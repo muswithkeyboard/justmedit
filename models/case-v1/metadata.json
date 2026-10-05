@@ -1,0 +1,297 @@
+{
+ "version": "case-v1",
+ "trained_at": "2026-10-03T22:35:02+00:00",
+ "engine_version": "0.1.0",
+ "data": {
+  "sha256": "9d97e125c961a92222eb31c86188ba7a7736ece1ba59ce296d32e300b107dbb6",
+  "table_sha256": "2c60e64639209fa6ce6b6fb6d81696930a598295ff40f92c2c8da0ab0c572266",
+  "rows": 840,
+  "file": "deficiency_anemia.csv",
+  "note": "учебный набор кейса (840 строк); строки данных в репозитории не хранятся"
+ },
+ "files": {
+  "prior_gbm.joblib": {
+   "sha256": "c4bc640cd6bc75f36248f940df8e1c1bba769cd9933a14fd87d4d0d3bc86e997",
+   "bytes": 572787
+  },
+  "bench_gbm.joblib": {
+   "sha256": "af95bc601c976b500f8379bc78b4f74c9b9a097cfd6ad4e5095915d8dd57ba40",
+   "bytes": 1346260
+  },
+  "fusion.json": {
+   "sha256": "df48e710919f66a40894d87002f05402264dad6845dc34e7e92933634328f3a6",
+   "bytes": 55411
+  },
+  "golden_predictions.json": {
+   "sha256": "ae0c55ac383978ab3b6c833a1c7132090400f7169ec76eaf28f641f26c5cbd41",
+   "bytes": 6367
+  }
+ },
+ "versions": {
+  "python": "3.13.16",
+  "scikit-learn": "1.9.1",
+  "numpy": "2.5.3",
+  "pandas": "3.0.5",
+  "joblib": "1.6.0"
+ },
+ "seed": 20261003,
+ "fusion": {
+  "prior_power_t": 0.5,
+  "group_weights": {
+   "iron": 0.7,
+   "b12": 1.0,
+   "folate": 1.0,
+   "copper": 1.0,
+   "b6": 1.0,
+   "inflammation": 0.5,
+   "hemolysis": 0.5,
+   "kidney": 0.35,
+   "tsh": 0.0,
+   "albumin": 0.0
+  },
+  "n_bins": 5,
+  "alpha": 1.0,
+  "oof_logloss14": 0.41713293075595714,
+  "oof_logloss14_prior_only": 1.6006018928254035,
+  "prior_gbm": {
+   "learning_rate": 0.08,
+   "max_iter": 120,
+   "max_leaf_nodes": 8,
+   "min_samples_leaf": 10,
+   "l2_regularization": 1.0,
+   "early_stopping": false
+  },
+  "presence_term": false
+ },
+ "benchmark": {
+  "gbm": {
+   "learning_rate": 0.05,
+   "max_iter": 300,
+   "max_leaf_nodes": 8,
+   "min_samples_leaf": 8,
+   "l2_regularization": 1.0,
+   "early_stopping": false
+  },
+  "derived_features": 6,
+  "combine": "геометрическое среднее вероятностей бустинга и слияния, затем замок ВОЗ"
+ },
+ "hidden_tau": {
+  "cbc": 0.7603749700328578,
+  "cbc_iron_crp": 0.6914597082157924,
+  "standard": 0.6816534607911071,
+  "extended": 0.6168101417971832
+ },
+ "hidden_tau_benchmark": {
+  "cbc": 0.40126710674673993,
+  "cbc_iron_crp": 0.3462270327916368,
+  "standard": 0.35197560560718444,
+  "extended": 0.27870134629617205
+ },
+ "hidden_oof": {
+  "target_specificity": 0.9,
+  "clinical": {
+   "cbc": {
+    "specificity": 0.9,
+    "sensitivity": 0.7386934673366834,
+    "n_negative": 110,
+    "n_positive": 199
+   },
+   "cbc_iron_crp": {
+    "specificity": 0.9,
+    "sensitivity": 0.8341708542713567,
+    "n_negative": 110,
+    "n_positive": 199
+   },
+   "standard": {
+    "specificity": 0.9,
+    "sensitivity": 0.8743718592964824,
+    "n_negative": 110,
+    "n_positive": 199
+   },
+   "extended": {
+    "specificity": 0.9,
+    "sensitivity": 0.9396984924623115,
+    "n_negative": 110,
+    "n_positive": 199
+   }
+  },
+  "benchmark": {
+   "cbc": {
+    "specificity": 0.9,
+    "sensitivity": 0.6984924623115578,
+    "n_negative": 110,
+    "n_positive": 199
+   },
+   "cbc_iron_crp": {
+    "specificity": 0.9,
+    "sensitivity": 0.8592964824120602,
+    "n_negative": 110,
+    "n_positive": 199
+   },
+   "standard": {
+    "specificity": 0.9,
+    "sensitivity": 0.9195979899497487,
+    "n_negative": 110,
+    "n_positive": 199
+   },
+   "extended": {
+    "specificity": 0.9,
+    "sensitivity": 0.964824120603015,
+    "n_negative": 110,
+    "n_positive": 199
+   }
+  }
+ },
+ "summary": {
+  "rows": 840,
+  "rows_with_anemia": 531,
+  "level1_match": 840,
+  "profile_counts": {
+   "no_anemia_no_deficiency": 110,
+   "latent_deficiency": 85,
+   "B12_deficiency_no_anemia": 50,
+   "folate_deficiency_no_anemia": 40,
+   "iron_deficiency_anemia": 115,
+   "B12_deficiency_anemia": 65,
+   "folate_deficiency_anemia": 50,
+   "mixed:iron_B12": 50,
+   "mixed:iron_folate": 40,
+   "mixed:B12_folate": 25,
+   "inflammation_anemia": 65,
+   "anemia_other": 75,
+   "B6_deficiency": 35,
+   "copper_deficiency": 35
+  },
+  "mean_share_of_labs_measured": 0.4756,
+  "train_seconds": 29.0,
+  "modes": {
+   "clinical": "слияние без утечки (по умолчанию)",
+   "benchmark": "ансамбль бустинг × слияние"
+  },
+  "limitations": "обучено на учебном наборе кейса (840 строк); не медицинское изделие"
+ },
+ "cv_metrics": {
+  "n_rows": 840,
+  "level1_match": 840,
+  "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003",
+  "acc12": {
+   "clinical": {
+    "cbc": 0.573,
+    "cbc_iron_crp": 0.6651,
+    "standard": 0.7659,
+    "extended": 0.8492
+   },
+   "benchmark": {
+    "cbc": 0.5044,
+    "cbc_iron_crp": 0.6385,
+    "standard": 0.7968,
+    "extended": 0.9187
+   },
+   "naive": {
+    "cbc": 0.4107,
+    "cbc_iron_crp": 0.571,
+    "standard": 0.7516,
+    "extended": 0.881
+   }
+  },
+  "benchmark_extended": {
+   "acc12": 0.9187,
+   "f1_12": 0.9101,
+   "acc5": 0.952,
+   "f1_5": 0.9397,
+   "f1_cause": 0.8943,
+   "f1_cause_proto": 0.8932,
+   "logloss12": 0.2633,
+   "ece": 0.0476,
+   "ece_pooled": 0.0228,
+   "auroc_hidden": 0.983,
+   "acc5_anemic": 0.9241
+  },
+  "clinical_extended": {
+   "acc12": 0.8492,
+   "f1_12": 0.8255,
+   "acc5": 0.9143,
+   "f1_5": 0.8929,
+   "f1_cause": 0.803,
+   "f1_cause_proto": 0.8052,
+   "logloss12": 0.4106,
+   "ece": 0.0492,
+   "ece_pooled": 0.0169,
+   "auroc_hidden": 0.9729,
+   "acc5_anemic": 0.8644
+  },
+  "clinical_cbc": {
+   "acc12": 0.573,
+   "f1_12": 0.496,
+   "acc5": 0.7821,
+   "f1_5": 0.707,
+   "f1_cause": 0.4199,
+   "f1_cause_proto": 0.4092,
+   "logloss12": 1.1825,
+   "ece": 0.0877,
+   "ece_pooled": 0.0435,
+   "auroc_hidden": 0.897,
+   "acc5_anemic": 0.6553
+  },
+  "acc5_anemic": {
+   "benchmark_extended": 0.9241,
+   "clinical_extended": 0.8644,
+   "clinical_cbc": 0.6553
+  },
+  "auroc_hidden_clinical": {
+   "cbc": 0.897,
+   "cbc_iron_crp": 0.9396,
+   "standard": 0.9512,
+   "extended": 0.9729
+  },
+  "ece_pooled_clinical": {
+   "cbc": 0.0435,
+   "cbc_iron_crp": 0.0365,
+   "standard": 0.0362,
+   "extended": 0.0169
+  },
+  "hidden_flag_clinical": {
+   "cbc": {
+    "specificity": 0.9212,
+    "sensitivity": 0.685
+   },
+   "cbc_iron_crp": {
+    "specificity": 0.9303,
+    "sensitivity": 0.8085
+   },
+   "standard": {
+    "specificity": 0.9152,
+    "sensitivity": 0.8449
+   },
+   "extended": {
+    "specificity": 0.9182,
+    "sensitivity": 0.9334
+   }
+  },
+  "gates": {
+   "thresholds": {
+    "level1_match": 840,
+    "benchmark_extended_acc12": 0.9,
+    "benchmark_extended_acc5": 0.93,
+    "clinical_extended_acc12": 0.83,
+    "clinical_cbc_iron_crp_acc12": 0.64,
+    "clinical_cbc_acc12": 0.55,
+    "clinical_cbc_auroc_hidden": 0.87,
+    "clinical_ece_pooled_max": 0.06
+   },
+   "passed": {
+    "level1_match": true,
+    "benchmark_extended_acc12": true,
+    "benchmark_extended_acc5": true,
+    "clinical_extended_acc12": true,
+    "clinical_cbc_iron_crp_acc12": true,
+    "clinical_cbc_acc12": true,
+    "clinical_cbc_auroc_hidden": true,
+    "clinical_ece_pooled_max": true
+   },
+   "all_passed": true
+  },
+  "source": "case_metrics.json",
+  "note": "кросс-валидация 5×3; итоговая модель обучена на всех строках"
+ }
+}

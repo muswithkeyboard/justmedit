@@ -1,0 +1,20 @@
+data/case/
+data/nhanes/
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+data/in/
+data/out/
+# База личного кабинета и ключ шифрования (ADR 0009) — никогда в git
+data/app/
+.ruff_cache/
+.env
+.DS_Store
+*.egg-info/
+# Любые файлы баз SQLite (кабинет, проверочные копии) — никогда в git
+*.db
+*.db-wal
+*.db-shm
+*.db-journal
+*.sqlite*

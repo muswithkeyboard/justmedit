@@ -1,0 +1,44 @@
+# Зависимости DeficitLens: работа сервиса и обучение моделей.
+# Версии — те, что установлены в среде разработки (Python 3.13.16), на них обучены и проверены модели.
+#
+# ВАЖНО: файлы моделей models/*/*.joblib привязаны к версии scikit-learn. При другой версии scikit-learn
+# модели нужно переобучить: `deficitlens train` (нужны файлы данных, см. README, раздел «Данные»).
+
+# --- расчёты и модели ---
+numpy==2.5.3
+scipy==1.18.1            # зависимость scikit-learn
+pandas==3.0.5
+scikit-learn==1.9.1      # не менять без переобучения моделей
+joblib==1.6.0
+threadpoolctl==3.7.0     # предсказание бустинга в один поток
+
+# --- схемы и конфигурация ---
+pydantic==2.13.5
+PyYAML==6.0.3
+
+# --- веб-сервис ---
+starlette==1.7.0
+uvicorn==0.54.0
+python-multipart==0.0.32 # загрузка файла в /api/v1/benchmark
+Jinja2==3.1.6
+
+# --- чтение и запись XLSX ---
+openpyxl==3.1.5
+pdfplumber==0.11.10      # таблица сверки: текстовый слой PDF, без OCR
+pdfminer.six==20260107
+pypdfium2==5.13.0
+
+# --- фото бланка: локальный Tesseract (ADR 0007); бинарник и языки rus, eng — apt в Dockerfile ---
+pytesseract==0.3.13
+pillow==12.3.0
+packaging==26.3          # зависимость pytesseract
+
+# --- личный кабинет (ADR 0009): шифрование данных в SQLite (Fernet) ---
+cryptography==50.0.2     # используется напрямую; та же версия, что в uv.lock (раньше — только как зависимость pdfminer)
+cffi==2.1.1              # зависимость cryptography
+pycparser==3.0           # зависимость cffi
+
+# Не входят в образ и ставятся отдельно:
+#   requests==2.34.2 — только для примеров в examples/ (python_client.py, lis_batch.py);
+#   pytest, ruff, matplotlib — для разработки (см. pyproject.toml, раздел dev). Тесты идут и без pytest:
+#   python3 scripts/run_tests.py

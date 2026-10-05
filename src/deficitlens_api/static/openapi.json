@@ -1,0 +1,2745 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Justmedit API",
+    "version": "1.0.0",
+    "description": "Скрининг анемий и скрытых дефицитов по анализам крови: расшифровка анализа, разбор бланков, расчёт по таблице, кабинет пациента с историей и доступом врачу.\n\n**Авторизация.** Маршруты анализа принимают ключ `X-API-Key` (только «сервер к серверу») или токен пользователя `Authorization: Bearer <токен>` (браузер, внешние сайты). Кабинет — только токен или cookie сайта. Нет или просрочен — 401, неверный ключ или не та роль — 403. Токен API (Bearer) читает кабинет, сохраняет анализы и референсы врача; новый токен, ссылку врачу и «выйти везде» — только с паролем аккаунта в поле `password` (403 `password_required` / `wrong_password`).\n\n**Кабинет.** Тела запросов — только JSON с заголовком `Content-Type: application/json` (иначе 415 `unsupported_media_type`); изменяющие запросы с cookie сайта — ещё и с заголовком `X-Justmedit: 1` (иначе 403 `csrf`), с Bearer-токеном он не нужен. Код 201 — только у регистрации и новой записи анализа, остальные успешные ответы — 200. Удаление токена, доступа врачу или набора референсов возвращает обновлённый список.\n\n**Ошибки** — всегда `{\"error\": {\"code\", \"message\", \"field\"}}`; сообщение по-русски говорит, что исправить. 401 `invalid_credentials` — неверный логин или пароль, 409 `login_taken` — логин занят, 413 — большой запрос, 415 — тело не JSON, 422 — ошибка ввода, 429 — лимит, 503 — сервис занят или хранилище кабинета недоступно (`storage_unavailable`), 507 — база кабинета заполнена (`storage_full`).\n\n**CORS** для `/api/v1/*` — только источники из `DL_CORS_ORIGINS`, без credentials.\n\nИсследовательский прототип, не медицинское изделие. Решение принимает врач. Страница с консолью и примерами — /developers."
+  },
+  "servers": [{"url": "/", "description": "этот сервер"}],
+  "tags": [
+    {"name": "Вход и токены", "description": "Регистрация, вход, выход, аккаунт и токены API. По Bearer-токену новый токен, «выйти везде» и ссылку врачу создают только с паролем аккаунта (поле password)."},
+    {"name": "Анализ", "description": "Расшифровка одного анализа и пакета записей."},
+    {
+      "name": "Файлы",
+      "description": "Бланк (текст, фото, PDF) и таблицы CSV / XLSX: разбор, сопоставление столбцов, расчёт по файлу."
+    },
+    {
+      "name": "Кабинет пациента",
+      "description": "История анализов пациента: записи, динамика, выгрузка, доступ врачу. Нужен токен пациента."
+    },
+    {
+      "name": "Врач",
+      "description": "Пациенты, открывшие доступ, их история и записи, референсы своей лаборатории. Нужен токен врача."
+    },
+    {"name": "Служебное", "description": "Состояние сервиса, справочник показателей и это описание."}
+  ],
+  "paths": {
+    "/api/v1/analyze": {
+      "post": {
+        "operationId": "analyze",
+        "tags": ["Анализ"],
+        "summary": "Расшифровка одного анализа",
+        "description": "Пол, возраст и значения показателей → анемия по ВОЗ, вероятный тип, скрытый дефицит, что досдать и два отчёта: врачу и пациенту. Число без единицы считается в канонической единице показателя.",
+        "x-role": "ключ API (сервер) или токен пользователя",
+        "security": [{"ApiKeyAuth": []}, {"BearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/AnalysisInput"},
+              "example": {"sex": "F", "age_years": 34, "values": {"hemoglobin": 124, "MCV": 82, "RDW": 15.2}}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ответ движка (сокращён)",
+            "content": {
+              "application/json": {
+                "example": {
+                  "version": {"engine": "0.1.0", "case_model": "case-v1", "screen_model": "screen-v1", "norms": "2026-10-04c"},
+                  "patient_ref": null,
+                  "level1": {
+                    "anemia": false,
+                    "hemoglobin": 124.0,
+                    "threshold_g_l": 120.0,
+                    "severity": null,
+                    "urgent": [],
+                    "source": "ВОЗ, 2024: пороги гемоглобина для определения анемии"
+                  },
+                  "level2": {
+                    "enabled": true,
+                    "mode": "clinical",
+                    "completeness": "cbc",
+                    "completeness_ru": "только общий анализ крови",
+                    "case_group": "healthy",
+                    "case_group_ru": "анемии нет",
+                    "confidence": "low",
+                    "confidence_ru": "низкая",
+                    "probabilities": {"groups5": {"healthy": 1.0, "iron_deficiency_anemia": 0.0}},
+                    "plausible": []
+                  },
+                  "hidden_deficiency": {
+                    "applicable": true,
+                    "detected": true,
+                    "p_any": null,
+                    "rule_signals": [],
+                    "screening": {
+                      "applicable": true,
+                      "model": "screen-v1",
+                      "p_ferritin_lt15": 0.223,
+                      "p_ferritin_lt30": 0.452,
+                      "risk": "high",
+                      "risk_ru": "высокий",
+                      "features": "hb_only",
+                      "group": "F18-49",
+                      "recommend_ferritin": true
+                    },
+                    "summary_ru": "Гемоглобин в норме, но по общему анализу крови риск скрытого дефицита железа высокий: стоит досдать ферритин."
+                  },
+                  "flags": [],
+                  "checklist": [],
+                  "next_tests": [
+                    {
+                      "analyte": "ferritin",
+                      "name_ru": "Ферритин",
+                      "kind": "rule",
+                      "price_rub": 845,
+                      "reason": "Гемоглобин в норме, но по общему анализу крови риск скрытого дефицита железа высокий. Ферритин покажет запас железа.",
+                      "source": "скрининг по общему анализу крови (модель проверена на данных NHANES)"
+                    },
+                    {
+                      "analyte": "CRP",
+                      "name_ru": "С-реактивный белок",
+                      "kind": "rule",
+                      "price_rub": 710,
+                      "reason": "Нужен, чтобы правильно прочитать ферритин: при воспалении ферритин завышается.",
+                      "source": "ВОЗ, 2020: ферритин для оценки запасов железа"
+                    }
+                  ],
+                  "explanation": {
+                    "items_for": [],
+                    "items_against": [],
+                    "note": "По одному общему анализу крови без анемии класс не определяется; см. скрининг."
+                  },
+                  "values": [
+                    {
+                      "analyte": "RDW",
+                      "name_ru": "Ширина распределения эритроцитов",
+                      "value": 15.2,
+                      "unit": "%",
+                      "norm": {
+                        "status": "high",
+                        "threshold_text": "выше 14,5 % — эритроциты неоднородны по размеру",
+                        "source": "лабораторный референс"
+                      }
+                    }
+                  ],
+                  "reports": {
+                    "doctor": {
+                      "headline": "Анемии по ВОЗ нет: Hb 124 г/л при пороге 120 г/л. Скрининг по ОАК: риск скрытого дефицита железа высокий — показан ферритин.",
+                      "sections": [
+                        {
+                          "title": "Уровень 1: анемия по ВОЗ",
+                          "lines": ["Анемии нет: гемоглобин 124 г/л не ниже порога 120 г/л (женщины)."]
+                        }
+                      ]
+                    },
+                    "patient": {
+                      "headline": "Признаков анемии нет, но есть признаки возможного скрытого дефицита — это стоит обсудить с врачом.",
+                      "sections": [
+                        {
+                          "title": "Главное",
+                          "lines": [
+                            "Гемоглобин 124 г/л — не ниже порога 120 г/л (порог ВОЗ для женщин): признаков анемии нет."
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  "normalization": [],
+                  "limitations": ["Исследовательский прототип, не медицинское изделие. Диагноз и лечение определяет врач."],
+                  "references": {"set": "default", "lab_name": null, "local_analytes": [], "warning": null},
+                  "processing_ms": 7.5
+                },
+                "schema": {"$ref": "#/components/schemas/AnalysisResult"}
+              }
+            }
+          },
+          "401": {"$ref": "#/components/responses/E401"},
+          "403": {"$ref": "#/components/responses/E403"},
+          "413": {"$ref": "#/components/responses/E413"},
+          "422": {"$ref": "#/components/responses/E422"},
+          "429": {"$ref": "#/components/responses/E429"},
+          "500": {"$ref": "#/components/responses/E500"}
+        }
+      }
+    },
+    "/api/v1/batch": {
+      "post": {
+        "operationId": "batch",
+        "tags": ["Анализ"],
+        "summary": "Пакет анализов",
+        "description": "До DL_MAX_BATCH (10 000) записей за запрос. Запись с ошибкой не останавливает пакет: у неё status = rejected и список errors. Тяжёлый маршрут: не больше двух расчётов одновременно на процесс (иначе 503 `service_busy` с `Retry-After`) и не больше `DL_UI_RATE_PER_MIN` запросов в минуту на ключ или токен (429).",
+        "x-role": "ключ API (сервер) или токен пользователя",
+        "security": [{"ApiKeyAuth": []}, {"BearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/BatchRequest"},
+              "example": {
+                "with_reports": false,
+                "records": [
+                  {
+                    "patient_ref": "row-1",
+                    "sex": "F",
+                    "age_years": 34,
+                    "values": {"hemoglobin": 124, "MCV": 82, "RDW": 15.2}
+                  },
+                  {"patient_ref": "row-2", "sex": "F", "age_years": 12, "values": {"hemoglobin": 118}}
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Сводка и результат по каждой записи (сокращено)",
+            "content": {
+              "application/json": {
+                "example": {
+                  "summary": {"total": 2, "done": 1, "rejected": 1, "processing_ms": 7.3},
+                  "items": [
+                    {
+                      "index": 0,
+                      "patient_ref": "row-1",
+                      "status": "done",
+                      "errors": [],
+                      "result": {"level1": {"anemia": false, "hemoglobin": 124.0}, "…": "…"}
+                    },
+                    {
+                      "index": 1,
+                      "patient_ref": "row-2",
+                      "status": "rejected",
+                      "result": null,
+                      "errors": [
+                        {
+                          "code": "invalid_value",
+                          "field": "age_years",
+                          "message": "Возраст — целое число от 18 до 120 лет: сервис рассчитан на взрослых."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "schema": {"$ref": "#/components/schemas/BatchResponse"}
+              }
+            }
+          },
+          "401": {"$ref": "#/components/responses/E401"},
+          "403": {"$ref": "#/components/responses/E403"},
+          "413": {"$ref": "#/components/responses/E413"},
+          "422": {"$ref": "#/components/responses/E422"},
+          "429": {"$ref": "#/components/responses/E429"},
+          "503": {"$ref": "#/components/responses/E503"},
+          "500": {"$ref": "#/components/responses/E500"}
+        },
+        "x-heavy": true
+      }
+    },
+    "/api/v1/parse": {
+      "post": {
+        "operationId": "parse",
+        "tags": ["Файлы"],
+        "summary": "Разбор бланка: текст, фото, PDF",
+        "description": "JSON {\"text\"} — вставленный текст бланка; multipart с полем file — фото (JPEG, PNG, WEBP), PDF (текст или скан), TXT, CSV / XLSX одного анализа. Возвращает значения для сверки, нормы и дату с бланка. ФИО, полис и другие ПДн не возвращаются и не пишутся в журнал. Фото и скан: warnings и check — значения, которые стоит проверить. Тяжёлый маршрут: не больше двух расчётов одновременно на процесс (иначе 503 `service_busy` с `Retry-After`) и не больше `DL_UI_RATE_PER_MIN` запросов в минуту на ключ или токен (429).",
+        "x-role": "ключ API (сервер) или токен пользователя",
+        "security": [{"ApiKeyAuth": []}, {"BearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/ParseText"},
+              "example": {"text": "Дата взятия 16.04.2026\nГемоглобин 118 г/л 120-150\nФерритин 9 мкг/л\nMCV 78 фл"}
+            },
+            "multipart/form-data": {"schema": {"$ref": "#/components/schemas/FileUpload"}}
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Распознанные значения",
+            "content": {
+              "application/json": {
+                "example": {
+                  "values": {
+                    "hemoglobin": {"value": 118.0, "unit": "г/л"},
+                    "ferritin": {"value": 9.0, "unit": "мкг/л"},
+                    "MCV": {"value": 78.0, "unit": "фл"}
+                  },
+                  "unrecognized": [],
+                  "notes": [],
+                  "date": "2026-04-16",
+                  "reference_ranges": {"hemoglobin": {"low": 120, "high": 150, "unit": "г/л"}},
+                  "ignored": []
+                },
+                "schema": {"$ref": "#/components/schemas/ParseResult"}
+              }
+            }
+          },
+          "401": {"$ref": "#/components/responses/E401"},
+          "403": {"$ref": "#/components/responses/E403"},
+          "413": {"$ref": "#/components/responses/E413"},
+          "422": {"$ref": "#/components/responses/E422"},
+          "429": {"$ref": "#/components/responses/E429"},
+          "503": {"$ref": "#/components/responses/E503"},
+          "500": {"$ref": "#/components/responses/E500"}
+        },
+        "x-heavy": true
+      }
+    },
+    "/api/v1/columns": {
+      "post": {
+        "operationId": "columns",
+        "tags": ["Файлы"],
+        "summary": "Столбцы файла: что понял сервис",
+        "description": "Файл CSV / XLSX → что сервис понял в каждом столбце, догадки для своих названий («HGB, г/дл») и проверка, хватает ли данных. Расчёта нет — это шаг перед /api/v1/benchmark с полем mapping. Тяжёлый маршрут: не больше двух расчётов одновременно на процесс (иначе 503 `service_busy` с `Retry-After`) и не больше `DL_UI_RATE_PER_MIN` запросов в минуту на ключ или токен (429).",
+        "x-role": "ключ API (сервер) или токен пользователя",
+        "security": [{"ApiKeyAuth": []}, {"BearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {"multipart/form-data": {"schema": {"$ref": "#/components/schemas/FileUpload"}}}
+        },
+        "responses": {
+          "200": {
+            "description": "Сопоставление столбцов (сокращено)",
+            "content": {
+              "application/json": {
+                "example": {
+                  "rows": 2,
+                  "columns": [
+                    {"column": "Пол", "kind": "feature", "target": "sex", "unit": "", "example": "Ж"},
+                    {
+                      "column": "HGB, г/дл",
+                      "kind": "guess",
+                      "target": "hemoglobin",
+                      "unit": "g/dl",
+                      "example": "12.4"
+                    },
+                    {"column": "Комментарий", "kind": "unknown", "target": null, "unit": "", "example": "—"}
+                  ],
+                  "targets": [
+                    {
+                      "code": "hemoglobin",
+                      "name_ru": "Гемоглобин",
+                      "group": "cbc",
+                      "units": [{"unit": "g/l", "factor": 1.0}, {"unit": "g/dl", "factor": 10.0}]
+                    }
+                  ],
+                  "requirements": {
+                    "ok": false,
+                    "errors": ["Нет возраста: без него нельзя выбрать нормы."],
+                    "warnings": [],
+                    "info": []
+                  }
+                },
+                "schema": {"$ref": "#/components/schemas/ColumnsResult"}
+              }
+            }
+          },
+          "401": {"$ref": "#/components/responses/E401"},
+          "403": {"$ref": "#/components/responses/E403"},
+          "413": {"$ref": "#/components/responses/E413"},
+          "422": {"$ref": "#/components/responses/E422"},
+          "429": {"$ref": "#/components/responses/E429"},
+          "503": {"$ref": "#/components/responses/E503"},
+          "500": {"$ref": "#/components/responses/E500"}
+        },
+        "x-heavy": true
+      }
+    },
+    "/api/v1/benchmark": {
+      "post": {
+        "operationId": "benchmark",
+        "tags": ["Файлы"],
+        "summary": "Расчёт по файлу CSV / XLSX",
+        "description": "Строка на пациента: пол, возраст, показатели (схема кейса или своя — с полем mapping). Ответ — сводка, первые 20 строк и весь результат в CSV; с ?format=csv — сразу файл CSV. Если в файле есть метки, считаются метрики. Тяжёлый маршрут: не больше двух расчётов одновременно на процесс (иначе 503 `service_busy` с `Retry-After`) и не больше `DL_UI_RATE_PER_MIN` запросов в минуту на ключ или токен (429).",
+        "x-role": "ключ API (сервер) или токен пользователя",
+        "security": [{"ApiKeyAuth": []}, {"BearerAuth": []}],
+        "parameters": [
+          {
+            "name": "format",
+            "in": "query",
+            "required": false,
+            "description": "csv — ответ файлом CSV",
+            "schema": {"type": "string", "enum": ["json", "csv"], "default": "json"},
+            "example": "json"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {"multipart/form-data": {"schema": {"$ref": "#/components/schemas/BenchmarkUpload"}}}
+        },
+        "responses": {
+          "200": {
+            "description": "Сводка, первые строки и CSV (сокращено); с format=csv — файл",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/BenchmarkResult"},
+                "example": {
+                  "summary": {
+                    "rows_total": 2,
+                    "rows_done": 2,
+                    "rows_rejected": 0,
+                    "mode": "clinical",
+                    "mode_requested": "auto",
+                    "metrics": null,
+                    "requirements": {"ok": true, "errors": [], "warnings": [], "info": []}
+                  },
+                  "preview": [
+                    {
+                      "patient_id": "row_1",
+                      "anemia": 0,
+                      "case_group": "healthy",
+                      "confidence": 0.392,
+                      "hidden_deficiency": 0,
+                      "mode": "clinical",
+                      "status": "done",
+                      "reject_reason": ""
+                    }
+                  ],
+                  "csv": "\"patient_id\";\"anemia\";\"case_group\"…"
+                }
+              },
+              "text/csv": {
+                "schema": {"type": "string"},
+                "example": "\"patient_id\",\"anemia\",\"case_group\"\n\"row_1\",\"0\",\"healthy\"\n"
+              }
+            }
+          },
+          "401": {"$ref": "#/components/responses/E401"},
+          "403": {"$ref": "#/components/responses/E403"},
+          "413": {"$ref": "#/components/responses/E413"},
+          "422": {"$ref": "#/components/responses/E422"},
+          "429": {"$ref": "#/components/responses/E429"},
+          "503": {"$ref": "#/components/responses/E503"},
+          "500": {"$ref": "#/components/responses/E500"}
+        },
+        "x-heavy": true
+      }
+    },
+    "/api/v1/me/records": {
+      "get": {
+        "operationId": "recordsList",
+        "tags": ["Кабинет пациента"],
+        "summary": "Мои анализы: список",
+        "description": "Записи истории: дата, источник, главный вывод.",
+        "x-role": "пациент",
+        "security": [{"BearerAuth": []}, {"CookieAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Успешно",
+            "content": {
+              "application/json": {
+                "example": {
+                  "records": [
+                    {
+                      "id": "5d21a7c4e9b84f0e9a3c6b2d1e0f7a58",
+                      "date": "2026-04-16",
+                      "source": "form",
+                      "headline": "Признаков анемии нет, но есть признаки возможного скрытого дефицита — это стоит обсудить с врачом.",
+                      "anemia": false,
+                      "created": "2026-10-04T18:31:00Z"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {"$ref": "#/components/responses/E401"},
+          "403": {"$ref": "#/components/responses/E403"},
+          "429": {"$ref": "#/components/responses/E429"},
+          "500": {"$ref": "#/components/responses/E500"}
+        }
+      },
+      "post": {
+        "operationId": "recordsCreate",
+        "tags": ["Кабинет пациента"],
+        "summary": "Мои анализы: добавить",
+        "description": "Сохраняет анализ в историю (значения шифруются) и сразу возвращает расшифровку. Поле input проверяется так же, как тело /api/v1/analyze (ошибка — 422 с полем), и строже: показатели в values — только известные коды и названия (иначе 422 unknown_analyte, field = values), patient_ref и lab_reference — до 64 символов, provenance не хранится, вход после проверки — не больше 16 КБ (413 record_too_large). Дата необязательна: без неё — сегодняшняя (UTC); не раньше 1900 года и не позже завтрашнего дня (запас на часовой пояс). В кабинете — до 500 анализов (больше — 422 too_many_records) и до 5 МБ данных (422 quota_exceeded); база сервиса заполнена — 507 storage_full.",
+        "x-role": "пациент",
+        "security": [{"BearerAuth": []}, {"CookieAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/RecordCreate"},
+              "example": {
+                "date": "2026-04-16",
+                "source": "form",
+                "input": {"sex": "F", "age_years": 34, "values": {"hemoglobin": 124, "MCV": 82, "RDW": 15.2}}
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Запись создана (результат сокращён)",
+            "content": {
+              "application/json": {
+                "example": {
+                  "record": {
+                    "id": "5d21a7c4e9b84f0e9a3c6b2d1e0f7a58",
+                    "date": "2026-04-16",
+                    "source": "form",
+                    "headline": "Признаков анемии нет, но есть признаки возможного скрытого дефицита — это стоит обсудить с врачом.",
+                    "anemia": false,
+                    "created": "2026-10-04T18:31:00Z"
+                  },
+                  "result": {
+                    "level1": {"anemia": false, "hemoglobin": 124.0},
+                    "reports": {
+                      "patient": {
+                        "headline": "Признаков анемии нет, но есть признаки возможного скрытого дефицита — это стоит обсудить с врачом."
+                      }
+                    },
+                    "…": "…"
+                  }
+                }
+              }
+            }
+          },
+          "401": {"$ref": "#/components/responses/E401"},
+          "403": {"$ref": "#/components/responses/E403"},
+          "413": {"$ref": "#/components/responses/E413"},
+          "415": {"$ref": "#/components/responses/E415"},
+          "422": {"$ref": "#/components/responses/E422"},
+          "429": {"$ref": "#/components/responses/E429"},
+          "500": {"$ref": "#/components/responses/E500"},
+          "507": {"$ref": "#/components/responses/E507"}
+        }
+      }
+    },
+    "/api/v1/me/records/{id}": {
+      "get": {
+        "operationId": "recordsGet",
+        "tags": ["Кабинет пациента"],
+        "summary": "Мои анализы: одна запись",
+        "description": "Запись с введёнными значениями (input — после проверки схемы, с полями по умолчанию) и расшифровкой. Если с момента сохранения сменилась версия движка, моделей или порогов, расшифровка пересчитывается. id — 32 шестнадцатеричных знака; чужая или несуществующая запись — 404.",
+        "x-role": "пациент",
+        "security": [{"BearerAuth": []}, {"CookieAuth": []}],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "id записи",
+            "schema": {"type": "string"},
+            "example": "5d21a7c4e9b84f0e9a3c6b2d1e0f7a58"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Запись (результат сокращён)",
+            "content": {
+              "application/json": {
+                "example": {
+                  "record": {
+                    "id": "5d21a7c4e9b84f0e9a3c6b2d1e0f7a58",
+                    "date": "2026-04-16",
+                    "source": "form",
+                    "headline": "Признаков анемии нет, но есть признаки возможного скрытого дефицита — это стоит обсудить с врачом.",
+                    "anemia": false,
+                    "created": "2026-10-04T18:31:00Z",
+                    "input": {
+                      "sex": "F",
+                      "age_years": 34,
+                      "pregnancy": {"status": "no"},
+                      "values": {"hemoglobin": 124.0, "MCV": 82.0, "RDW": 15.2},
+                      "norms": "who",
+                      "mode": "clinical",
+                      "lab_reference": "default"
+                    }
+                  },
+                  "result": {
+                    "reports": {
+                      "patient": {
+                        "headline": "Признаков анемии нет, но есть признаки возможного скрытого дефицита — это стоит обсудить с врачом."
+                      }
+                    },
+                    "…": "…"
+                  }
+                }
+              }
+            }
+          },
+          "401": {"$ref": "#/components/responses/E401"},
+          "403": {"$ref": "#/components/responses/E403"},
+          "404": {"$ref": "#/components/responses/E404"},
+          "429": {"$ref": "#/components/responses/E429"},
+          "500": {"$ref": "#/components/responses/E500"}
+        }
+      },
+      "delete": {
+        "operationId": "recordsDelete",
+        "tags": ["Кабинет пациента"],
+        "summary": "Мои анализы: удалить",
+        "description": "Удаляет запись из истории.",
+        "x-role": "пациент",
+        "security": [{"BearerAuth": []}, {"CookieAuth": []}],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "id записи",
+            "schema": {"type": "string"},
+            "example": "5d21a7c4e9b84f0e9a3c6b2d1e0f7a58"
+          }
+        ],
+        "responses": {
+          "200": {"description": "Успешно", "content": {"application/json": {"example": {"deleted": true}}}},
+          "401": {"$ref": "#/components/responses/E401"},
+          "403": {"$ref": "#/components/responses/E403"},
+          "404": {"$ref": "#/components/responses/E404"},
+          "429": {"$ref": "#/components/responses/E429"},
+          "500": {"$ref": "#/components/responses/E500"}
+        }
+      }
+    },
+    "/api/v1/me/history": {
+      "get": {
+        "operationId": "history",
+        "tags": ["Кабинет пациента"],
+        "summary": "Динамика анализов",
+        "description": "Ряды показателей по датам, заметные изменения, что давно не сдавалось. Тексты — для пациента: без диагнозов. n_records — число разных анализов: одинаковые записи одного дня считаются один раз (GET /api/v1/me/records отдаёт все записи). Слот тяжёлых расчётов нужен, только если кеш ответов движка устарел (сменилась версия движка или порогов): тогда история ждёт слот до 3 с, не дождалась — 503 service_busy с Retry-After.",
+        "x-role": "пациент",
+        "security": [{"BearerAuth": []}, {"CookieAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Успешно",
+            "content": {
+              "application/json": {
+                "example": {
+                  "role": "patient",
+                  "n_records": 2,
+                  "first_date": "2025-10-02",
+                  "last_date": "2026-04-16",
+                  "series": [
+                    {
+                      "analyte": "hemoglobin",
+                      "name_ru": "Гемоглобин",
+                      "unit": "г/л",
+                      "points": [
+                        {"date": "2025-10-02", "value": 136.0, "record_id": "1a07c3e5b9d24f6a8c0e2b4d6f8a1c3e"},
+                        {"date": "2026-04-16", "value": 124.0, "record_id": "5d21a7c4e9b84f0e9a3c6b2d1e0f7a58"}
+                      ],
+                      "last": 124.0,
+                      "delta": -12.0,
+                      "delta_pct": -8.8,
+                      "direction": "down",
+                      "months": 6.4,
+                      "ref": {"low": 120, "high": 150}
+                    }
+                  ],
+                  "events": [
+                    {
+                      "code": "hb_drop",
+                      "severity": "attention",
+                      "date": "2026-04-16",
+                      "title": "Гемоглобин снизился",
+                      "text": "Гемоглобин за 6 месяцев снизился — покажите историю врачу.",
+                      "analytes": ["hemoglobin"]
+                    }
+                  ],
+                  "completeness": [
+                    {
+                      "analyte": "ferritin",
+                      "name_ru": "Ферритин",
+                      "status": "never",
+                      "last_date": null,
+                      "reason": "Чтобы оценить запас железа. Ещё не сдавали.",
+                      "priority": 1,
+                      "price_rub": 845
+                    }
+                  ],
+                  "latest": {
+                    "record_id": "5d21a7c4e9b84f0e9a3c6b2d1e0f7a58",
+                    "date": "2026-04-16",
+                    "headline": "Признаков анемии нет, но есть признаки возможного скрытого дефицита — это стоит обсудить с врачом."
+                  },
+                  "summary": "2 анализа с октября 2025 по апрель 2026; есть изменения, которые стоит обсудить с врачом"
+                },
+                "schema": {"$ref": "#/components/schemas/History"}
+              }
+            }
+          },
+          "401": {"$ref": "#/components/responses/E401"},
+          "403": {"$ref": "#/components/responses/E403"},
+          "429": {"$ref": "#/components/responses/E429"},
+          "503": {"$ref": "#/components/responses/E503"},
+          "500": {"$ref": "#/components/responses/E500"}
+        }
+      }
+    },
+    "/api/v1/me/export": {
+      "get": {
+        "operationId": "export",
+        "tags": ["Кабинет пациента"],
+        "summary": "Выгрузка всех записей",
+        "description": "Файл (Content-Disposition: attachment) JSON — для переноса через /api/v1/me/import — или CSV в схеме кейса: sex, age_years, все коды показателей в канонических единицах, date. Расшифровки в выгрузку не входят: при загрузке они считаются заново.",
+        "x-role": "пациент",
+        "security": [{"BearerAuth": []}, {"CookieAuth": []}],
+        "parameters": [
+          {
+            "name": "format",
+            "in": "query",
+            "required": false,
+            "description": "формат файла",
+            "schema": {"type": "string", "enum": ["json", "csv"], "default": "json"},
+            "example": "json"
+          },
+          {
+            "name": "day",
+            "in": "query",
+            "required": false,
+            "description": "местная дата ГГГГ-ММ-ДД для имени файла justmedit-<day>.json; принимается в пределах суток от даты сервера (UTC), иначе — дата сервера",
+            "schema": {"type": "string", "format": "date"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Файл выгрузки",
+            "content": {
+              "application/json": {
+                "example": {
+                  "format": "justmedit-export",
+                  "version": 1,
+                  "exported": "2026-10-04T19:10:00Z",
+                  "records": [
+                    {
+                      "date": "2026-04-16",
+                      "source": "form",
+                      "created": "2026-10-04T18:31:00Z",
+                      "input": {
+                        "sex": "F",
+                        "age_years": 34,
+                        "pregnancy": {"status": "no"},
+                        "values": {"hemoglobin": 124.0, "MCV": 82.0, "RDW": 15.2},
+                        "norms": "who",
+                        "mode": "clinical",
+                        "lab_reference": "default"
+                      }
+                    }
+                  ]
+                }
+              },
+              "text/csv": {
+                "schema": {"type": "string"},
+                "example": "\"sex\",\"age_years\",\"hemoglobin\",\"RBC\",\"hematocrit\",\"MCV\",\"MCH\",\"MCHC\",\"RDW\",\"platelets\",\"WBC\",\"ferritin\",\"serum_iron\",\"transferrin\",\"TIBC\",\"UIBC\",\"TSAT\",\"sTfR\",\"Ret_He\",\"vitamin_B12\",\"active_B12\",\"MMA\",\"homocysteine\",\"folate\",\"copper\",\"ceruloplasmin\",\"vitamin_B6\",\"CRP\",\"ESR\",\"LDH\",\"indirect_bilirubin\",\"haptoglobin\",\"reticulocytes\",\"creatinine\",\"eGFR\",\"TSH\",\"albumin\",\"date\"\n\"F\",\"34\",\"124.0\",\"\",\"\",\"82.0\",\"\",\"\",\"15.2\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"2026-04-16\"\n"
+              }
+            }
+          },
+          "401": {"$ref": "#/components/responses/E401"},
+          "403": {"$ref": "#/components/responses/E403"},
+          "422": {"$ref": "#/components/responses/E422"},
+          "429": {"$ref": "#/components/responses/E429"},
+          "500": {"$ref": "#/components/responses/E500"}
+        }
+      }
+    },
+    "/api/v1/me/import": {
+      "post": {
+        "operationId": "import",
+        "tags": ["Кабинет пациента"],
+        "summary": "Загрузка выгрузки",
+        "description": "Принимает JSON из /api/v1/me/export (format=json). Всё или ничего: сначала проверяются все записи (схема и правила кабинета, как у POST /api/v1/me/records), потом каждая считается движком заново; ошибка в одной — 422 с полем вида records[1].sex, и не загружается ничего. Дата у каждой записи обязательна. Записи, которые уже есть в кабинете (та же дата, пол, возраст, беременность и те же значения после пересчёта единиц), не загружаются второй раз — их число в skipped; одинаковые записи в файле сверх сохранённых загружаются. Загруженные записи получают source = import и добавляются к истории (всего — до 500 и до 5 МБ). Тяжёлый запрос: не больше DL_UI_RATE_PER_MIN в минуту на пользователя (429) и под слотом тяжёлых расчётов (ждёт до 3 с, затем 503 service_busy).",
+        "x-role": "пациент",
+        "security": [{"BearerAuth": []}, {"CookieAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["records"],
+                "description": "JSON выгрузки",
+                "properties": {
+                  "format": {"type": "string", "enum": ["justmedit-export"], "description": "если есть — только justmedit-export"},
+                  "records": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": ["date", "input"],
+                      "properties": {
+                        "date": {"type": "string", "format": "date"},
+                        "input": {"$ref": "#/components/schemas/AnalysisInput"}
+                      }
+                    }
+                  }
+                }
+              },
+              "example": {
+                "format": "justmedit-export",
+                "version": 1,
+                "records": [
+                  {
+                    "date": "2026-04-16",
+                    "source": "form",
+                    "input": {"sex": "F", "age_years": 34, "values": {"hemoglobin": 124, "MCV": 82, "RDW": 15.2}}
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Успешно", "content": {"application/json": {"example": {"imported": 1, "skipped": 0}}}},
+          "401": {"$ref": "#/components/responses/E401"},
+          "403": {"$ref": "#/components/responses/E403"},
+          "413": {"$ref": "#/components/responses/E413"},
+          "415": {"$ref": "#/components/responses/E415"},
+          "422": {"$ref": "#/components/responses/E422"},
+          "429": {"$ref": "#/components/responses/E429"},
+          "503": {"$ref": "#/components/responses/E503"},
+          "500": {"$ref": "#/components/responses/E500"},
+          "507": {"$ref": "#/components/responses/E507"}
+        }
+      }
+    },
+    "/api/v1/me/shares": {
+      "get": {
+        "operationId": "sharesList",
+        "tags": ["Кабинет пациента"],
+        "summary": "Доступ врачу: список",
+        "description": "Кому и до какого числа открыт доступ к истории. status: pending — ссылка ещё не принята (doctor = null, expires — срок ссылки, 48 ч), active — врач принял (expires = accepted + days), expired, revoked.",
+        "x-role": "пациент",
+        "security": [{"BearerAuth": []}, {"CookieAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Успешно",
+            "content": {
+              "application/json": {
+                "example": {
+                  "shares": [
+                    {
+                      "id": "77e0b4c2a8f6419d8e3b5c7a9d1f2e4b",
+                      "doctor": {"login": "dr.ivanov.demo", "clinic": "Клиника «Пример»"},
+                      "status": "active",
+                      "expires": "2026-11-03T18:45:00Z",
+                      "days": 30,
+                      "created": "2026-10-04T18:40:00Z",
+                      "accepted": "2026-10-04T18:45:00Z"
+                    }
+                  ]
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {"shares": {"type": "array", "items": {"$ref": "#/components/schemas/Share"}}}
+                }
+              }
+            }
+          },
+          "401": {"$ref": "#/components/responses/E401"},
+          "403": {"$ref": "#/components/responses/E403"},
+          "429": {"$ref": "#/components/responses/E429"},
+          "500": {"$ref": "#/components/responses/E500"}
+        }
+      },
+      "post": {
+        "operationId": "sharesCreate",
+        "tags": ["Кабинет пациента"],
+        "summary": "Доступ врачу: создать ссылку",
+        "description": "Возвращает одноразовый link_token и готовый путь link = /share#<link_token> (фрагмент после # на сервер не уходит). Токен живёт 48 ч до принятия; доступ действует days дней с момента принятия. Значение link_token приходит только в этом ответе. Код ответа — 200. Не больше 50 ожидающих и действующих ссылок (иначе 422 too_many_shares). С cookie сайта пароль не нужен; по Bearer-токену — только с паролем аккаунта в поле password (нет — 403 password_required, неверный — 403 wrong_password): токен API сам по себе доступ врачу не открывает.",
+        "x-role": "пациент",
+        "security": [{"BearerAuth": []}, {"CookieAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["days"],
+                "properties": {
+                  "days": {"type": "integer", "enum": [1, 7, 30, 90]},
+                  "password": {"type": "string", "description": "пароль аккаунта — обязателен при запросе с Bearer-токеном"}
+                }
+              },
+              "example": {"days": 30, "password": "придумайте-длинный-пароль"}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ссылка создана",
+            "content": {
+              "application/json": {
+                "example": {
+                  "share": {
+                    "id": "77e0b4c2a8f6419d8e3b5c7a9d1f2e4b",
+                    "doctor": null,
+                    "status": "pending",
+                    "expires": "2026-10-06T18:40:00Z",
+                    "days": 30,
+                    "created": "2026-10-04T18:40:00Z",
+                    "accepted": null
+                  },
+                  "link_token": "demo_Lk3Nw8Rz2Hq5Tv9Xc1Bm6Fp4Js7Dg0Ya2Ue8Wo",
+                  "link": "/share#demo_Lk3Nw8Rz2Hq5Tv9Xc1Bm6Fp4Js7Dg0Ya2Ue8Wo"
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "share": {"$ref": "#/components/schemas/Share"},
+                    "link_token": {"type": "string", "description": "одноразовый токен для врача"},
+                    "link": {"type": "string", "description": "путь для врача на этом сервере: /share#<link_token>"}
+                  }
+                }
+              }
+            }
+          },
+          "401": {"$ref": "#/components/responses/E401"},
+          "403": {"$ref": "#/components/responses/E403"},
+          "415": {"$ref": "#/components/responses/E415"},
+          "422": {"$ref": "#/components/responses/E422"},
+          "429": {"$ref": "#/components/responses/E429"},
+          "500": {"$ref": "#/components/responses/E500"}
+        }
+      }
+    },
+    "/api/v1/me/shares/{id}": {
+      "delete": {
+        "operationId": "sharesDelete",
+        "tags": ["Кабинет пациента"],
+        "summary": "Доступ врачу: отозвать",
+        "description": "Врач сразу теряет доступ; ещё не принятая ссылка перестаёт работать. Ответ — обновлённый список доступов (как GET /api/v1/me/shares). Уже отозванная или чужая ссылка — 404.",
+        "x-role": "пациент",
+        "security": [{"BearerAuth": []}, {"CookieAuth": []}],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "id доступа",
+            "schema": {"type": "string"},
+            "example": "77e0b4c2a8f6419d8e3b5c7a9d1f2e4b"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Доступ отозван: обновлённый список",
+            "content": {
+              "application/json": {
+                "example": {
+                  "shares": [
+                    {
+                      "id": "77e0b4c2a8f6419d8e3b5c7a9d1f2e4b",
+                      "doctor": {"login": "dr.ivanov.demo", "clinic": "Клиника «Пример»"},
+                      "status": "revoked",
+                      "expires": "2026-11-03T18:45:00Z",
+                      "days": 30,
+                      "created": "2026-10-04T18:40:00Z",
+                      "accepted": "2026-10-04T18:45:00Z"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {"$ref": "#/components/responses/E401"},
+          "403": {"$ref": "#/components/responses/E403"},
+          "404": {"$ref": "#/components/responses/E404"},
+          "429": {"$ref": "#/components/responses/E429"},
+          "500": {"$ref": "#/components/responses/E500"}
+        }
+      }
+    },
+    "/api/v1/me/access-log": {
+      "get": {
+        "operationId": "accessLog",
+        "tags": ["Кабинет пациента"],
+        "summary": "Журнал: кто смотрел историю",
+        "description": "Просмотры истории или записей врачом, новые сверху (последние 500). Повторы «врач — что» в течение часа — одна строка (at — время первого просмотра). what: history — история, records — список записей (record_id = null), record — запись (её id — в record_id; если за этот час открывались разные записи, record_id = null; у истории record_id = null). doctor = {login, clinic, deleted: true} — врач удалил аккаунт: снимок логина и клиники на момент просмотра (хранится зашифрованно в журнале пациента); doctor = null — строка записана до снимков, а врач удалил аккаунт.",
+        "x-role": "пациент",
+        "security": [{"BearerAuth": []}, {"CookieAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Успешно",
+            "content": {
+              "application/json": {
+                "example": {
+                  "items": [
+                    {
+                      "doctor": {"login": "dr.ivanov.demo", "clinic": "Клиника «Пример»"},
+                      "what": "record",
+                      "record_id": "5d21a7c4e9b84f0e9a3c6b2d1e0f7a58",
+                      "at": "2026-10-04T19:03:00Z"
+                    },
+                    {
+                      "doctor": {"login": "dr.ivanov.demo", "clinic": "Клиника «Пример»"},
+                      "what": "history",
+                      "record_id": null,
+                      "at": "2026-10-04T19:02:00Z"
+                    }
+                  ]
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "doctor": {
+                            "type": "object",
+                            "nullable": true,
+                            "properties": {"login": {"type": "string"}, "clinic": {"type": "string", "nullable": true}}
+                          },
+                          "what": {"type": "string", "enum": ["history", "record", "records"]},
+                          "record_id": {"type": "string", "nullable": true},
+                          "at": {"type": "string", "format": "date-time"}
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {"$ref": "#/components/responses/E401"},
+          "403": {"$ref": "#/components/responses/E403"},
+          "429": {"$ref": "#/components/responses/E429"},
+          "500": {"$ref": "#/components/responses/E500"}
+        }
+      }
+    },
+    "/api/v1/shares/accept": {
+      "post": {
+        "operationId": "sharesAccept",
+        "tags": ["Врач"],
+        "summary": "Принять доступ пациента",
+        "description": "Врач отправляет link_token из ссылки /share#<link_token>. Токен одноразовый: повторно, после отзыва или через 48 ч — 404 share_invalid. Пациент принять ссылку не может (403).",
+        "x-role": "врач",
+        "security": [{"BearerAuth": []}, {"CookieAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"type": "object", "required": ["token"], "properties": {"token": {"type": "string"}}},
+              "example": {"token": "demo_Lk3Nw8Rz2Hq5Tv9Xc1Bm6Fp4Js7Dg0Ya2Ue8Wo"}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Доступ принят: пациент и срок доступа",
+            "content": {
+              "application/json": {
+                "example": {
+                  "patient": {"id": "3f9c2a6e8b0d4f1a9c7e5b3d1f8a6c4e", "login": "anna.demo"},
+                  "expires": "2026-11-03T18:45:00Z"
+                }
+              }
+            }
+          },
+          "401": {"$ref": "#/components/responses/E401"},
+          "403": {"$ref": "#/components/responses/E403"},
+          "404": {
+            "description": "Ссылка недействительна: уже использована, отозвана или истекла",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Error"},
+                "example": {
+                  "error": {
+                    "code": "share_invalid",
+                    "message": "Ссылка недействительна: она уже использована, отозвана или истекла. Попросите пациента создать новую.",
+                    "field": "token"
+                  }
+                }
+              }
+            }
+          },
+          "415": {"$ref": "#/components/responses/E415"},
+          "422": {"$ref": "#/components/responses/E422"},
+          "429": {"$ref": "#/components/responses/E429"},
+          "500": {"$ref": "#/components/responses/E500"}
+        }
+      }
+    },
+    "/api/v1/doctor/patients": {
+      "get": {
+        "operationId": "doctorPatients",
+        "tags": ["Врач"],
+        "summary": "Мои пациенты",
+        "description": "Пациенты с действующим доступом: сколько записей, дата последнего анализа. last_headline — без значений и выводов: только есть ли анемия по последнему анализу; сам анализ врач видит, открыв запись или историю (это пишется в журнал доступа пациента).",
+        "x-role": "врач",
+        "security": [{"BearerAuth": []}, {"CookieAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Успешно",
+            "content": {
+              "application/json": {
+                "example": {
+                  "patients": [
+                    {
+                      "id": "3f9c2a6e8b0d4f1a9c7e5b3d1f8a6c4e",
+                      "login": "anna.demo",
+                      "expires": "2026-11-03T18:45:00Z",
+                      "n_records": 2,
+                      "last_date": "2026-04-16",
+                      "last_headline": "Последний анализ: анемии нет."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {"$ref": "#/components/responses/E401"},
+          "403": {"$ref": "#/components/responses/E403"},
+          "429": {"$ref": "#/components/responses/E429"},
+          "500": {"$ref": "#/components/responses/E500"}
+        }
+      }
+    },
+    "/api/v1/doctor/patients/{id}/history": {
+      "get": {
+        "operationId": "doctorHistory",
+        "tags": ["Врач"],
+        "summary": "История пациента",
+        "description": "То же, что /api/v1/me/history, но тексты — для врача. Просмотр пишется в журнал доступа пациента. Нет действующего доступа (не принят, истёк, отозван) или нет такого пациента — одинаково 403. Считается под слотом тяжёлых расчётов: занято — 503 service_busy.",
+        "x-role": "врач",
+        "security": [{"BearerAuth": []}, {"CookieAuth": []}],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "id пациента",
+            "schema": {"type": "string"},
+            "example": "3f9c2a6e8b0d4f1a9c7e5b3d1f8a6c4e"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешно",
+            "content": {
+              "application/json": {
+                "example": {
+                  "role": "doctor",
+                  "n_records": 2,
+                  "first_date": "2025-10-02",
+                  "last_date": "2026-04-16",
+                  "series": [
+                    {
+                      "analyte": "hemoglobin",
+                      "name_ru": "Гемоглобин",
+                      "unit": "г/л",
+                      "points": [
+                        {"date": "2025-10-02", "value": 136.0, "record_id": "1a07c3e5b9d24f6a8c0e2b4d6f8a1c3e"},
+                        {"date": "2026-04-16", "value": 124.0, "record_id": "5d21a7c4e9b84f0e9a3c6b2d1e0f7a58"}
+                      ],
+                      "last": 124.0,
+                      "delta": -12.0,
+                      "delta_pct": -8.8,
+                      "direction": "down",
+                      "months": 6.4,
+                      "ref": {"low": 120, "high": 150}
+                    }
+                  ],
+                  "events": [
+                    {
+                      "code": "hb_drop",
+                      "severity": "attention",
+                      "date": "2026-04-16",
+                      "title": "Снижение гемоглобина",
+                      "text": "Hb снизился со 136 до 124 г/л за 6 мес (−12 г/л, −9 %; 02.10.2025 → 16.04.2026). Порог события — снижение не меньше 10 г/л или 10 % за ≤ 12 мес (выбор проекта, требует решения врача).",
+                      "analytes": ["hemoglobin"]
+                    }
+                  ],
+                  "completeness": [
+                    {
+                      "analyte": "ferritin",
+                      "name_ru": "Ферритин",
+                      "status": "never",
+                      "last_date": null,
+                      "reason": "Запас железа (ВОЗ 2020; КР ЖДА 2024). Не сдавался.",
+                      "priority": 1,
+                      "price_rub": 845
+                    }
+                  ],
+                  "latest": {
+                    "record_id": "5d21a7c4e9b84f0e9a3c6b2d1e0f7a58",
+                    "date": "2026-04-16",
+                    "headline": "Анемии по ВОЗ нет: Hb 124 г/л при пороге 120 г/л. Скрининг по ОАК: риск скрытого дефицита железа высокий — показан ферритин."
+                  },
+                  "summary": "2 анализа, 02.10.2025–16.04.2026 (6 мес); требуют внимания: Снижение гемоглобина"
+                },
+                "schema": {"$ref": "#/components/schemas/History"}
+              }
+            }
+          },
+          "401": {"$ref": "#/components/responses/E401"},
+          "403": {"$ref": "#/components/responses/E403"},
+          "429": {"$ref": "#/components/responses/E429"},
+          "503": {"$ref": "#/components/responses/E503"},
+          "500": {"$ref": "#/components/responses/E500"}
+        }
+      }
+    },
+    "/api/v1/doctor/patients/{id}/records": {
+      "get": {
+        "operationId": "doctorRecords",
+        "tags": ["Врач"],
+        "summary": "Записи пациента: список",
+        "description": "Записи пациента, новые сверху; headline — заголовок отчёта врачу. Только при действующем доступе: нет связи (не принята, истекла, отозвана) или нет такого пациента — одинаково 403. Запрос пишется в журнал доступа пациента (what = records; повторы за час — одна строка).",
+        "x-role": "врач",
+        "security": [{"BearerAuth": []}, {"CookieAuth": []}],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "id пациента",
+            "schema": {"type": "string"},
+            "example": "3f9c2a6e8b0d4f1a9c7e5b3d1f8a6c4e"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешно",
+            "content": {
+              "application/json": {
+                "example": {
+                  "records": [
+                    {
+                      "id": "5d21a7c4e9b84f0e9a3c6b2d1e0f7a58",
+                      "date": "2026-04-16",
+                      "source": "form",
+                      "headline": "Анемии по ВОЗ нет: Hb 124 г/л при пороге 120 г/л. Скрининг по ОАК: риск скрытого дефицита железа высокий — показан ферритин.",
+                      "anemia": false,
+                      "created": "2026-10-04T18:31:00Z"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {"$ref": "#/components/responses/E401"},
+          "403": {"$ref": "#/components/responses/E403"},
+          "429": {"$ref": "#/components/responses/E429"},
+          "500": {"$ref": "#/components/responses/E500"}
+        }
+      }
+    },
+    "/api/v1/doctor/patients/{id}/records/{rid}": {
+      "get": {
+        "operationId": "doctorRecord",
+        "tags": ["Врач"],
+        "summary": "Запись пациента",
+        "description": "Одна запись с расшифровкой; headline — заголовок отчёта врачу. Просмотр пишется в журнал доступа пациента. Нет доступа к пациенту — 403, нет такой записи — 404.",
+        "x-role": "врач",
+        "security": [{"BearerAuth": []}, {"CookieAuth": []}],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "id пациента",
+            "schema": {"type": "string"},
+            "example": "3f9c2a6e8b0d4f1a9c7e5b3d1f8a6c4e"
+          },
+          {
+            "name": "rid",
+            "in": "path",
+            "required": true,
+            "description": "id записи",
+            "schema": {"type": "string"},
+            "example": "5d21a7c4e9b84f0e9a3c6b2d1e0f7a58"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Запись (результат сокращён)",
+            "content": {
+              "application/json": {
+                "example": {
+                  "record": {
+                    "id": "5d21a7c4e9b84f0e9a3c6b2d1e0f7a58",
+                    "date": "2026-04-16",
+                    "source": "form",
+                    "headline": "Анемии по ВОЗ нет: Hb 124 г/л при пороге 120 г/л. Скрининг по ОАК: риск скрытого дефицита железа высокий — показан ферритин.",
+                    "anemia": false,
+                    "created": "2026-10-04T18:31:00Z",
+                    "input": {
+                      "sex": "F",
+                      "age_years": 34,
+                      "pregnancy": {"status": "no"},
+                      "values": {"hemoglobin": 124.0, "MCV": 82.0, "RDW": 15.2},
+                      "norms": "who",
+                      "mode": "clinical",
+                      "lab_reference": "default"
+                    }
+                  },
+                  "result": {
+                    "reports": {
+                      "doctor": {
+                        "headline": "Анемии по ВОЗ нет: Hb 124 г/л при пороге 120 г/л. Скрининг по ОАК: риск скрытого дефицита железа высокий — показан ферритин."
+                      }
+                    },
+                    "…": "…"
+                  }
+                }
+              }
+            }
+          },
+          "401": {"$ref": "#/components/responses/E401"},
+          "403": {"$ref": "#/components/responses/E403"},
+          "404": {"$ref": "#/components/responses/E404"},
+          "429": {"$ref": "#/components/responses/E429"},
+          "500": {"$ref": "#/components/responses/E500"}
+        }
+      }
+    },
+    "/api/v1/doctor/lab-refs": {
+      "get": {
+        "operationId": "labRefsList",
+        "tags": ["Врач"],
+        "summary": "Референсы лаборатории: список",
+        "description": "Наборы референсов своей лаборатории. Границы — в канонической единице сервиса (unit: g/L, fL, µg/L …), какая бы единица ни была в запросе или файле. Набор с default = true подставляется в расчёты врача (/api/v1/analyze, /ui/analyze), если в запросе нет reference_ranges.",
+        "x-role": "врач",
+        "security": [{"BearerAuth": []}, {"CookieAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Успешно",
+            "content": {
+              "application/json": {
+                "example": {
+                  "sets": [
+                    {
+                      "id": "02c4e6a8b1d34f5a7c9e1b3d5f7a9c2e",
+                      "name": "Лаборатория клиники, 2026",
+                      "default": true,
+                      "ranges": {
+                        "hemoglobin": {"low": 117.0, "high": 155.0, "unit": "g/L"},
+                        "MCV": {"low": 81.0, "high": 100.0, "unit": "fL"}
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {"$ref": "#/components/responses/E401"},
+          "403": {"$ref": "#/components/responses/E403"},
+          "429": {"$ref": "#/components/responses/E429"},
+          "500": {"$ref": "#/components/responses/E500"}
+        }
+      },
+      "post": {
+        "operationId": "labRefsCreate",
+        "tags": ["Врач"],
+        "summary": "Референсы лаборатории: добавить",
+        "description": "JSON {name, ranges, default} или multipart: file (CSV / XLSX «показатель;нижняя;верхняя;единица», первая строка может быть заголовком), name (по умолчанию — имя файла), default. Показатель — код или русское название, единица пересчитывается в каноническую. Ответ — все наборы врача (код 200). Новый набор по умолчанию снимает отметку с прежнего. До 20 наборов (иначе 422 too_many_sets), до 100 показателей в наборе. Имя набора (и взятое из имени файла) — до 80 символов без управляющих и невидимых знаков (иначе 422, field = name).",
+        "x-role": "врач",
+        "security": [{"BearerAuth": []}, {"CookieAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/LabRefCreate"},
+              "example": {
+                "name": "Лаборатория клиники, 2026",
+                "default": true,
+                "ranges": {
+                  "hemoglobin": {"low": 117, "high": 155, "unit": "г/л"},
+                  "MCV": {"low": 81, "high": 100, "unit": "фл"}
+                }
+              }
+            },
+            "multipart/form-data": {"schema": {"$ref": "#/components/schemas/LabRefUpload"}}
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Успешно",
+            "content": {
+              "application/json": {
+                "example": {
+                  "sets": [
+                    {
+                      "id": "02c4e6a8b1d34f5a7c9e1b3d5f7a9c2e",
+                      "name": "Лаборатория клиники, 2026",
+                      "default": true,
+                      "ranges": {
+                        "hemoglobin": {"low": 117.0, "high": 155.0, "unit": "g/L"},
+                        "MCV": {"low": 81.0, "high": 100.0, "unit": "fL"}
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {"$ref": "#/components/responses/E401"},
+          "403": {"$ref": "#/components/responses/E403"},
+          "413": {"$ref": "#/components/responses/E413"},
+          "415": {"$ref": "#/components/responses/E415"},
+          "422": {"$ref": "#/components/responses/E422"},
+          "429": {"$ref": "#/components/responses/E429"},
+          "500": {"$ref": "#/components/responses/E500"},
+          "507": {"$ref": "#/components/responses/E507"}
+        }
+      }
+    },
+    "/api/v1/doctor/lab-refs/{id}": {
+      "patch": {
+        "operationId": "labRefsUpdate",
+        "tags": ["Врач"],
+        "summary": "Референсы лаборатории: изменить",
+        "description": "Правка набора без пересоздания: имя, отметка «по умолчанию» (true снимает её с остальных наборов врача; false — снимает с этого) и/или границы (проверяются, как при создании, и хранятся в канонической единице). Хотя бы одно поле, иначе 422 missing_field; default — только true или false. Предел числа наборов не затрагивается. Ответ — все наборы врача. Чужой или несуществующий набор — 404.",
+        "x-role": "врач",
+        "security": [{"BearerAuth": []}, {"CookieAuth": []}],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "id набора",
+            "schema": {"type": "string"},
+            "example": "02c4e6a8b1d34f5a7c9e1b3d5f7a9c2e"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {"type": "string", "maxLength": 80},
+                  "default": {"type": "boolean"},
+                  "ranges": {"type": "object", "additionalProperties": {"$ref": "#/components/schemas/ReferenceRange"}}
+                }
+              },
+              "example": {"default": true}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Набор изменён: все наборы врача",
+            "content": {
+              "application/json": {
+                "example": {
+                  "sets": [
+                    {
+                      "id": "02c4e6a8b1d34f5a7c9e1b3d5f7a9c2e",
+                      "name": "Лаборатория клиники, 2026",
+                      "default": true,
+                      "ranges": {
+                        "hemoglobin": {"low": 117.0, "high": 155.0, "unit": "g/L"},
+                        "MCV": {"low": 81.0, "high": 100.0, "unit": "fL"}
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {"$ref": "#/components/responses/E401"},
+          "403": {"$ref": "#/components/responses/E403"},
+          "404": {"$ref": "#/components/responses/E404"},
+          "415": {"$ref": "#/components/responses/E415"},
+          "422": {"$ref": "#/components/responses/E422"},
+          "429": {"$ref": "#/components/responses/E429"},
+          "500": {"$ref": "#/components/responses/E500"}
+        }
+      },
+      "delete": {
+        "operationId": "labRefsDelete",
+        "tags": ["Врач"],
+        "summary": "Референсы лаборатории: удалить",
+        "description": "Удаляет набор. Ответ — оставшиеся наборы врача (как GET /api/v1/doctor/lab-refs).",
+        "x-role": "врач",
+        "security": [{"BearerAuth": []}, {"CookieAuth": []}],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "id набора",
+            "schema": {"type": "string"},
+            "example": "02c4e6a8b1d34f5a7c9e1b3d5f7a9c2e"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Набор удалён: оставшиеся наборы",
+            "content": {
+              "application/json": {
+                "example": {
+                  "sets": [
+                    {
+                      "id": "9e1b3d5f7a9c2e02c4e6a8b1d34f5a7c",
+                      "name": "lab_refs",
+                      "default": false,
+                      "ranges": {"ferritin": {"low": 15.0, "high": 150.0, "unit": "µg/L"}}
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {"$ref": "#/components/responses/E401"},
+          "403": {"$ref": "#/components/responses/E403"},
+          "404": {"$ref": "#/components/responses/E404"},
+          "429": {"$ref": "#/components/responses/E429"},
+          "500": {"$ref": "#/components/responses/E500"}
+        }
+      }
+    },
+    "/api/v1/auth/register": {
+      "post": {
+        "operationId": "authRegister",
+        "tags": ["Вход и токены"],
+        "summary": "Регистрация",
+        "description": "Создаёт пациента или врача и сразу выдаёт токен входа «Вход» (7 дней, вместе с cookie) — код 201. Для сайта ставится и cookie jm_session (__Host-jm_session при DL_COOKIE_SECURE=1; HttpOnly, SameSite=Strict, 7 дней). Логин — 3–64 символа: буквы, цифры и «._-@», латиница или кириллица без смешения, без учёта регистра; занят — 409 login_taken. Пароль — 8–128 символов. clinic сохраняется только у врача (до 120 символов без управляющих и невидимых знаков). Без согласия consent = true — 422 consent_required. Не больше 10 регистраций в час с адреса (429) и DL_MAX_SIGNUPS_PER_DAY в сутки на сервис (503 signups_paused); база заполнена — 507 storage_full. Не используйте ФИО и почту как логин.",
+        "x-role": "без авторизации",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/RegisterRequest"},
+              "example": {"login": "anna.demo", "password": "придумайте-длинный-пароль", "role": "patient", "consent": true}
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Пользователь создан",
+            "headers": {
+              "Set-Cookie": {
+                "description": "jm_session=…; HttpOnly; Max-Age=604800; Path=/; SameSite=strict (при DL_COOKIE_SECURE=1 — __Host-jm_session=…; Secure)",
+                "schema": {"type": "string"}
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "user": {
+                    "id": "3f9c2a6e8b0d4f1a9c7e5b3d1f8a6c4e",
+                    "login": "anna.demo",
+                    "role": "patient",
+                    "clinic": null,
+                    "created": "2026-10-04T18:20:00Z"
+                  },
+                  "token": "demo_q7Vt0mXcL2pR9sKfN4wZb8YhJ3uE6aDgT1oPiQ"
+                },
+                "schema": {"$ref": "#/components/schemas/AuthResult"}
+              }
+            }
+          },
+          "409": {
+            "description": "Логин занят (без учёта регистра)",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Error"},
+                "example": {"error": {"code": "login_taken", "message": "Этот логин уже занят.", "field": null}}
+              }
+            }
+          },
+          "415": {"$ref": "#/components/responses/E415"},
+          "422": {"$ref": "#/components/responses/E422"},
+          "429": {"$ref": "#/components/responses/E429"},
+          "500": {"$ref": "#/components/responses/E500"},
+          "503": {
+            "description": "Достигнут суточный предел регистраций на сервис (DL_MAX_SIGNUPS_PER_DAY)",
+            "headers": {"Retry-After": {"description": "через сколько секунд повторить", "schema": {"type": "integer"}}},
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Error"},
+                "example": {"error": {"code": "signups_paused", "message": "Регистрация временно приостановлена: достигнут суточный предел новых аккаунтов. Повторите позже.", "field": null}}
+              }
+            }
+          },
+          "507": {"$ref": "#/components/responses/E507"}
+        }
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "operationId": "authLogin",
+        "tags": ["Вход и токены"],
+        "summary": "Вход: получить токен",
+        "description": "Логин и пароль → пользователь, токен входа «Вход» и cookie сайта jm_session — оба на 7 дней; выход закрывает оба. Токен передавайте в заголовке Authorization: Bearer <токен>; для интеграций на 30 дней создайте именованный токен (/api/v1/me/tokens). Неверный логин или неверный пароль — одинаковый ответ 401 invalid_credentials. Лимиты: попытки с адреса и пары «адрес + логин» в минуту и общий счётчик неудач на логин — после 10 неудач за 15 мин логин на паузе (429 с Retry-After; 1 мин, дальше вдвое дольше, не больше 15 мин).",
+        "x-role": "без авторизации",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/LoginRequest"},
+              "example": {"login": "anna.demo", "password": "придумайте-длинный-пароль"}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Вход выполнен",
+            "content": {
+              "application/json": {
+                "example": {
+                  "user": {
+                    "id": "3f9c2a6e8b0d4f1a9c7e5b3d1f8a6c4e",
+                    "login": "anna.demo",
+                    "role": "patient",
+                    "clinic": null,
+                    "created": "2026-10-04T18:20:00Z"
+                  },
+                  "token": "demo_q7Vt0mXcL2pR9sKfN4wZb8YhJ3uE6aDgT1oPiQ"
+                },
+                "schema": {"$ref": "#/components/schemas/AuthResult"}
+              }
+            }
+          },
+          "401": {
+            "description": "Неверный логин или пароль (одинаково для неизвестного логина и неверного пароля)",
+            "headers": {"WWW-Authenticate": {"description": "Bearer realm=\"Justmedit\"", "schema": {"type": "string"}}},
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Error"},
+                "example": {"error": {"code": "invalid_credentials", "message": "Неверный логин или пароль.", "field": null}}
+              }
+            }
+          },
+          "415": {"$ref": "#/components/responses/E415"},
+          "422": {"$ref": "#/components/responses/E422"},
+          "429": {"$ref": "#/components/responses/E429"},
+          "500": {"$ref": "#/components/responses/E500"}
+        }
+      }
+    },
+    "/api/v1/auth/logout": {
+      "post": {
+        "operationId": "authLogout",
+        "tags": ["Вход и токены"],
+        "summary": "Выход",
+        "description": "Отзывает текущий токен или сессию. Выход на сайте (cookie) закрывает и токен API, выданный при этом входе, и стирает cookie. Без авторизации — тоже 200 {\"ok\": true}; 401 — только недействительный Bearer-токен.",
+        "x-role": "любой вошедший пользователь",
+        "security": [{"BearerAuth": []}, {"CookieAuth": []}],
+        "responses": {
+          "200": {"description": "Успешно", "content": {"application/json": {"example": {"ok": true}}}},
+          "401": {"$ref": "#/components/responses/E401"},
+          "403": {"$ref": "#/components/responses/E403"},
+          "500": {"$ref": "#/components/responses/E500"}
+        }
+      }
+    },
+    "/api/v1/me": {
+      "get": {
+        "operationId": "meGet",
+        "tags": ["Вход и токены"],
+        "summary": "Текущий пользователь",
+        "description": "Кто вошёл: id, логин, роль, клиника. Cookie сайта есть, но недействительна (выход везде, смена пароля, срок) — 401 с Set-Cookie, стирающим её.",
+        "x-role": "любой вошедший пользователь",
+        "security": [{"BearerAuth": []}, {"CookieAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Успешно",
+            "content": {
+              "application/json": {
+                "example": {
+                  "id": "3f9c2a6e8b0d4f1a9c7e5b3d1f8a6c4e",
+                  "login": "anna.demo",
+                  "role": "patient",
+                  "clinic": null,
+                  "created": "2026-10-04T18:20:00Z"
+                },
+                "schema": {"$ref": "#/components/schemas/User"}
+              }
+            }
+          },
+          "401": {"$ref": "#/components/responses/E401"},
+          "429": {"$ref": "#/components/responses/E429"},
+          "500": {"$ref": "#/components/responses/E500"}
+        }
+      },
+      "delete": {
+        "operationId": "meDelete",
+        "tags": ["Вход и токены"],
+        "summary": "Удалить аккаунт и все данные",
+        "description": "Удаляет пользователя, его записи, токены и доступы врачам (у врача — и наборы референсов) одной транзакцией; удалённое затирается нулями (secure_delete), журнал WAL усекается. Нужен текущий пароль (и с cookie, и с Bearer): неверный — 403 wrong_password, ничего не удалено. Отменить нельзя.",
+        "x-role": "любой вошедший пользователь",
+        "security": [{"BearerAuth": []}, {"CookieAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/PasswordRequest"},
+              "example": {"password": "придумайте-длинный-пароль"}
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Успешно", "content": {"application/json": {"example": {"deleted": true}}}},
+          "401": {"$ref": "#/components/responses/E401"},
+          "403": {
+            "description": "Неверный пароль (wrong_password) или запрос с cookie без X-Justmedit (csrf)",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Error"},
+                "example": {"error": {"code": "wrong_password", "message": "Неверный пароль: аккаунт не удалён.", "field": "password"}}
+              }
+            }
+          },
+          "415": {"$ref": "#/components/responses/E415"},
+          "422": {"$ref": "#/components/responses/E422"},
+          "429": {"$ref": "#/components/responses/E429"},
+          "500": {"$ref": "#/components/responses/E500"}
+        }
+      }
+    },
+    "/api/v1/me/logout-all": {
+      "post": {
+        "operationId": "meLogoutAll",
+        "tags": ["Вход и токены"],
+        "summary": "Выйти на всех устройствах",
+        "description": "Отзывает все сессии сайта и все токены API, кроме текущего входа (cookie и её токен «Вход» или токен этого запроса); с \"all\": true — и текущий (cookie стирается). revoked — сколько отозвано. С cookie сайта тело необязательно; по Bearer-токену — только с паролем аккаунта в поле password (403 password_required / wrong_password).",
+        "x-role": "любой вошедший пользователь",
+        "security": [{"BearerAuth": []}, {"CookieAuth": []}],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "all": {"type": "boolean", "default": false, "description": "true — отозвать и текущий вход"},
+                  "password": {"type": "string", "description": "пароль аккаунта — обязателен при запросе с Bearer-токеном"}
+                }
+              },
+              "example": {"password": "придумайте-длинный-пароль"}
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Успешно", "content": {"application/json": {"example": {"ok": true, "revoked": 3}}}},
+          "401": {"$ref": "#/components/responses/E401"},
+          "403": {"$ref": "#/components/responses/E403"},
+          "415": {"$ref": "#/components/responses/E415"},
+          "429": {"$ref": "#/components/responses/E429"},
+          "500": {"$ref": "#/components/responses/E500"}
+        }
+      }
+    },
+    "/api/v1/me/password": {
+      "post": {
+        "operationId": "mePassword",
+        "tags": ["Вход и токены"],
+        "summary": "Сменить пароль",
+        "description": "Текущий пароль old (всегда, и с cookie, и с Bearer) и новый new (8–128 символов). Все остальные сессии сайта и токены API, в том числе именованные, отзываются; текущий вход остаётся. Неверный текущий пароль — 403 wrong_password (field = old), пароль не изменён; лимиты — как у входа.",
+        "x-role": "любой вошедший пользователь",
+        "security": [{"BearerAuth": []}, {"CookieAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["old", "new"],
+                "properties": {
+                  "old": {"type": "string", "description": "текущий пароль"},
+                  "new": {"type": "string", "minLength": 8, "maxLength": 128, "description": "новый пароль"}
+                }
+              },
+              "example": {"old": "придумайте-длинный-пароль", "new": "новый-длинный-пароль-2"}
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Пароль изменён", "content": {"application/json": {"example": {"ok": true, "revoked": 2}}}},
+          "401": {"$ref": "#/components/responses/E401"},
+          "403": {
+            "description": "Неверный текущий пароль (wrong_password) или запрос с cookie без X-Justmedit (csrf)",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Error"},
+                "example": {"error": {"code": "wrong_password", "message": "Неверный текущий пароль: пароль не изменён.", "field": "old"}}
+              }
+            }
+          },
+          "415": {"$ref": "#/components/responses/E415"},
+          "422": {"$ref": "#/components/responses/E422"},
+          "429": {"$ref": "#/components/responses/E429"},
+          "500": {"$ref": "#/components/responses/E500"}
+        }
+      }
+    },
+    "/api/v1/me/tokens": {
+      "get": {
+        "operationId": "tokensList",
+        "tags": ["Вход и токены"],
+        "summary": "Токены API: список",
+        "description": "Действующие токены API: созданные здесь (30 дней) и выданные при входе (name = «Вход», 7 дней — вместе с cookie этого входа). Значение токена здесь не показывается. current = true — токен, которым подписан этот запрос (с cookie сайта — токен «Вход» этой сессии). kind: login — токен входа, named — именованный токен приложения.",
+        "x-role": "любой вошедший пользователь",
+        "security": [{"BearerAuth": []}, {"CookieAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Успешно",
+            "content": {
+              "application/json": {
+                "example": {
+                  "tokens": [
+                    {
+                      "id": "0b5d7f9a1c3e4a6b8d0f2a4c6e8b1d3f",
+                      "name": "Вход",
+                      "created": "2026-10-04T18:20:00Z",
+                      "expires": "2026-10-11T18:20:00Z",
+                      "last_used": "2026-10-04T18:52:00Z",
+                      "current": true,
+                      "kind": "login"
+                    },
+                    {
+                      "id": "19f3a5c7e9b14d2f8a6c0e4b2d8f6a1c",
+                      "name": "МИС клиники",
+                      "created": "2026-10-04T18:50:00Z",
+                      "expires": "2026-11-03T18:50:00Z",
+                      "last_used": null,
+                      "current": false,
+                      "kind": "named"
+                    }
+                  ]
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {"tokens": {"type": "array", "items": {"$ref": "#/components/schemas/ApiToken"}}}
+                }
+              }
+            }
+          },
+          "401": {"$ref": "#/components/responses/E401"},
+          "429": {"$ref": "#/components/responses/E429"},
+          "500": {"$ref": "#/components/responses/E500"}
+        }
+      },
+      "post": {
+        "operationId": "tokensCreate",
+        "tags": ["Вход и токены"],
+        "summary": "Токены API: создать",
+        "description": "Новый именованный токен API на 30 дней. Значение (value) приходит только в этом ответе — сохраните его у себя. Код ответа — 200. С cookie сайта тело необязательно (без name токен называется «Токен API»). По Bearer-токену — только с паролем аккаунта в поле password (нет — 403 password_required, неверный — 403 wrong_password), и новый токен живёт не дольше токена запроса. Именованных токенов не больше 20: сверх — 422 too_many_tokens (старые не удаляются сами — отзовите ненужные). Токены входа «Вход» в этот предел не входят.",
+        "x-role": "любой вошедший пользователь",
+        "security": [{"BearerAuth": []}, {"CookieAuth": []}],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {"type": "string", "maxLength": 60, "default": "Токен API", "description": "название токена"},
+                  "password": {"type": "string", "description": "пароль аккаунта — обязателен при запросе с Bearer-токеном"}
+                }
+              },
+              "example": {"name": "МИС клиники", "password": "придумайте-длинный-пароль"}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Токен создан",
+            "content": {
+              "application/json": {
+                "example": {
+                  "token": {
+                    "id": "19f3a5c7e9b14d2f8a6c0e4b2d8f6a1c",
+                    "name": "МИС клиники",
+                    "created": "2026-10-04T18:50:00Z",
+                    "expires": "2026-11-03T18:50:00Z",
+                    "last_used": null,
+                    "current": false,
+                    "kind": "named"
+                  },
+                  "value": "demo_Rw4Yp9Kc2Vn7Hs0Lx5Qb8Td3Gz6Mf1Ja4Ue2Wo9"
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {"$ref": "#/components/schemas/ApiToken"},
+                    "value": {"type": "string", "description": "значение токена для Authorization: Bearer — только в этом ответе"}
+                  }
+                }
+              }
+            }
+          },
+          "401": {"$ref": "#/components/responses/E401"},
+          "403": {"$ref": "#/components/responses/E403"},
+          "415": {"$ref": "#/components/responses/E415"},
+          "422": {"$ref": "#/components/responses/E422"},
+          "429": {"$ref": "#/components/responses/E429"},
+          "500": {"$ref": "#/components/responses/E500"}
+        }
+      }
+    },
+    "/api/v1/me/tokens/{id}": {
+      "delete": {
+        "operationId": "tokensDelete",
+        "tags": ["Вход и токены"],
+        "summary": "Токены API: отозвать",
+        "description": "Токен перестаёт работать сразу; вход на сайте (cookie) не затрагивается. Ответ — оставшиеся токены (как GET /api/v1/me/tokens). Чужой или уже отозванный токен — 404.",
+        "x-role": "любой вошедший пользователь",
+        "security": [{"BearerAuth": []}, {"CookieAuth": []}],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "id токена",
+            "schema": {"type": "string"},
+            "example": "19f3a5c7e9b14d2f8a6c0e4b2d8f6a1c"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Токен отозван: оставшиеся токены",
+            "content": {
+              "application/json": {
+                "example": {
+                  "tokens": [
+                    {
+                      "id": "0b5d7f9a1c3e4a6b8d0f2a4c6e8b1d3f",
+                      "name": "Вход",
+                      "created": "2026-10-04T18:20:00Z",
+                      "expires": "2026-10-11T18:20:00Z",
+                      "last_used": "2026-10-04T18:55:00Z",
+                      "current": true,
+                      "kind": "login"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {"$ref": "#/components/responses/E401"},
+          "403": {"$ref": "#/components/responses/E403"},
+          "404": {"$ref": "#/components/responses/E404"},
+          "429": {"$ref": "#/components/responses/E429"},
+          "500": {"$ref": "#/components/responses/E500"}
+        }
+      }
+    },
+    "/healthz": {
+      "get": {
+        "operationId": "health",
+        "tags": ["Служебное"],
+        "summary": "Состояние сервиса",
+        "description": "Жив ли сервис и какие версии движка, моделей и порогов. Для мониторинга.",
+        "x-role": "без авторизации",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Успешно",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": "ok",
+                  "engine": "0.1.0",
+                  "case_model": "case-v1",
+                  "screen_model": "screen-v1",
+                  "norms": "2026-10-04c"
+                },
+                "schema": {"$ref": "#/components/schemas/Health"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reference": {
+      "get": {
+        "operationId": "reference",
+        "tags": ["Служебное"],
+        "summary": "Справочник показателей",
+        "description": "Коды показателей и допустимые единицы, пороги с источниками, референсы по умолчанию, цены, версии.",
+        "x-role": "ключ API (сервер) или токен пользователя",
+        "security": [{"ApiKeyAuth": []}, {"BearerAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Справочник (сокращён)",
+            "content": {
+              "application/json": {
+                "example": {
+                  "versions": {
+                    "engine": "0.1.0",
+                    "case_model": "case-v1",
+                    "screen_model": "screen-v1",
+                    "norms": "2026-10-04c",
+                    "prices": "2026-10-03"
+                  },
+                  "analytes": [
+                    {
+                      "code": "hemoglobin",
+                      "name_ru": "Гемоглобин",
+                      "short_ru": "Hb",
+                      "unit": "g/L",
+                      "unit_ru": "г/л",
+                      "group": "cbc",
+                      "units": ["g/dl", "g/l", "г/дл", "г/л"]
+                    }
+                  ],
+                  "thresholds": [{"key": "hemoglobin", "unit_ru": "г/л", "values": {"anemia_below": {"F": 120, "M": 130}}}],
+                  "sources": {
+                    "who_hb_2024": {
+                      "title": "ВОЗ, 2024: пороги гемоглобина для определения анемии",
+                      "url": "https://www.ncbi.nlm.nih.gov/books/NBK602183/"
+                    }
+                  },
+                  "disclaimer": "Исследовательский прототип, не медицинское изделие. Решение принимает врач."
+                },
+                "schema": {"$ref": "#/components/schemas/Reference"}
+              }
+            }
+          },
+          "401": {"$ref": "#/components/responses/E401"},
+          "403": {"$ref": "#/components/responses/E403"},
+          "500": {"$ref": "#/components/responses/E500"}
+        }
+      }
+    },
+    "/api/v1/openapi.json": {
+      "get": {
+        "operationId": "openapi",
+        "tags": ["Служебное"],
+        "summary": "Это описание API",
+        "description": "OpenAPI 3.0, написано вручную. Подходит для Swagger UI, Postman и генераторов клиентов.",
+        "x-role": "без авторизации",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Описание API",
+            "content": {
+              "application/json": {"example": {"openapi": "3.0.3", "info": {"title": "Justmedit API"}, "paths": {"…": "…"}}}
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key",
+        "description": "Ключ организации (один из DL_API_KEYS). Только для запросов с вашего сервера: в коде страницы ключ увидит любой посетитель."
+      },
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Токен пользователя: поле token в ответе /api/v1/auth/login или /api/v1/auth/register либо токен API из кабинета (/api/v1/me/tokens). Подходит для браузера и внешних сайтов."
+      },
+      "CookieAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "jm_session",
+        "description": "Сессия сайта Justmedit (HttpOnly, SameSite=Strict; за HTTPS при DL_COOKIE_SECURE=1 — cookie __Host-jm_session с Secure). Изменяющие запросы с cookie — только с заголовком X-Justmedit: 1 и своим Origin (схема, хост и порт), иначе 403 csrf. Внешним сайтам не подходит — используйте Bearer."
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "description": "Тело любой ошибки. Значения анализов в сообщение не попадают.",
+        "required": ["error"],
+        "properties": {
+          "error": {
+            "type": "object",
+            "required": ["code", "message"],
+            "properties": {
+              "code": {
+                "type": "string",
+                "description": "машинный код: unauthorized, forbidden, csrf, invalid_value, invalid_json, file_required, too_many_rows, service_busy …"
+              },
+              "message": {"type": "string", "description": "что исправить, по-русски"},
+              "field": {"type": "string", "nullable": true, "description": "поле запроса с ошибкой"}
+            }
+          }
+        },
+        "example": {
+          "error": {
+            "code": "invalid_value",
+            "message": "Возраст — целое число от 18 до 120 лет: сервис рассчитан на взрослых.",
+            "field": "age_years"
+          }
+        }
+      },
+      "LabValue": {
+        "type": "object",
+        "required": ["value"],
+        "description": "Значение с единицей.",
+        "properties": {
+          "value": {"type": "number"},
+          "unit": {"type": "string", "description": "единица; без неё — каноническая (гемоглобин — г/л, ферритин — мкг/л)"}
+        },
+        "example": {"value": 9, "unit": "ng/mL"}
+      },
+      "ReferenceRange": {
+        "type": "object",
+        "description": "Референс лаборатории: хотя бы одна граница.",
+        "properties": {
+          "low": {"type": "number", "nullable": true},
+          "high": {"type": "number", "nullable": true},
+          "unit": {"type": "string"}
+        },
+        "example": {"low": 120, "high": 150, "unit": "г/л"}
+      },
+      "AnalysisInput": {
+        "type": "object",
+        "required": ["sex", "age_years", "values"],
+        "additionalProperties": false,
+        "description": "Один анализ. Персональные данные не нужны: только пол, возраст и значения. Неизвестное поле — 422.",
+        "properties": {
+          "sex": {"type": "string", "enum": ["F", "M"], "description": "пол: F — женский, M — мужской"},
+          "age_years": {"type": "integer", "minimum": 18, "maximum": 120, "description": "возраст, полных лет"},
+          "values": {
+            "type": "object",
+            "description": "код показателя → число или {value, unit}. Гемоглобин обязателен. Коды и единицы — GET /api/v1/reference.",
+            "additionalProperties": {"oneOf": [{"type": "number"}, {"$ref": "#/components/schemas/LabValue"}]}
+          },
+          "pregnancy": {
+            "type": "object",
+            "properties": {
+              "status": {"type": "string", "enum": ["no", "yes", "unknown"], "default": "no"},
+              "trimester": {"type": "integer", "enum": [1, 2, 3], "nullable": true}
+            }
+          },
+          "norms": {
+            "type": "string",
+            "enum": ["who", "ru"],
+            "default": "who",
+            "description": "какой порог ферритина показывать первым: ВОЗ или практика РФ"
+          },
+          "mode": {"type": "string", "enum": ["clinical", "benchmark", "auto"], "default": "clinical"},
+          "lab_reference": {"type": "string", "default": "default", "description": "справочник ОАК лаборатории"},
+          "reference_ranges": {
+            "type": "object",
+            "additionalProperties": {"$ref": "#/components/schemas/ReferenceRange"},
+            "description": "референсы с бланка: код → {low, high, unit}"
+          },
+          "refer_share": {"type": "number", "enum": [0.2, 0.3, 0.4], "description": "доля направлений на ферритин"},
+          "patient_ref": {"type": "string", "description": "метка строки, возвращается как есть; не ПДн"},
+          "provenance": {"type": "object", "description": "источник ввода (произвольный словарь)"}
+        },
+        "example": {
+          "sex": "F",
+          "age_years": 34,
+          "values": {"hemoglobin": 124, "MCV": 82, "RDW": 15.2, "ferritin": {"value": 9, "unit": "ng/mL"}},
+          "norms": "who",
+          "mode": "clinical",
+          "patient_ref": "row-17"
+        }
+      },
+      "AnalysisResult": {
+        "type": "object",
+        "description": "Полный ответ движка. Полная схема — src/deficitlens_core/schemas.py; поля могут добавляться, существующие не меняются.",
+        "properties": {
+          "version": {"type": "object", "description": "версии движка, моделей и порогов"},
+          "patient_ref": {"type": "string", "nullable": true},
+          "level1": {"type": "object", "description": "анемия по ВОЗ: да / нет, порог, тяжесть, «срочно»"},
+          "level2": {"type": "object", "description": "группа (5), класс (12), причина (11), вероятности, уверенность"},
+          "hidden_deficiency": {
+            "type": "object",
+            "description": "скрытый дефицит при нормальном гемоглобине: сигналы по порогам и скрининг по ОАК"
+          },
+          "flags": {"type": "array", "items": {"type": "object"}, "description": "подсказки врачу"},
+          "checklist": {"type": "array", "items": {"type": "object"}, "description": "что исключено и что проверить"},
+          "next_tests": {"type": "array", "items": {"type": "object"}, "description": "что досдать: причина, цена"},
+          "explanation": {"type": "object", "description": "какие анализы за вывод и какие против"},
+          "values": {"type": "array", "items": {"type": "object"}, "description": "значения со статусом и порогом"},
+          "reports": {"type": "object", "description": "doctor и patient: headline и sections[{title, lines}]"},
+          "normalization": {"type": "array", "items": {"type": "object"}, "description": "пересчёты единиц"},
+          "limitations": {"type": "array", "items": {"type": "string"}},
+          "references": {
+            "type": "object",
+            "nullable": true,
+            "description": "какие референсы применены: set (default | lab), lab_name, local_analytes, warning. Врач (Bearer или cookie сайта) без reference_ranges в запросе получает свой набор по умолчанию: тогда lab_name = doctor_default, lab_title — имя набора, lab_id — его id; референсы из запроса — lab_name = request.",
+            "properties": {
+              "set": {"type": "string", "enum": ["default", "lab"]},
+              "lab_name": {"type": "string", "nullable": true},
+              "lab_title": {"type": "string", "description": "имя набора врача (только при lab_name = doctor_default)"},
+              "lab_id": {"type": "string", "description": "id набора врача (только при lab_name = doctor_default)"},
+              "local_analytes": {"type": "array", "items": {"type": "string"}},
+              "warning": {"type": "string", "nullable": true}
+            }
+          },
+          "processing_ms": {"type": "number"}
+        },
+        "example": {
+          "version": {"engine": "0.1.0", "case_model": "case-v1", "screen_model": "screen-v1", "norms": "2026-10-04c"},
+          "patient_ref": null,
+          "level1": {
+            "anemia": false,
+            "hemoglobin": 124.0,
+            "threshold_g_l": 120.0,
+            "severity": null,
+            "urgent": [],
+            "source": "ВОЗ, 2024: пороги гемоглобина для определения анемии"
+          },
+          "level2": {
+            "enabled": true,
+            "mode": "clinical",
+            "completeness": "cbc",
+            "completeness_ru": "только общий анализ крови",
+            "case_group": "healthy",
+            "case_group_ru": "анемии нет",
+            "confidence": "low",
+            "confidence_ru": "низкая",
+            "probabilities": {"groups5": {"healthy": 1.0, "iron_deficiency_anemia": 0.0}},
+            "plausible": []
+          },
+          "hidden_deficiency": {
+            "applicable": true,
+            "detected": true,
+            "p_any": null,
+            "rule_signals": [],
+            "screening": {
+              "applicable": true,
+              "model": "screen-v1",
+              "p_ferritin_lt15": 0.223,
+              "p_ferritin_lt30": 0.452,
+              "risk": "high",
+              "risk_ru": "высокий",
+              "features": "hb_only",
+              "group": "F18-49",
+              "recommend_ferritin": true
+            },
+            "summary_ru": "Гемоглобин в норме, но по общему анализу крови риск скрытого дефицита железа высокий: стоит досдать ферритин."
+          },
+          "flags": [],
+          "checklist": [],
+          "next_tests": [
+            {
+              "analyte": "ferritin",
+              "name_ru": "Ферритин",
+              "kind": "rule",
+              "price_rub": 845,
+              "reason": "Гемоглобин в норме, но по общему анализу крови риск скрытого дефицита железа высокий. Ферритин покажет запас железа.",
+              "source": "скрининг по общему анализу крови (модель проверена на данных NHANES)"
+            },
+            {
+              "analyte": "CRP",
+              "name_ru": "С-реактивный белок",
+              "kind": "rule",
+              "price_rub": 710,
+              "reason": "Нужен, чтобы правильно прочитать ферритин: при воспалении ферритин завышается.",
+              "source": "ВОЗ, 2020: ферритин для оценки запасов железа"
+            }
+          ],
+          "explanation": {
+            "items_for": [],
+            "items_against": [],
+            "note": "По одному общему анализу крови без анемии класс не определяется; см. скрининг."
+          },
+          "values": [
+            {
+              "analyte": "RDW",
+              "name_ru": "Ширина распределения эритроцитов",
+              "value": 15.2,
+              "unit": "%",
+              "norm": {
+                "status": "high",
+                "threshold_text": "выше 14,5 % — эритроциты неоднородны по размеру",
+                "source": "лабораторный референс"
+              }
+            }
+          ],
+          "reports": {
+            "doctor": {
+              "headline": "Анемии по ВОЗ нет: Hb 124 г/л при пороге 120 г/л. Скрининг по ОАК: риск скрытого дефицита железа высокий — показан ферритин.",
+              "sections": [
+                {
+                  "title": "Уровень 1: анемия по ВОЗ",
+                  "lines": ["Анемии нет: гемоглобин 124 г/л не ниже порога 120 г/л (женщины)."]
+                }
+              ]
+            },
+            "patient": {
+              "headline": "Признаков анемии нет, но есть признаки возможного скрытого дефицита — это стоит обсудить с врачом.",
+              "sections": [
+                {
+                  "title": "Главное",
+                  "lines": ["Гемоглобин 124 г/л — не ниже порога 120 г/л (порог ВОЗ для женщин): признаков анемии нет."]
+                }
+              ]
+            }
+          },
+          "normalization": [],
+          "limitations": ["Исследовательский прототип, не медицинское изделие. Диагноз и лечение определяет врач."],
+          "references": {"set": "default", "lab_name": null, "local_analytes": [], "warning": null},
+          "processing_ms": 7.5
+        }
+      },
+      "BatchRequest": {
+        "type": "object",
+        "required": ["records"],
+        "properties": {
+          "records": {"type": "array", "items": {"$ref": "#/components/schemas/AnalysisInput"}, "maxItems": 10000},
+          "with_reports": {"type": "boolean", "default": false, "description": "включать ли отчёты в каждый результат"}
+        }
+      },
+      "BatchResponse": {
+        "type": "object",
+        "properties": {
+          "summary": {
+            "type": "object",
+            "properties": {
+              "total": {"type": "integer"},
+              "done": {"type": "integer"},
+              "rejected": {"type": "integer"},
+              "processing_ms": {"type": "number"}
+            }
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "index": {"type": "integer"},
+                "patient_ref": {"type": "string", "nullable": true},
+                "status": {"type": "string", "enum": ["done", "rejected"]},
+                "errors": {"type": "array", "items": {"type": "object"}},
+                "result": {"allOf": [{"$ref": "#/components/schemas/AnalysisResult"}], "nullable": true}
+              }
+            }
+          }
+        }
+      },
+      "ParseText": {
+        "type": "object",
+        "required": ["text"],
+        "properties": {"text": {"type": "string", "description": "текст бланка: строки «показатель значение единица норма»"}}
+      },
+      "ParseResult": {
+        "type": "object",
+        "properties": {
+          "values": {"type": "object", "description": "код → {value, unit}: значения для сверки"},
+          "unrecognized": {"type": "array", "items": {"type": "string"}, "description": "«строка N: …» без текста бланка"},
+          "notes": {"type": "array", "items": {"type": "string"}},
+          "source": {"type": "object", "description": "для файла: format = pdf | pdf_scan | photo | txt | csv | xlsx …"},
+          "date": {"type": "string", "format": "date", "nullable": true, "description": "дата анализа с бланка"},
+          "reference_ranges": {
+            "type": "object",
+            "additionalProperties": {"$ref": "#/components/schemas/ReferenceRange"},
+            "description": "нормы с бланка в канонических единицах"
+          },
+          "ignored": {"type": "array", "items": {"type": "string"}, "description": "распознано, но не используется"},
+          "warnings": {"type": "array", "items": {"type": "string"}, "description": "фото и скан: «проверьте значение»"},
+          "check": {"type": "array", "items": {"type": "string"}, "description": "коды показателей, которые стоит проверить"}
+        }
+      },
+      "FileUpload": {
+        "type": "object",
+        "required": ["file"],
+        "properties": {
+          "file": {"type": "string", "format": "binary", "description": "файл; обрабатывается в памяти и не сохраняется"}
+        }
+      },
+      "BenchmarkUpload": {
+        "type": "object",
+        "required": ["file"],
+        "properties": {
+          "file": {"type": "string", "format": "binary", "description": "CSV или XLSX: строка на пациента"},
+          "mode": {
+            "type": "string",
+            "enum": ["auto", "clinical", "benchmark"],
+            "default": "auto",
+            "description": "режим расчёта"
+          },
+          "mapping": {
+            "type": "string",
+            "description": "JSON {\"столбец\": \"код\" | {\"code\",\"unit\"} | \"ignore\"} для своей структуры файла"
+          }
+        }
+      },
+      "ColumnsResult": {
+        "type": "object",
+        "properties": {
+          "rows": {"type": "integer"},
+          "columns": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "column": {"type": "string"},
+                "kind": {"type": "string", "enum": ["feature", "label", "guess", "unknown", "service", "duplicate"]},
+                "target": {"type": "string", "nullable": true},
+                "unit": {"type": "string"},
+                "example": {"type": "string"}
+              }
+            }
+          },
+          "targets": {"type": "array", "items": {"type": "object"}, "description": "куда можно сопоставить столбец"},
+          "requirements": {"type": "object", "description": "ok, errors, warnings, info: хватает ли данных"}
+        }
+      },
+      "BenchmarkResult": {
+        "type": "object",
+        "properties": {
+          "summary": {"type": "object", "description": "строки, режим, полнота, предсказания, метрики (если есть метки)"},
+          "preview": {"type": "array", "items": {"type": "object"}, "description": "первые 20 строк результата"},
+          "csv": {"type": "string", "description": "весь результат в CSV"}
+        }
+      },
+      "Health": {
+        "type": "object",
+        "properties": {
+          "status": {"type": "string"},
+          "engine": {"type": "string"},
+          "case_model": {"type": "string"},
+          "screen_model": {"type": "string"},
+          "norms": {"type": "string"}
+        }
+      },
+      "Reference": {
+        "type": "object",
+        "description": "Справочник: показатели и единицы, пороги с источниками, цены.",
+        "properties": {
+          "versions": {"type": "object"},
+          "analytes": {"type": "array", "items": {"type": "object"}},
+          "thresholds": {"type": "array", "items": {"type": "object"}},
+          "sources": {"type": "object"},
+          "prices": {"type": "object"},
+          "reference_ranges": {"type": "object"},
+          "disclaimer": {"type": "string"}
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string"},
+          "login": {"type": "string"},
+          "role": {"type": "string", "enum": ["patient", "doctor"]},
+          "clinic": {"type": "string", "nullable": true},
+          "created": {"type": "string", "format": "date-time"}
+        },
+        "example": {
+          "id": "3f9c2a6e8b0d4f1a9c7e5b3d1f8a6c4e",
+          "login": "anna.demo",
+          "role": "patient",
+          "clinic": null,
+          "created": "2026-10-04T18:20:00Z"
+        }
+      },
+      "RegisterRequest": {
+        "type": "object",
+        "required": ["login", "password", "role", "consent"],
+        "properties": {
+          "login": {"type": "string", "description": "логин; не используйте ФИО и почту"},
+          "password": {"type": "string", "format": "password"},
+          "role": {"type": "string", "enum": ["patient", "doctor"]},
+          "clinic": {"type": "string", "description": "для врача: название клиники"},
+          "consent": {"type": "boolean", "description": "согласие на хранение анализов; без него — 422"}
+        }
+      },
+      "LoginRequest": {
+        "type": "object",
+        "required": ["login", "password"],
+        "properties": {"login": {"type": "string"}, "password": {"type": "string", "format": "password"}}
+      },
+      "AuthResult": {
+        "type": "object",
+        "properties": {
+          "user": {"$ref": "#/components/schemas/User"},
+          "token": {"type": "string", "description": "токен для заголовка Authorization: Bearer <токен>"}
+        }
+      },
+      "PasswordRequest": {
+        "type": "object",
+        "required": ["password"],
+        "properties": {"password": {"type": "string", "format": "password", "description": "текущий пароль — подтверждение"}}
+      },
+      "ApiToken": {
+        "type": "object",
+        "description": "Токен API без значения: значение приходит только в ответе на создание.",
+        "properties": {
+          "id": {"type": "string"},
+          "name": {"type": "string"},
+          "created": {"type": "string", "format": "date-time"},
+          "expires": {"type": "string", "format": "date-time"},
+          "last_used": {"type": "string", "format": "date-time", "nullable": true, "description": "последний запрос с этим токеном; null — токеном ещё не пользовались"},
+          "current": {"type": "boolean", "description": "этим токеном подписан текущий запрос; с cookie сайта — токен «Вход» этой сессии"},
+          "kind": {"type": "string", "enum": ["login", "named"], "description": "login — токен входа (вместе с cookie или из ответа /api/v1/auth/login), named — именованный токен приложения"}
+        }
+      },
+      "RecordSummary": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string"},
+          "date": {"type": "string", "format": "date"},
+          "source": {"type": "string", "enum": ["form", "photo", "pdf", "file", "text", "import"], "description": "form — вручную, photo — фото бланка, pdf, file — файл бланка, text — вставленный текст, import — из выгрузки"},
+          "headline": {"type": "string"},
+          "anemia": {"type": "boolean"},
+          "created": {"type": "string", "format": "date-time"}
+        }
+      },
+      "RecordCreate": {
+        "type": "object",
+        "required": ["input"],
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "description": "дата анализа ГГГГ-ММ-ДД; необязательна — без неё сегодняшняя (UTC)"
+          },
+          "input": {"$ref": "#/components/schemas/AnalysisInput"},
+          "source": {"type": "string", "enum": ["form", "photo", "pdf", "file", "text", "import"], "default": "form"}
+        }
+      },
+      "History": {
+        "type": "object",
+        "description": "Динамика анализов: ряды, события, что давно не сдавалось. Тексты — по роли (пациенту без диагнозов).",
+        "properties": {
+          "role": {"type": "string", "enum": ["patient", "doctor"]},
+          "n_records": {"type": "integer"},
+          "first_date": {"type": "string"},
+          "last_date": {"type": "string"},
+          "series": {"type": "array", "items": {"type": "object"}},
+          "events": {"type": "array", "items": {"type": "object"}},
+          "completeness": {"type": "array", "items": {"type": "object"}},
+          "latest": {"type": "object", "nullable": true},
+          "summary": {"type": "string"}
+        },
+        "example": {
+          "role": "patient",
+          "n_records": 2,
+          "first_date": "2025-10-02",
+          "last_date": "2026-04-16",
+          "series": [
+            {
+              "analyte": "hemoglobin",
+              "name_ru": "Гемоглобин",
+              "unit": "г/л",
+              "points": [
+                {"date": "2025-10-02", "value": 136.0, "record_id": "1a07c3e5b9d24f6a8c0e2b4d6f8a1c3e"},
+                {"date": "2026-04-16", "value": 124.0, "record_id": "5d21a7c4e9b84f0e9a3c6b2d1e0f7a58"}
+              ],
+              "last": 124.0,
+              "delta": -12.0,
+              "delta_pct": -8.8,
+              "direction": "down",
+              "months": 6.4,
+              "ref": {"low": 120, "high": 150}
+            }
+          ],
+          "events": [
+            {
+              "code": "hb_drop",
+              "severity": "attention",
+              "date": "2026-04-16",
+              "title": "Гемоглобин снизился",
+              "text": "Гемоглобин за 6 месяцев снизился — покажите историю врачу.",
+              "analytes": ["hemoglobin"]
+            }
+          ],
+          "completeness": [
+            {
+              "analyte": "ferritin",
+              "name_ru": "Ферритин",
+              "status": "never",
+              "last_date": null,
+              "reason": "Чтобы оценить запас железа. Ещё не сдавали.",
+              "priority": 1,
+              "price_rub": 845
+            }
+          ],
+          "latest": {
+            "record_id": "5d21a7c4e9b84f0e9a3c6b2d1e0f7a58",
+            "date": "2026-04-16",
+            "headline": "Признаков анемии нет, но есть признаки возможного скрытого дефицита — это стоит обсудить с врачом."
+          },
+          "summary": "2 анализа с октября 2025 по апрель 2026; есть изменения, которые стоит обсудить с врачом"
+        }
+      },
+      "Share": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string"},
+          "doctor": {
+            "type": "object",
+            "nullable": true,
+            "description": "null — ссылку ещё не приняли; deleted: true — врач удалил аккаунт (снимок на момент принятия, связь закрыта)",
+            "properties": {
+              "login": {"type": "string"},
+              "clinic": {"type": "string", "nullable": true},
+              "deleted": {"type": "boolean", "description": "есть только у удалённого аккаунта врача"}
+            }
+          },
+          "status": {"type": "string", "enum": ["pending", "active", "expired", "revoked"]},
+          "expires": {
+            "type": "string",
+            "format": "date-time",
+            "description": "pending — срок ссылки (48 ч), после принятия — конец доступа"
+          },
+          "days": {"type": "integer", "enum": [1, 7, 30, 90], "description": "срок доступа с момента принятия"},
+          "created": {"type": "string", "format": "date-time"},
+          "accepted": {"type": "string", "format": "date-time", "nullable": true}
+        }
+      },
+      "LabRefSet": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string"},
+          "name": {"type": "string"},
+          "default": {"type": "boolean"},
+          "ranges": {"type": "object", "additionalProperties": {"$ref": "#/components/schemas/ReferenceRange"}}
+        },
+        "example": {
+          "id": "02c4e6a8b1d34f5a7c9e1b3d5f7a9c2e",
+          "name": "Лаборатория клиники, 2026",
+          "default": true,
+          "ranges": {
+            "hemoglobin": {"low": 117.0, "high": 155.0, "unit": "g/L"},
+            "MCV": {"low": 81.0, "high": 100.0, "unit": "fL"}
+          }
+        }
+      },
+      "LabRefCreate": {
+        "type": "object",
+        "required": ["name", "ranges"],
+        "properties": {
+          "name": {"type": "string"},
+          "ranges": {"type": "object", "additionalProperties": {"$ref": "#/components/schemas/ReferenceRange"}},
+          "default": {"type": "boolean", "default": false, "description": "применять по умолчанию для пациентов врача"}
+        }
+      },
+      "LabRefUpload": {
+        "type": "object",
+        "required": ["file"],
+        "properties": {
+          "file": {"type": "string", "format": "binary", "description": "CSV / XLSX: «показатель;нижняя;верхняя;единица»"},
+          "name": {"type": "string", "description": "название набора"},
+          "default": {"type": "string", "enum": ["false", "true"], "default": "false"}
+        }
+      }
+    },
+    "responses": {
+      "E401": {
+        "description": "Нет ключа или токена, токен просрочен",
+        "headers": {
+          "WWW-Authenticate": {"description": "Bearer realm=\"Justmedit\" или ApiKey realm=\"Justmedit\"", "schema": {"type": "string"}}
+        },
+        "content": {
+          "application/json": {
+            "schema": {"$ref": "#/components/schemas/Error"},
+            "example": {
+              "error": {
+                "code": "unauthorized",
+                "message": "Нужен ключ API (заголовок X-API-Key) или токен кабинета (Authorization: Bearer <токен>).",
+                "field": null
+              }
+            }
+          }
+        }
+      },
+      "E403": {
+        "description": "Ключ не подходит, не та роль, нет связи с пациентом или нет заголовка X-Justmedit (csrf)",
+        "content": {
+          "application/json": {
+            "schema": {"$ref": "#/components/schemas/Error"},
+            "example": {"error": {"code": "forbidden", "message": "Ключ API не подходит.", "field": null}}
+          }
+        }
+      },
+      "E404": {
+        "description": "Нет такой записи или маршрута",
+        "content": {
+          "application/json": {
+            "schema": {"$ref": "#/components/schemas/Error"},
+            "example": {"error": {"code": "not_found", "message": "Страница не найдена.", "field": null}}
+          }
+        }
+      },
+      "E413": {
+        "description": "Слишком большой запрос или файл (DL_MAX_UPLOAD_MB); PDF бланка больше 5 МБ — код pdf_too_large",
+        "content": {
+          "application/json": {
+            "schema": {"$ref": "#/components/schemas/Error"},
+            "example": {"error": {"code": "payload_too_large", "message": "Файл больше 10 МБ.", "field": "file"}}
+          }
+        }
+      },
+      "E415": {
+        "description": "Тело кабинета не JSON: нужен заголовок Content-Type: application/json",
+        "content": {
+          "application/json": {
+            "schema": {"$ref": "#/components/schemas/Error"},
+            "example": {
+              "error": {
+                "code": "unsupported_media_type",
+                "message": "Тело запроса — JSON с заголовком Content-Type: application/json.",
+                "field": null
+              }
+            }
+          }
+        }
+      },
+      "E422": {
+        "description": "Ошибка ввода: что исправить — в message, какое поле — в field",
+        "content": {
+          "application/json": {
+            "schema": {"$ref": "#/components/schemas/Error"},
+            "example": {
+              "error": {
+                "code": "invalid_value",
+                "message": "Возраст — целое число от 18 до 120 лет: сервис рассчитан на взрослых.",
+                "field": "age_years"
+              }
+            }
+          }
+        }
+      },
+      "E429": {
+        "description": "Превышен лимит запросов в минуту",
+        "content": {
+          "application/json": {
+            "schema": {"$ref": "#/components/schemas/Error"},
+            "example": {
+              "error": {"code": "rate_limited", "message": "Слишком много запросов. Повторите через 20 с.", "field": null}
+            }
+          }
+        },
+        "headers": {"Retry-After": {"description": "через сколько секунд повторить", "schema": {"type": "integer"}}}
+      },
+      "E503": {
+        "description": "Заняты оба слота тяжёлых расчётов",
+        "content": {
+          "application/json": {
+            "schema": {"$ref": "#/components/schemas/Error"},
+            "example": {
+              "error": {
+                "code": "service_busy",
+                "message": "Сервис занят другими расчётами. Повторите через 5 с.",
+                "field": null
+              }
+            }
+          }
+        },
+        "headers": {"Retry-After": {"description": "через сколько секунд повторить", "schema": {"type": "integer"}}}
+      },
+      "E507": {
+        "description": "База кабинета заполнена (DL_DATA_MAX_MB): новые данные не принимаются; вход, просмотр, выгрузка и удаление работают",
+        "content": {
+          "application/json": {
+            "schema": {"$ref": "#/components/schemas/Error"},
+            "example": {
+              "error": {
+                "code": "storage_full",
+                "message": "Хранилище кабинета заполнено: новые данные сейчас не принимаются. Вход, просмотр, выгрузка и удаление работают.",
+                "field": null
+              }
+            }
+          }
+        }
+      },
+      "E500": {
+        "description": "Внутренняя ошибка (без трассировки и без значений анализов)",
+        "content": {
+          "application/json": {
+            "schema": {"$ref": "#/components/schemas/Error"},
+            "example": {"error": {"code": "internal", "message": "Внутренняя ошибка", "field": null}}
+          }
+        }
+      }
+    }
+  }
+}

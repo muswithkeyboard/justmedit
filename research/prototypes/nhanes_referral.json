@@ -1,0 +1,570 @@
+{
+ "referral": {
+  "F18-49|t15|L1_z": [
+   {
+    "refer_share": 0.1,
+    "referred_per1000": 100,
+    "cases_per1000": 72,
+    "found_per1000": 35,
+    "sensitivity": 0.495,
+    "ppv": 0.354,
+    "referred_per_case_found": 2.83,
+    "rub_per_case_found": 2388
+   },
+   {
+    "refer_share": 0.2,
+    "referred_per1000": 200,
+    "cases_per1000": 72,
+    "found_per1000": 48,
+    "sensitivity": 0.672,
+    "ppv": 0.241,
+    "referred_per_case_found": 4.15,
+    "rub_per_case_found": 3508
+   },
+   {
+    "refer_share": 0.3,
+    "referred_per1000": 300,
+    "cases_per1000": 72,
+    "found_per1000": 56,
+    "sensitivity": 0.774,
+    "ppv": 0.185,
+    "referred_per_case_found": 5.41,
+    "rub_per_case_found": 4568
+   },
+   {
+    "refer_share": 0.4,
+    "referred_per1000": 400,
+    "cases_per1000": 72,
+    "found_per1000": 63,
+    "sensitivity": 0.885,
+    "ppv": 0.159,
+    "referred_per_case_found": 6.3,
+    "rub_per_case_found": 5326
+   },
+   {
+    "refer_share": 0.5,
+    "referred_per1000": 500,
+    "cases_per1000": 72,
+    "found_per1000": 67,
+    "sensitivity": 0.938,
+    "ppv": 0.135,
+    "referred_per_case_found": 7.43,
+    "rub_per_case_found": 6279
+   }
+  ],
+  "F18-49|t15|L0_z": [
+   {
+    "refer_share": 0.1,
+    "referred_per1000": 100,
+    "cases_per1000": 72,
+    "found_per1000": 20,
+    "sensitivity": 0.282,
+    "ppv": 0.202,
+    "referred_per_case_found": 4.94,
+    "rub_per_case_found": 4178
+   },
+   {
+    "refer_share": 0.2,
+    "referred_per1000": 201,
+    "cases_per1000": 72,
+    "found_per1000": 36,
+    "sensitivity": 0.502,
+    "ppv": 0.179,
+    "referred_per_case_found": 5.58,
+    "rub_per_case_found": 4714
+   },
+   {
+    "refer_share": 0.3,
+    "referred_per1000": 301,
+    "cases_per1000": 72,
+    "found_per1000": 51,
+    "sensitivity": 0.716,
+    "ppv": 0.171,
+    "referred_per_case_found": 5.85,
+    "rub_per_case_found": 4942
+   },
+   {
+    "refer_share": 0.4,
+    "referred_per1000": 400,
+    "cases_per1000": 72,
+    "found_per1000": 59,
+    "sensitivity": 0.828,
+    "ppv": 0.148,
+    "referred_per_case_found": 6.74,
+    "rub_per_case_found": 5695
+   },
+   {
+    "refer_share": 0.5,
+    "referred_per1000": 500,
+    "cases_per1000": 72,
+    "found_per1000": 61,
+    "sensitivity": 0.855,
+    "ppv": 0.123,
+    "referred_per_case_found": 8.15,
+    "rub_per_case_found": 6886
+   }
+  ],
+  "F18-49|t30|L1_z": [
+   {
+    "refer_share": 0.1,
+    "referred_per1000": 100,
+    "cases_per1000": 276,
+    "found_per1000": 71,
+    "sensitivity": 0.255,
+    "ppv": 0.704,
+    "referred_per_case_found": 1.42,
+    "rub_per_case_found": 1200
+   },
+   {
+    "refer_share": 0.2,
+    "referred_per1000": 200,
+    "cases_per1000": 276,
+    "found_per1000": 115,
+    "sensitivity": 0.417,
+    "ppv": 0.576,
+    "referred_per_case_found": 1.74,
+    "rub_per_case_found": 1468
+   },
+   {
+    "refer_share": 0.3,
+    "referred_per1000": 300,
+    "cases_per1000": 276,
+    "found_per1000": 155,
+    "sensitivity": 0.561,
+    "ppv": 0.516,
+    "referred_per_case_found": 1.94,
+    "rub_per_case_found": 1637
+   },
+   {
+    "refer_share": 0.4,
+    "referred_per1000": 400,
+    "cases_per1000": 276,
+    "found_per1000": 183,
+    "sensitivity": 0.663,
+    "ppv": 0.458,
+    "referred_per_case_found": 2.18,
+    "rub_per_case_found": 1846
+   },
+   {
+    "refer_share": 0.5,
+    "referred_per1000": 501,
+    "cases_per1000": 276,
+    "found_per1000": 211,
+    "sensitivity": 0.765,
+    "ppv": 0.422,
+    "referred_per_case_found": 2.37,
+    "rub_per_case_found": 2003
+   }
+  ],
+  "F18-49|t30|L0_z": [
+   {
+    "refer_share": 0.1,
+    "referred_per1000": 100,
+    "cases_per1000": 276,
+    "found_per1000": 52,
+    "sensitivity": 0.188,
+    "ppv": 0.521,
+    "referred_per_case_found": 1.92,
+    "rub_per_case_found": 1623
+   },
+   {
+    "refer_share": 0.2,
+    "referred_per1000": 200,
+    "cases_per1000": 276,
+    "found_per1000": 93,
+    "sensitivity": 0.336,
+    "ppv": 0.464,
+    "referred_per_case_found": 2.16,
+    "rub_per_case_found": 1823
+   },
+   {
+    "refer_share": 0.3,
+    "referred_per1000": 300,
+    "cases_per1000": 276,
+    "found_per1000": 125,
+    "sensitivity": 0.453,
+    "ppv": 0.417,
+    "referred_per_case_found": 2.4,
+    "rub_per_case_found": 2025
+   },
+   {
+    "refer_share": 0.4,
+    "referred_per1000": 400,
+    "cases_per1000": 276,
+    "found_per1000": 161,
+    "sensitivity": 0.581,
+    "ppv": 0.401,
+    "referred_per_case_found": 2.49,
+    "rub_per_case_found": 2106
+   },
+   {
+    "refer_share": 0.5,
+    "referred_per1000": 500,
+    "cases_per1000": 276,
+    "found_per1000": 192,
+    "sensitivity": 0.695,
+    "ppv": 0.384,
+    "referred_per_case_found": 2.61,
+    "rub_per_case_found": 2202
+   }
+  ],
+  "F50+|t15|L1_z": [
+   {
+    "refer_share": 0.1,
+    "referred_per1000": 104,
+    "cases_per1000": 15,
+    "found_per1000": 6,
+    "sensitivity": 0.415,
+    "ppv": 0.062,
+    "referred_per_case_found": 16.19,
+    "rub_per_case_found": 13682
+   },
+   {
+    "refer_share": 0.2,
+    "referred_per1000": 200,
+    "cases_per1000": 15,
+    "found_per1000": 13,
+    "sensitivity": 0.833,
+    "ppv": 0.064,
+    "referred_per_case_found": 15.58,
+    "rub_per_case_found": 13164
+   },
+   {
+    "refer_share": 0.3,
+    "referred_per1000": 301,
+    "cases_per1000": 15,
+    "found_per1000": 14,
+    "sensitivity": 0.903,
+    "ppv": 0.046,
+    "referred_per_case_found": 21.57,
+    "rub_per_case_found": 18228
+   },
+   {
+    "refer_share": 0.4,
+    "referred_per1000": 402,
+    "cases_per1000": 15,
+    "found_per1000": 14,
+    "sensitivity": 0.928,
+    "ppv": 0.036,
+    "referred_per_case_found": 28.09,
+    "rub_per_case_found": 23735
+   },
+   {
+    "refer_share": 0.5,
+    "referred_per1000": 500,
+    "cases_per1000": 15,
+    "found_per1000": 15,
+    "sensitivity": 0.948,
+    "ppv": 0.029,
+    "referred_per_case_found": 34.2,
+    "rub_per_case_found": 28903
+   }
+  ],
+  "F50+|t15|L0_z": [
+   {
+    "refer_share": 0.1,
+    "referred_per1000": 101,
+    "cases_per1000": 15,
+    "found_per1000": 8,
+    "sensitivity": 0.514,
+    "ppv": 0.079,
+    "referred_per_case_found": 12.67,
+    "rub_per_case_found": 10709
+   },
+   {
+    "refer_share": 0.2,
+    "referred_per1000": 200,
+    "cases_per1000": 15,
+    "found_per1000": 8,
+    "sensitivity": 0.514,
+    "ppv": 0.04,
+    "referred_per_case_found": 25.24,
+    "rub_per_case_found": 21330
+   },
+   {
+    "refer_share": 0.3,
+    "referred_per1000": 300,
+    "cases_per1000": 15,
+    "found_per1000": 8,
+    "sensitivity": 0.514,
+    "ppv": 0.026,
+    "referred_per_case_found": 37.83,
+    "rub_per_case_found": 31970
+   },
+   {
+    "refer_share": 0.4,
+    "referred_per1000": 400,
+    "cases_per1000": 15,
+    "found_per1000": 11,
+    "sensitivity": 0.704,
+    "ppv": 0.027,
+    "referred_per_case_found": 36.83,
+    "rub_per_case_found": 31118
+   },
+   {
+    "refer_share": 0.5,
+    "referred_per1000": 500,
+    "cases_per1000": 15,
+    "found_per1000": 11,
+    "sensitivity": 0.737,
+    "ppv": 0.023,
+    "referred_per_case_found": 43.97,
+    "rub_per_case_found": 37152
+   }
+  ],
+  "F50+|t30|L1_z": [
+   {
+    "refer_share": 0.1,
+    "referred_per1000": 105,
+    "cases_per1000": 78,
+    "found_per1000": 23,
+    "sensitivity": 0.296,
+    "ppv": 0.221,
+    "referred_per_case_found": 4.53,
+    "rub_per_case_found": 3829
+   },
+   {
+    "refer_share": 0.2,
+    "referred_per1000": 205,
+    "cases_per1000": 78,
+    "found_per1000": 35,
+    "sensitivity": 0.448,
+    "ppv": 0.17,
+    "referred_per_case_found": 5.88,
+    "rub_per_case_found": 4966
+   },
+   {
+    "refer_share": 0.3,
+    "referred_per1000": 300,
+    "cases_per1000": 78,
+    "found_per1000": 40,
+    "sensitivity": 0.508,
+    "ppv": 0.132,
+    "referred_per_case_found": 7.59,
+    "rub_per_case_found": 6414
+   },
+   {
+    "refer_share": 0.4,
+    "referred_per1000": 402,
+    "cases_per1000": 78,
+    "found_per1000": 49,
+    "sensitivity": 0.631,
+    "ppv": 0.122,
+    "referred_per_case_found": 8.17,
+    "rub_per_case_found": 6905
+   },
+   {
+    "refer_share": 0.5,
+    "referred_per1000": 502,
+    "cases_per1000": 78,
+    "found_per1000": 56,
+    "sensitivity": 0.718,
+    "ppv": 0.111,
+    "referred_per_case_found": 8.98,
+    "rub_per_case_found": 7587
+   }
+  ],
+  "F50+|t30|L0_z": [
+   {
+    "refer_share": 0.1,
+    "referred_per1000": 101,
+    "cases_per1000": 78,
+    "found_per1000": 12,
+    "sensitivity": 0.15,
+    "ppv": 0.116,
+    "referred_per_case_found": 8.63,
+    "rub_per_case_found": 7292
+   },
+   {
+    "refer_share": 0.2,
+    "referred_per1000": 201,
+    "cases_per1000": 78,
+    "found_per1000": 23,
+    "sensitivity": 0.297,
+    "ppv": 0.115,
+    "referred_per_case_found": 8.68,
+    "rub_per_case_found": 7336
+   },
+   {
+    "refer_share": 0.3,
+    "referred_per1000": 301,
+    "cases_per1000": 78,
+    "found_per1000": 33,
+    "sensitivity": 0.42,
+    "ppv": 0.109,
+    "referred_per_case_found": 9.19,
+    "rub_per_case_found": 7763
+   },
+   {
+    "refer_share": 0.4,
+    "referred_per1000": 400,
+    "cases_per1000": 78,
+    "found_per1000": 42,
+    "sensitivity": 0.544,
+    "ppv": 0.106,
+    "referred_per_case_found": 9.44,
+    "rub_per_case_found": 7980
+   },
+   {
+    "refer_share": 0.5,
+    "referred_per1000": 500,
+    "cases_per1000": 78,
+    "found_per1000": 47,
+    "sensitivity": 0.608,
+    "ppv": 0.095,
+    "referred_per_case_found": 10.55,
+    "rub_per_case_found": 8918
+   }
+  ],
+  "M|t30|L1_z": [
+   {
+    "refer_share": 0.1,
+    "referred_per1000": 103,
+    "cases_per1000": 32,
+    "found_per1000": 16,
+    "sensitivity": 0.505,
+    "ppv": 0.159,
+    "referred_per_case_found": 6.29,
+    "rub_per_case_found": 5315
+   },
+   {
+    "refer_share": 0.2,
+    "referred_per1000": 200,
+    "cases_per1000": 32,
+    "found_per1000": 19,
+    "sensitivity": 0.589,
+    "ppv": 0.095,
+    "referred_per_case_found": 10.48,
+    "rub_per_case_found": 8854
+   },
+   {
+    "refer_share": 0.3,
+    "referred_per1000": 301,
+    "cases_per1000": 32,
+    "found_per1000": 23,
+    "sensitivity": 0.723,
+    "ppv": 0.078,
+    "referred_per_case_found": 12.82,
+    "rub_per_case_found": 10835
+   },
+   {
+    "refer_share": 0.4,
+    "referred_per1000": 400,
+    "cases_per1000": 32,
+    "found_per1000": 23,
+    "sensitivity": 0.723,
+    "ppv": 0.059,
+    "referred_per_case_found": 17.05,
+    "rub_per_case_found": 14409
+   },
+   {
+    "refer_share": 0.5,
+    "referred_per1000": 500,
+    "cases_per1000": 32,
+    "found_per1000": 24,
+    "sensitivity": 0.734,
+    "ppv": 0.048,
+    "referred_per_case_found": 21.01,
+    "rub_per_case_found": 17754
+   }
+  ],
+  "M|t30|L0_z": [
+   {
+    "refer_share": 0.1,
+    "referred_per1000": 100,
+    "cases_per1000": 32,
+    "found_per1000": 9,
+    "sensitivity": 0.291,
+    "ppv": 0.094,
+    "referred_per_case_found": 10.6,
+    "rub_per_case_found": 8959
+   },
+   {
+    "refer_share": 0.2,
+    "referred_per1000": 202,
+    "cases_per1000": 32,
+    "found_per1000": 16,
+    "sensitivity": 0.488,
+    "ppv": 0.078,
+    "referred_per_case_found": 12.75,
+    "rub_per_case_found": 10776
+   },
+   {
+    "refer_share": 0.3,
+    "referred_per1000": 300,
+    "cases_per1000": 32,
+    "found_per1000": 19,
+    "sensitivity": 0.573,
+    "ppv": 0.062,
+    "referred_per_case_found": 16.15,
+    "rub_per_case_found": 13643
+   },
+   {
+    "refer_share": 0.4,
+    "referred_per1000": 401,
+    "cases_per1000": 32,
+    "found_per1000": 22,
+    "sensitivity": 0.672,
+    "ppv": 0.054,
+    "referred_per_case_found": 18.39,
+    "rub_per_case_found": 15537
+   },
+   {
+    "refer_share": 0.5,
+    "referred_per1000": 500,
+    "cases_per1000": 32,
+    "found_per1000": 24,
+    "sensitivity": 0.743,
+    "ppv": 0.048,
+    "referred_per_case_found": 20.77,
+    "rub_per_case_found": 17548
+   }
+  ]
+ },
+ "importance": [
+  [
+   "RDW_z",
+   0.1153
+  ],
+  [
+   "hemoglobin_z",
+   0.0517
+  ],
+  [
+   "hematocrit_z",
+   0.0127
+  ],
+  [
+   "WBC_z",
+   0.0112
+  ],
+  [
+   "MCH_z",
+   0.0103
+  ],
+  [
+   "age_years",
+   0.0035
+  ],
+  [
+   "platelets_z",
+   0.0029
+  ],
+  [
+   "MCV_z",
+   0.0027
+  ],
+  [
+   "RBC_z",
+   0.0019
+  ],
+  [
+   "MCHC_z",
+   0.0012
+  ],
+  [
+   "female",
+   0.0
+  ]
+ ]
+}

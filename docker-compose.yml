@@ -1,0 +1,142 @@
+# DeficitLens — запуск одной командой:  docker compose up --build
+#   Страница демо: http://127.0.0.1:8080/   Проверка: curl http://127.0.0.1:8080/healthz
+#
+# Инструменты (профиль tools; `docker compose run` включает профиль сам):
+#   docker compose run --rm verify                     — тесты и проверка сервиса в контейнере (PASS / FAIL / SKIP)
+#   docker compose run --rm cli predict --in /data/in/x.csv --out /data/out/pred.csv
+#                                                      — пакетная расшифровка: файлы из ./data/in, результат в ./data/out
+# Мини-сайт клиники (профиль clinic):
+#   docker compose --profile clinic up --build         — http://127.0.0.1:8081 (ключ API только на его сервере)
+#
+# Порты по умолчанию открыты только на этой машине (127.0.0.1). Открыть в сеть: DL_PUBLISH=0.0.0.0:8080.
+# Все контейнеры: не root (uid 10001), файловая система только для чтения, запись — только в tmpfs /tmp (память);
+# у app ещё том jm-data (/data) — база личного кабинета (ADR 0009). Стереть её: docker compose down -v.
+
+x-hardening: &hardening
+  read_only: true
+  cap_drop: [ALL]
+  security_opt: ["no-new-privileges:true"]
+
+services:
+  app:
+    build:
+      context: .
+      target: app
+    image: deficitlens:0.1.0
+    ports:
+      - "${DL_PUBLISH:-127.0.0.1:8080}:8080"
+    environment:
+      # Ключи API через запятую. Значение по умолчанию — ДЕМО-ключ, он известен всем, кто читал этот файл.
+      # Перед любым использованием вне демо задайте свой: DL_API_KEYS=<ключ> docker compose up
+      DL_API_KEYS: "${DL_API_KEYS:-dl-demo-key}"
+      # Лимит расчётов страницы демо (POST /ui/*) с одного адреса в минуту. Для демо — 120: на общем Wi-Fi площадки
+      # все гости делят один адрес. Справочник страницы (GET /ui/reference, /ui/examples) в лимит не входит.
+      DL_UI_RATE_PER_MIN: "${DL_UI_RATE_PER_MIN:-120}"
+      DL_MAX_UPLOAD_MB: "${DL_MAX_UPLOAD_MB:-10}"       # предел размера файла и тела запроса, МБ
+      DL_MAX_BATCH: "${DL_MAX_BATCH:-10000}"            # предел числа записей в /api/v1/batch
+      # Личный кабинет (ADR 0009): база SQLite — на томе jm-data, значения анализов в ней зашифрованы.
+      # DL_DATA_KEY — ключ Fernet (base64, 32 байта): `python -c "from cryptography.fernet import Fernet;
+      # print(Fernet.generate_key().decode())"`. Пусто — ключ создаётся файлом /data/key рядом с базой (только демо).
+      DL_DATA_DIR: /data
+      DL_DATA_KEY: "${DL_DATA_KEY:-}"
+      # Вне демо ключ — не в томе с базой: DL_DATA_KEY из хранилища секретов или файл-секрет DL_DATA_KEY_FILE
+      # (права 0600, владелец uid 10001), смонтированный только для чтения вне /data, например:
+      #   volumes: ["/etc/justmedit/data.key:/run/secrets/jm_data_key:ro"]  и  DL_DATA_KEY_FILE=/run/secrets/jm_data_key
+      DL_DATA_KEY_FILE: "${DL_DATA_KEY_FILE:-}"
+      DL_DATA_MAX_MB: "${DL_DATA_MAX_MB:-512}"          # предел размера базы кабинета; дальше — 507 storage_full
+      DL_MAX_SIGNUPS_PER_DAY: "${DL_MAX_SIGNUPS_PER_DAY:-1000}"   # регистраций в сутки на весь сервис
+      DL_SIGNUP_IP_PER_HOUR: "${DL_SIGNUP_IP_PER_HOUR:-30}"       # регистраций в час с одного адреса
+      DL_COOKIE_SECURE: "${DL_COOKIE_SECURE:-0}"        # 1 — сайт за HTTPS: cookie __Host-jm_session с Secure и HSTS
+      DL_CORS_ORIGINS: "${DL_CORS_ORIGINS:-}"           # сайты, которым разрешены запросы к /api/v1/* из браузера
+      # Обратный прокси перед сервисом (nginx, Caddy): его адрес или сеть, например 172.16.0.0/12. Только от них
+      # принимаются X-Forwarded-For / -Proto / -Host (адрес клиента для лимитов, схема и хост для CSRF).
+      # Пусто — заголовкам не верить (сервис открыт напрямую): подставной X-Forwarded-For не обходит лимиты.
+      # Сеть шлюза Docker указывайте, только если порт открыт лишь прокси (DL_PUBLISH=127.0.0.1:8080).
+      DL_TRUSTED_PROXIES: "${DL_TRUSTED_PROXIES:-}"
+    # Без входа сервис ничего не хранит; кабинет пишет только в том jm-data (/data). Остальная файловая система —
+    # только для чтения. Полное удаление данных: `docker compose down -v` (удаляет и том).
+    volumes:
+      - jm-data:/data
+    <<: *hardening
+    tmpfs:
+      - /tmp:size=128m,mode=1777   # временные файлы при разборе загруженного файла; живут в памяти
+    mem_limit: 2g
+    pids_limit: 256
+    restart: unless-stopped
+
+  verify:
+    profiles: ["tools"]
+    build:
+      context: .
+      target: verify
+    image: deficitlens-verify:0.1.0
+    # Файлы кейса и NHANES не входят в образ и в git: только тома для чтения. Без файлов тесты с данными — SKIP.
+    # Другие каталоги: DL_CASE_DIR=/путь DL_NHANES_DIR=/путь docker compose run --rm verify
+    volumes:
+      - "${DL_CASE_DIR:-./data/case}:/app/data/case:ro"
+      - "${DL_NHANES_DIR:-./data/nhanes}:/app/data/nhanes:ro"
+    environment:
+      DL_DATA_DIR: /tmp/jm-data     # база кабинета проверочного сервера — в tmpfs (память), исчезает с контейнером
+    <<: *hardening
+    tmpfs:
+      - /tmp:size=512m,mode=1777   # временные файлы тестов, журнал проверочного сервера
+    pids_limit: 512
+
+  cli:
+    profiles: ["tools"]
+    build:
+      context: .
+      target: app
+    image: deficitlens:0.1.0
+    entrypoint: ["deficitlens"]
+    command: ["--help"]
+    # Linux: чтобы файлы в ./data/out принадлежали вам, а не uid 10001:
+    #   DL_UID=$(id -u) DL_GID=$(id -g) docker compose run --rm cli predict ...
+    user: "${DL_UID:-10001}:${DL_GID:-10001}"
+    volumes:
+      - ./data/in:/data/in:ro
+      - ./data/out:/data/out
+    <<: *hardening
+    tmpfs:
+      - /tmp:size=256m,mode=1777
+    mem_limit: 2g
+    pids_limit: 256
+
+  # Пример интеграции: мини-сайт клиники (examples/clinic_site, Starlette). Ключ API — только на его сервере,
+  # в браузер не попадает. Образ — тот же, что у app; код примера монтируется только для чтения.
+  clinic:
+    profiles: ["clinic"]
+    build:
+      context: .
+      target: app
+    image: deficitlens:0.1.0
+    command: ["python", "-m", "uvicorn", "app:app", "--app-dir", "/clinic", "--host", "0.0.0.0", "--port", "8081",
+              "--no-access-log", "--no-server-header"]
+    environment:
+      DL_URL: "http://app:8080"
+      # Ключ клиники: один из DL_API_KEYS сервиса app. По умолчанию — демо-ключ.
+      DL_API_KEY: "${DL_CLINIC_API_KEY:-dl-demo-key}"
+    volumes:
+      - ./examples/clinic_site:/clinic:ro
+    ports:
+      - "${DL_CLINIC_PUBLISH:-127.0.0.1:8081}:8081"
+    depends_on:
+      app:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import sys, urllib.request; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8081/healthz', timeout=3).status == 200 else 1)"]
+      interval: 30s
+      timeout: 5s
+      start_period: 30s
+      start_interval: 2s
+      retries: 3
+    <<: *hardening
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+    mem_limit: 512m
+    pids_limit: 128
+    restart: unless-stopped
+
+volumes:
+  # База личного кабинета (SQLite, значения анализов зашифрованы). Владелец — uid 10001 (каталог /data в образе).
+  jm-data:

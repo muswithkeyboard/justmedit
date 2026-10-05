@@ -1,0 +1,3475 @@
+{
+ "generated_at": "2026-10-04T04:51:30+00:00",
+ "generator": "scripts/make_figures.py",
+ "note": "Числа для слайдов: value + source (+ n, ci95, sd, где есть). Доли — от 0 до 1. NHANES — США; учебный набор кейса — 840 строк. Главная метрика скрининга — AUC у женщин 18–49 без анемии (screen.auc.F18_49.*), не общий AUC.",
+ "sources": {
+  "case_metrics": {
+   "path": "docs/metrics/case_metrics.json",
+   "data_sha256": "9d97e125c961a92222eb31c86188ba7a7736ece1ba59ce296d32e300b107dbb6"
+  },
+  "screen_metrics": {
+   "path": "docs/metrics/screen_metrics.json",
+   "generated": "2026-10-03T22:45:47+00:00",
+   "data_sha256": "e118411f8b3a358ffa77f2de873f5b1dea183a9aafff7e4f0c472007a0a4c3ad"
+  },
+  "case_model": {
+   "path": "models/case-v1/metadata.json",
+   "trained_at": "2026-10-03T22:35:02+00:00"
+  },
+  "screen_model": {
+   "path": "models/screen-v1/metadata.json",
+   "created": "2026-10-03T22:45:53+00:00"
+  }
+ },
+ "items": {
+  "case.n_rows": {
+   "value": 840,
+   "label_ru": "Учебный набор кейса (840 строк): строк",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003)"
+  },
+  "case.rows_with_anemia": {
+   "value": 531,
+   "label_ru": "Учебный набор кейса: строк с анемией",
+   "source": "models/case-v1/metadata.json (summary)"
+  },
+  "case.level1_match": {
+   "value": 840,
+   "label_ru": "Анемия по ВОЗ совпала с меткой anemia, строк из 840",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003)"
+  },
+  "case.clinical.cbc.acc12": {
+   "value": 0.573,
+   "label_ru": "Кейс, клинический режим, Только ОАК: точность, 12 классов (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0269,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.cbc.acc12_sd": {
+   "value": 0.0269,
+   "label_ru": "Кейс, клинический режим, Только ОАК: разброс точности по 15 фолдам (SD)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.cbc.f1_12": {
+   "value": 0.496,
+   "label_ru": "Кейс, клинический режим, Только ОАК: macro-F1, 12 классов (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0298,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.cbc.acc5": {
+   "value": 0.7821,
+   "label_ru": "Кейс, клинический режим, Только ОАК: точность, 5 групп (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0314,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.cbc.f1_5": {
+   "value": 0.707,
+   "label_ru": "Кейс, клинический режим, Только ОАК: macro-F1, 5 групп (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0404,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.cbc.f1_cause": {
+   "value": 0.4199,
+   "label_ru": "Кейс, клинический режим, Только ОАК: macro-F1, причина (как в продукте) (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0349,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.cbc.f1_cause_proto": {
+   "value": 0.4092,
+   "label_ru": "Кейс, клинический режим, Только ОАК: macro-F1, причина (как в прототипе) (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0417,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.cbc.acc_cause": {
+   "value": 0.5313,
+   "label_ru": "Кейс, клинический режим, Только ОАК: acc_cause (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0276,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.cbc.logloss12": {
+   "value": 1.1825,
+   "label_ru": "Кейс, клинический режим, Только ОАК: log-loss, 12 классов (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0595,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.cbc.ece": {
+   "value": 0.0877,
+   "label_ru": "Кейс, клинический режим, Только ОАК: ECE по фолду (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0212,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.cbc.auroc_hidden": {
+   "value": 0.897,
+   "label_ru": "Кейс, клинический режим, Только ОАК: AUROC скрытого дефицита (строки без анемии) (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0322,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.cbc.acc5_anemic": {
+   "value": 0.6553,
+   "label_ru": "Кейс, клинический режим, Только ОАК: точность, 5 групп, строки с анемией (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.049,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.cbc.hidden_specificity": {
+   "value": 0.9212,
+   "label_ru": "Кейс, клинический режим, Только ОАК: флаг скрытого дефицита: специфичность (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0529,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.cbc.hidden_sensitivity": {
+   "value": 0.685,
+   "label_ru": "Кейс, клинический режим, Только ОАК: флаг скрытого дефицита: чувствительность (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0648,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.cbc.ece_pooled": {
+   "value": 0.0435,
+   "label_ru": "Кейс, клинический режим, Только ОАК: ECE по объединённым предсказаниям (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0048,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.cbc_iron_crp.acc12": {
+   "value": 0.6651,
+   "label_ru": "Кейс, клинический режим, + железо, СРБ: точность, 12 классов (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0318,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.cbc_iron_crp.acc12_sd": {
+   "value": 0.0318,
+   "label_ru": "Кейс, клинический режим, + железо, СРБ: разброс точности по 15 фолдам (SD)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.cbc_iron_crp.f1_12": {
+   "value": 0.5828,
+   "label_ru": "Кейс, клинический режим, + железо, СРБ: macro-F1, 12 классов (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0374,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.cbc_iron_crp.acc5": {
+   "value": 0.8167,
+   "label_ru": "Кейс, клинический режим, + железо, СРБ: точность, 5 групп (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0253,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.cbc_iron_crp.f1_5": {
+   "value": 0.7541,
+   "label_ru": "Кейс, клинический режим, + железо, СРБ: macro-F1, 5 групп (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.031,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.cbc_iron_crp.f1_cause": {
+   "value": 0.5021,
+   "label_ru": "Кейс, клинический режим, + железо, СРБ: macro-F1, причина (как в продукте) (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0474,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.cbc_iron_crp.f1_cause_proto": {
+   "value": 0.5,
+   "label_ru": "Кейс, клинический режим, + железо, СРБ: macro-F1, причина (как в прототипе) (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.047,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.cbc_iron_crp.acc_cause": {
+   "value": 0.6234,
+   "label_ru": "Кейс, клинический режим, + железо, СРБ: acc_cause (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0314,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.cbc_iron_crp.logloss12": {
+   "value": 0.8692,
+   "label_ru": "Кейс, клинический режим, + железо, СРБ: log-loss, 12 классов (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0651,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.cbc_iron_crp.ece": {
+   "value": 0.076,
+   "label_ru": "Кейс, клинический режим, + железо, СРБ: ECE по фолду (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0272,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.cbc_iron_crp.auroc_hidden": {
+   "value": 0.9396,
+   "label_ru": "Кейс, клинический режим, + железо, СРБ: AUROC скрытого дефицита (строки без анемии) (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0277,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.cbc_iron_crp.acc5_anemic": {
+   "value": 0.71,
+   "label_ru": "Кейс, клинический режим, + железо, СРБ: точность, 5 групп, строки с анемией (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0394,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.cbc_iron_crp.hidden_specificity": {
+   "value": 0.9303,
+   "label_ru": "Кейс, клинический режим, + железо, СРБ: флаг скрытого дефицита: специфичность (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0566,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.cbc_iron_crp.hidden_sensitivity": {
+   "value": 0.8085,
+   "label_ru": "Кейс, клинический режим, + железо, СРБ: флаг скрытого дефицита: чувствительность (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0552,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.cbc_iron_crp.ece_pooled": {
+   "value": 0.0365,
+   "label_ru": "Кейс, клинический режим, + железо, СРБ: ECE по объединённым предсказаниям (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0102,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.standard.acc12": {
+   "value": 0.7659,
+   "label_ru": "Кейс, клинический режим, + B12, фолаты: точность, 12 классов (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0201,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.standard.acc12_sd": {
+   "value": 0.0201,
+   "label_ru": "Кейс, клинический режим, + B12, фолаты: разброс точности по 15 фолдам (SD)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.standard.f1_12": {
+   "value": 0.7043,
+   "label_ru": "Кейс, клинический режим, + B12, фолаты: macro-F1, 12 классов (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0292,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.standard.acc5": {
+   "value": 0.8813,
+   "label_ru": "Кейс, клинический режим, + B12, фолаты: точность, 5 групп (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0207,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.standard.f1_5": {
+   "value": 0.8482,
+   "label_ru": "Кейс, клинический режим, + B12, фолаты: macro-F1, 5 групп (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0273,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.standard.f1_cause": {
+   "value": 0.6784,
+   "label_ru": "Кейс, клинический режим, + B12, фолаты: macro-F1, причина (как в продукте) (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0426,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.standard.f1_cause_proto": {
+   "value": 0.6837,
+   "label_ru": "Кейс, клинический режим, + B12, фолаты: macro-F1, причина (как в прототипе) (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0459,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.standard.acc_cause": {
+   "value": 0.7583,
+   "label_ru": "Кейс, клинический режим, + B12, фолаты: acc_cause (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0222,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.standard.logloss12": {
+   "value": 0.6617,
+   "label_ru": "Кейс, клинический режим, + B12, фолаты: log-loss, 12 классов (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0555,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.standard.ece": {
+   "value": 0.0633,
+   "label_ru": "Кейс, клинический режим, + B12, фолаты: ECE по фолду (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0159,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.standard.auroc_hidden": {
+   "value": 0.9512,
+   "label_ru": "Кейс, клинический режим, + B12, фолаты: AUROC скрытого дефицита (строки без анемии) (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0209,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.standard.acc5_anemic": {
+   "value": 0.8124,
+   "label_ru": "Кейс, клинический режим, + B12, фолаты: точность, 5 групп, строки с анемией (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0317,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.standard.hidden_specificity": {
+   "value": 0.9152,
+   "label_ru": "Кейс, клинический режим, + B12, фолаты: флаг скрытого дефицита: специфичность (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0616,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.standard.hidden_sensitivity": {
+   "value": 0.8449,
+   "label_ru": "Кейс, клинический режим, + B12, фолаты: флаг скрытого дефицита: чувствительность (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.053,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.standard.ece_pooled": {
+   "value": 0.0362,
+   "label_ru": "Кейс, клинический режим, + B12, фолаты: ECE по объединённым предсказаниям (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0046,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.extended.acc12": {
+   "value": 0.8492,
+   "label_ru": "Кейс, клинический режим, Строка как есть: точность, 12 классов (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0247,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.extended.acc12_sd": {
+   "value": 0.0247,
+   "label_ru": "Кейс, клинический режим, Строка как есть: разброс точности по 15 фолдам (SD)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.extended.f1_12": {
+   "value": 0.8255,
+   "label_ru": "Кейс, клинический режим, Строка как есть: macro-F1, 12 классов (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0242,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.extended.acc5": {
+   "value": 0.9143,
+   "label_ru": "Кейс, клинический режим, Строка как есть: точность, 5 групп (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0197,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.extended.f1_5": {
+   "value": 0.8929,
+   "label_ru": "Кейс, клинический режим, Строка как есть: macro-F1, 5 групп (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0246,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.extended.f1_cause": {
+   "value": 0.803,
+   "label_ru": "Кейс, клинический режим, Строка как есть: macro-F1, причина (как в продукте) (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0323,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.extended.f1_cause_proto": {
+   "value": 0.8052,
+   "label_ru": "Кейс, клинический режим, Строка как есть: macro-F1, причина (как в прототипе) (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0316,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.extended.acc_cause": {
+   "value": 0.8464,
+   "label_ru": "Кейс, клинический режим, Строка как есть: acc_cause (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0238,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.extended.logloss12": {
+   "value": 0.4106,
+   "label_ru": "Кейс, клинический режим, Строка как есть: log-loss, 12 классов (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0477,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.extended.ece": {
+   "value": 0.0492,
+   "label_ru": "Кейс, клинический режим, Строка как есть: ECE по фолду (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0145,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.extended.auroc_hidden": {
+   "value": 0.9729,
+   "label_ru": "Кейс, клинический режим, Строка как есть: AUROC скрытого дефицита (строки без анемии) (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0174,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.extended.acc5_anemic": {
+   "value": 0.8644,
+   "label_ru": "Кейс, клинический режим, Строка как есть: точность, 5 групп, строки с анемией (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0315,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.extended.hidden_specificity": {
+   "value": 0.9182,
+   "label_ru": "Кейс, клинический режим, Строка как есть: флаг скрытого дефицита: специфичность (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0828,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.extended.hidden_sensitivity": {
+   "value": 0.9334,
+   "label_ru": "Кейс, клинический режим, Строка как есть: флаг скрытого дефицита: чувствительность (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0334,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.clinical.extended.ece_pooled": {
+   "value": 0.0169,
+   "label_ru": "Кейс, клинический режим, Строка как есть: ECE по объединённым предсказаниям (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0021,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.cbc.acc12": {
+   "value": 0.5044,
+   "label_ru": "Кейс, режим бенчмарка, Только ОАК: точность, 12 классов (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0346,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.cbc.acc12_sd": {
+   "value": 0.0346,
+   "label_ru": "Кейс, режим бенчмарка, Только ОАК: разброс точности по 15 фолдам (SD)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.cbc.f1_12": {
+   "value": 0.3905,
+   "label_ru": "Кейс, режим бенчмарка, Только ОАК: macro-F1, 12 классов (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0352,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.cbc.acc5": {
+   "value": 0.7417,
+   "label_ru": "Кейс, режим бенчмарка, Только ОАК: точность, 5 групп (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0286,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.cbc.f1_5": {
+   "value": 0.6557,
+   "label_ru": "Кейс, режим бенчмарка, Только ОАК: macro-F1, 5 групп (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0428,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.cbc.f1_cause": {
+   "value": 0.3182,
+   "label_ru": "Кейс, режим бенчмарка, Только ОАК: macro-F1, причина (как в продукте) (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0373,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.cbc.f1_cause_proto": {
+   "value": 0.3059,
+   "label_ru": "Кейс, режим бенчмарка, Только ОАК: macro-F1, причина (как в прототипе) (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0258,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.cbc.acc_cause": {
+   "value": 0.475,
+   "label_ru": "Кейс, режим бенчмарка, Только ОАК: acc_cause (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0312,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.cbc.logloss12": {
+   "value": 1.3663,
+   "label_ru": "Кейс, режим бенчмарка, Только ОАК: log-loss, 12 классов (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0778,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.cbc.ece": {
+   "value": 0.1477,
+   "label_ru": "Кейс, режим бенчмарка, Только ОАК: ECE по фолду (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0277,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.cbc.auroc_hidden": {
+   "value": 0.8997,
+   "label_ru": "Кейс, режим бенчмарка, Только ОАК: AUROC скрытого дефицита (строки без анемии) (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0308,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.cbc.acc5_anemic": {
+   "value": 0.5911,
+   "label_ru": "Кейс, режим бенчмарка, Только ОАК: точность, 5 групп, строки с анемией (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0462,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.cbc.ece_pooled": {
+   "value": 0.1149,
+   "label_ru": "Кейс, режим бенчмарка, Только ОАК: ECE по объединённым предсказаниям (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0072,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.cbc_iron_crp.acc12": {
+   "value": 0.6385,
+   "label_ru": "Кейс, режим бенчмарка, + железо, СРБ: точность, 12 классов (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0308,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.cbc_iron_crp.acc12_sd": {
+   "value": 0.0308,
+   "label_ru": "Кейс, режим бенчмарка, + железо, СРБ: разброс точности по 15 фолдам (SD)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.cbc_iron_crp.f1_12": {
+   "value": 0.5313,
+   "label_ru": "Кейс, режим бенчмарка, + железо, СРБ: macro-F1, 12 классов (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0407,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.cbc_iron_crp.acc5": {
+   "value": 0.7798,
+   "label_ru": "Кейс, режим бенчмарка, + железо, СРБ: точность, 5 групп (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0261,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.cbc_iron_crp.f1_5": {
+   "value": 0.6999,
+   "label_ru": "Кейс, режим бенчмарка, + железо, СРБ: macro-F1, 5 групп (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0462,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.cbc_iron_crp.f1_cause": {
+   "value": 0.4438,
+   "label_ru": "Кейс, режим бенчмарка, + железо, СРБ: macro-F1, причина (как в продукте) (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0408,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.cbc_iron_crp.f1_cause_proto": {
+   "value": 0.4366,
+   "label_ru": "Кейс, режим бенчмарка, + железо, СРБ: macro-F1, причина (как в прототипе) (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0394,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.cbc_iron_crp.acc_cause": {
+   "value": 0.6234,
+   "label_ru": "Кейс, режим бенчмарка, + железо, СРБ: acc_cause (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.03,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.cbc_iron_crp.logloss12": {
+   "value": 0.9703,
+   "label_ru": "Кейс, режим бенчмарка, + железо, СРБ: log-loss, 12 классов (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0715,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.cbc_iron_crp.ece": {
+   "value": 0.153,
+   "label_ru": "Кейс, режим бенчмарка, + железо, СРБ: ECE по фолду (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0267,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.cbc_iron_crp.auroc_hidden": {
+   "value": 0.954,
+   "label_ru": "Кейс, режим бенчмарка, + железо, СРБ: AUROC скрытого дефицита (строки без анемии) (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0222,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.cbc_iron_crp.acc5_anemic": {
+   "value": 0.6517,
+   "label_ru": "Кейс, режим бенчмарка, + железо, СРБ: точность, 5 групп, строки с анемией (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0396,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.cbc_iron_crp.ece_pooled": {
+   "value": 0.136,
+   "label_ru": "Кейс, режим бенчмарка, + железо, СРБ: ECE по объединённым предсказаниям (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0095,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.standard.acc12": {
+   "value": 0.7968,
+   "label_ru": "Кейс, режим бенчмарка, + B12, фолаты: точность, 12 классов (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.025,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.standard.acc12_sd": {
+   "value": 0.025,
+   "label_ru": "Кейс, режим бенчмарка, + B12, фолаты: разброс точности по 15 фолдам (SD)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.standard.f1_12": {
+   "value": 0.7206,
+   "label_ru": "Кейс, режим бенчмарка, + B12, фолаты: macro-F1, 12 классов (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0344,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.standard.acc5": {
+   "value": 0.8794,
+   "label_ru": "Кейс, режим бенчмарка, + B12, фолаты: точность, 5 групп (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0229,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.standard.f1_5": {
+   "value": 0.8481,
+   "label_ru": "Кейс, режим бенчмарка, + B12, фолаты: macro-F1, 5 групп (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.033,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.standard.f1_cause": {
+   "value": 0.6912,
+   "label_ru": "Кейс, режим бенчмарка, + B12, фолаты: macro-F1, причина (как в продукте) (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.044,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.standard.f1_cause_proto": {
+   "value": 0.6901,
+   "label_ru": "Кейс, режим бенчмарка, + B12, фолаты: macro-F1, причина (как в прототипе) (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0443,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.standard.acc_cause": {
+   "value": 0.7944,
+   "label_ru": "Кейс, режим бенчмарка, + B12, фолаты: acc_cause (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0271,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.standard.logloss12": {
+   "value": 0.6039,
+   "label_ru": "Кейс, режим бенчмарка, + B12, фолаты: log-loss, 12 классов (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0728,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.standard.ece": {
+   "value": 0.066,
+   "label_ru": "Кейс, режим бенчмарка, + B12, фолаты: ECE по фолду (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0176,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.standard.auroc_hidden": {
+   "value": 0.9697,
+   "label_ru": "Кейс, режим бенчмарка, + B12, фолаты: AUROC скрытого дефицита (строки без анемии) (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0152,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.standard.acc5_anemic": {
+   "value": 0.8093,
+   "label_ru": "Кейс, режим бенчмарка, + B12, фолаты: точность, 5 групп, строки с анемией (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.035,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.standard.ece_pooled": {
+   "value": 0.0442,
+   "label_ru": "Кейс, режим бенчмарка, + B12, фолаты: ECE по объединённым предсказаниям (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0098,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.extended.acc12": {
+   "value": 0.9187,
+   "label_ru": "Кейс, режим бенчмарка, Строка как есть: точность, 12 классов (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0203,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.extended.acc12_sd": {
+   "value": 0.0203,
+   "label_ru": "Кейс, режим бенчмарка, Строка как есть: разброс точности по 15 фолдам (SD)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.extended.f1_12": {
+   "value": 0.9101,
+   "label_ru": "Кейс, режим бенчмарка, Строка как есть: macro-F1, 12 классов (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0219,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.extended.acc5": {
+   "value": 0.952,
+   "label_ru": "Кейс, режим бенчмарка, Строка как есть: точность, 5 групп (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0168,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.extended.f1_5": {
+   "value": 0.9397,
+   "label_ru": "Кейс, режим бенчмарка, Строка как есть: macro-F1, 5 групп (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.022,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.extended.f1_cause": {
+   "value": 0.8943,
+   "label_ru": "Кейс, режим бенчмарка, Строка как есть: macro-F1, причина (как в продукте) (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0291,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.extended.f1_cause_proto": {
+   "value": 0.8932,
+   "label_ru": "Кейс, режим бенчмарка, Строка как есть: macro-F1, причина (как в прототипе) (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0281,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.extended.acc_cause": {
+   "value": 0.9171,
+   "label_ru": "Кейс, режим бенчмарка, Строка как есть: acc_cause (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0195,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.extended.logloss12": {
+   "value": 0.2633,
+   "label_ru": "Кейс, режим бенчмарка, Строка как есть: log-loss, 12 классов (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0506,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.extended.ece": {
+   "value": 0.0476,
+   "label_ru": "Кейс, режим бенчмарка, Строка как есть: ECE по фолду (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0115,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.extended.auroc_hidden": {
+   "value": 0.983,
+   "label_ru": "Кейс, режим бенчмарка, Строка как есть: AUROC скрытого дефицита (строки без анемии) (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0119,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.extended.acc5_anemic": {
+   "value": 0.9241,
+   "label_ru": "Кейс, режим бенчмарка, Строка как есть: точность, 5 групп, строки с анемией (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0266,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.benchmark.extended.ece_pooled": {
+   "value": 0.0228,
+   "label_ru": "Кейс, режим бенчмарка, Строка как есть: ECE по объединённым предсказаниям (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0069,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.cbc.acc12": {
+   "value": 0.4107,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, Только ОАК: точность, 12 классов (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0352,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.cbc.acc12_sd": {
+   "value": 0.0352,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, Только ОАК: разброс точности по 15 фолдам (SD)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.cbc.f1_12": {
+   "value": 0.2813,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, Только ОАК: macro-F1, 12 классов (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0261,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.cbc.acc5": {
+   "value": 0.6944,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, Только ОАК: точность, 5 групп (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0404,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.cbc.f1_5": {
+   "value": 0.5818,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, Только ОАК: macro-F1, 5 групп (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.046,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.cbc.f1_cause": {
+   "value": 0.2481,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, Только ОАК: macro-F1, причина (как в продукте) (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.026,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.cbc.f1_cause_proto": {
+   "value": 0.2289,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, Только ОАК: macro-F1, причина (как в прототипе) (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0189,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.cbc.acc_cause": {
+   "value": 0.3988,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, Только ОАК: acc_cause (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0284,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.cbc.logloss12": {
+   "value": 1.9735,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, Только ОАК: log-loss, 12 классов (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.109,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.cbc.ece": {
+   "value": 0.2351,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, Только ОАК: ECE по фолду (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0412,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.cbc.auroc_hidden": {
+   "value": 0.8765,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, Только ОАК: AUROC скрытого дефицита (строки без анемии) (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.035,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.cbc.acc5_anemic": {
+   "value": 0.5169,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, Только ОАК: точность, 5 групп, строки с анемией (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0605,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.cbc.ece_pooled": {
+   "value": 0.2086,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, Только ОАК: ECE по объединённым предсказаниям (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0155,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.cbc_iron_crp.acc12": {
+   "value": 0.571,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, + железо, СРБ: точность, 12 классов (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0306,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.cbc_iron_crp.acc12_sd": {
+   "value": 0.0306,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, + железо, СРБ: разброс точности по 15 фолдам (SD)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.cbc_iron_crp.f1_12": {
+   "value": 0.4317,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, + железо, СРБ: macro-F1, 12 классов (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.034,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.cbc_iron_crp.acc5": {
+   "value": 0.7448,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, + железо, СРБ: точность, 5 групп (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0135,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.cbc_iron_crp.f1_5": {
+   "value": 0.6301,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, + железо, СРБ: macro-F1, 5 групп (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0444,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.cbc_iron_crp.f1_cause": {
+   "value": 0.3599,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, + железо, СРБ: macro-F1, причина (как в продукте) (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0273,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.cbc_iron_crp.f1_cause_proto": {
+   "value": 0.3528,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, + железо, СРБ: macro-F1, причина (как в прототипе) (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0275,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.cbc_iron_crp.acc_cause": {
+   "value": 0.5722,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, + железо, СРБ: acc_cause (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0282,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.cbc_iron_crp.logloss12": {
+   "value": 1.4284,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, + железо, СРБ: log-loss, 12 классов (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.1225,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.cbc_iron_crp.ece": {
+   "value": 0.2275,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, + железо, СРБ: ECE по фолду (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0377,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.cbc_iron_crp.auroc_hidden": {
+   "value": 0.944,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, + железо, СРБ: AUROC скрытого дефицита (строки без анемии) (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0238,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.cbc_iron_crp.acc5_anemic": {
+   "value": 0.5962,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, + железо, СРБ: точность, 5 групп, строки с анемией (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0222,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.cbc_iron_crp.ece_pooled": {
+   "value": 0.2222,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, + железо, СРБ: ECE по объединённым предсказаниям (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0094,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.standard.acc12": {
+   "value": 0.7516,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, + B12, фолаты: точность, 12 классов (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0254,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.standard.acc12_sd": {
+   "value": 0.0254,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, + B12, фолаты: разброс точности по 15 фолдам (SD)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.standard.f1_12": {
+   "value": 0.6613,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, + B12, фолаты: macro-F1, 12 классов (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0274,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.standard.acc5": {
+   "value": 0.8639,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, + B12, фолаты: точность, 5 групп (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0239,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.standard.f1_5": {
+   "value": 0.8267,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, + B12, фолаты: macro-F1, 5 групп (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0347,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.standard.f1_cause": {
+   "value": 0.6377,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, + B12, фолаты: macro-F1, причина (как в продукте) (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0258,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.standard.f1_cause_proto": {
+   "value": 0.6362,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, + B12, фолаты: macro-F1, причина (как в прототипе) (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0287,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.standard.acc_cause": {
+   "value": 0.7595,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, + B12, фолаты: acc_cause (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.023,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.standard.logloss12": {
+   "value": 0.8777,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, + B12, фолаты: log-loss, 12 классов (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.1227,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.standard.ece": {
+   "value": 0.1029,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, + B12, фолаты: ECE по фолду (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0227,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.standard.auroc_hidden": {
+   "value": 0.9617,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, + B12, фолаты: AUROC скрытого дефицита (строки без анемии) (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0199,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.standard.acc5_anemic": {
+   "value": 0.785,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, + B12, фолаты: точность, 5 групп, строки с анемией (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0356,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.standard.ece_pooled": {
+   "value": 0.0868,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, + B12, фолаты: ECE по объединённым предсказаниям (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0068,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.extended.acc12": {
+   "value": 0.881,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, Строка как есть: точность, 12 классов (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0267,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.extended.acc12_sd": {
+   "value": 0.0267,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, Строка как есть: разброс точности по 15 фолдам (SD)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.extended.f1_12": {
+   "value": 0.8777,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, Строка как есть: macro-F1, 12 классов (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0294,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.extended.acc5": {
+   "value": 0.9361,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, Строка как есть: точность, 5 групп (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0152,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.extended.f1_5": {
+   "value": 0.917,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, Строка как есть: macro-F1, 5 групп (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0203,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.extended.f1_cause": {
+   "value": 0.8626,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, Строка как есть: macro-F1, причина (как в продукте) (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0283,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.extended.f1_cause_proto": {
+   "value": 0.8638,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, Строка как есть: macro-F1, причина (как в прототипе) (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0278,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.extended.acc_cause": {
+   "value": 0.8881,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, Строка как есть: acc_cause (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0259,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.extended.logloss12": {
+   "value": 0.4012,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, Строка как есть: log-loss, 12 классов (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.087,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.extended.ece": {
+   "value": 0.051,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, Строка как есть: ECE по фолду (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0234,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.extended.auroc_hidden": {
+   "value": 0.9785,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, Строка как есть: AUROC скрытого дефицита (строки без анемии) (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0137,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.extended.acc5_anemic": {
+   "value": 0.899,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, Строка как есть: точность, 5 групп, строки с анемией (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0236,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.naive.extended.ece_pooled": {
+   "value": 0.0335,
+   "label_ru": "Кейс, типовой бустинг на всех столбцах, Строка как есть: ECE по объединённым предсказаниям (среднее по 15 фолдам)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), by_mode_level",
+   "sd": 0.0092,
+   "n": 840,
+   "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003"
+  },
+  "case.confusion5.clinical.first_repeat_acc5_anemic": {
+   "value": 0.8663,
+   "label_ru": "Кейс, клинический режим, строка как есть: точность по 5 группам у строк с анемией, первый повтор CV (матрица на слайде)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), confusion.clinical",
+   "n": 531
+  },
+  "case.confusion5.benchmark.first_repeat_acc5_anemic": {
+   "value": 0.9209,
+   "label_ru": "Кейс, режим бенчмарка, строка как есть: точность по 5 группам у строк с анемией, первый повтор CV (матрица на слайде)",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003), confusion.benchmark",
+   "n": 531
+  },
+  "case.gates.all_passed": {
+   "value": true,
+   "label_ru": "Ворота качества по кейсу пройдены",
+   "source": "docs/metrics/case_metrics.json (модель case-v1, обучена 2026-10-03; CV 5×3, seed 20261003)"
+  },
+  "screen.cohort.rows_total": {
+   "value": 88320,
+   "label_ru": "NHANES: строк в файле NHANES",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), cohort.counts"
+  },
+  "screen.cohort.adults_18plus": {
+   "value": 58731,
+   "label_ru": "NHANES: взрослых 18+",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), cohort.counts"
+  },
+  "screen.cohort.with_ferritin": {
+   "value": 22752,
+   "label_ru": "NHANES: небеременных взрослых с полным ОАК и ферритином",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), cohort.counts"
+  },
+  "screen.cohort.train": {
+   "value": 16291,
+   "label_ru": "NHANES: из них в обучении (1999–2016)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), cohort.counts"
+  },
+  "screen.cohort.test": {
+   "value": 6461,
+   "label_ru": "NHANES: из них в тесте (2017–2023)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), cohort.counts"
+  },
+  "screen.cohort.test_normal_hb": {
+   "value": 5728,
+   "label_ru": "NHANES: тест, без анемии по ВОЗ — на них проверен скрининг (правка 12: 5 728, не 6 461)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), cohort.counts"
+  },
+  "screen.cohort.train_normal_hb": {
+   "value": 14811,
+   "label_ru": "NHANES: обучение, без анемии по ВОЗ",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), cohort.counts"
+  },
+  "screen.cohort.test_normal_hb_F18_49": {
+   "value": 2180,
+   "label_ru": "NHANES тест, без анемии, F18-49",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), cohort"
+  },
+  "screen.cohort.test_normal_hb_F50": {
+   "value": 1242,
+   "label_ru": "NHANES тест, без анемии, F50+",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), cohort"
+  },
+  "screen.cohort.test_normal_hb_M": {
+   "value": 2306,
+   "label_ru": "NHANES тест, без анемии, M",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), cohort"
+  },
+  "screen.rdw_median.1999-2000": {
+   "value": 12.5,
+   "label_ru": "NHANES: медиана RDW, цикл 1999-2000, %",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), calibration_shift"
+  },
+  "screen.rdw_median.2001-2002": {
+   "value": 12.5,
+   "label_ru": "NHANES: медиана RDW, цикл 2001-2002, %",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), calibration_shift"
+  },
+  "screen.rdw_median.2003-2004": {
+   "value": 12.5,
+   "label_ru": "NHANES: медиана RDW, цикл 2003-2004, %",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), calibration_shift"
+  },
+  "screen.rdw_median.2005-2006": {
+   "value": 12.5,
+   "label_ru": "NHANES: медиана RDW, цикл 2005-2006, %",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), calibration_shift"
+  },
+  "screen.rdw_median.2007-2008": {
+   "value": 12.6,
+   "label_ru": "NHANES: медиана RDW, цикл 2007-2008, %",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), calibration_shift"
+  },
+  "screen.rdw_median.2009-2010": {
+   "value": 12.6,
+   "label_ru": "NHANES: медиана RDW, цикл 2009-2010, %",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), calibration_shift"
+  },
+  "screen.rdw_median.2011-2012": {
+   "value": 12.7,
+   "label_ru": "NHANES: медиана RDW, цикл 2011-2012, %",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), calibration_shift"
+  },
+  "screen.rdw_median.2013-2014": {
+   "value": 13.5,
+   "label_ru": "NHANES: медиана RDW, цикл 2013-2014, %",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), calibration_shift"
+  },
+  "screen.rdw_median.2015-2016": {
+   "value": 13.5,
+   "label_ru": "NHANES: медиана RDW, цикл 2015-2016, %",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), calibration_shift"
+  },
+  "screen.rdw_median.2017-2018": {
+   "value": 13.6,
+   "label_ru": "NHANES: медиана RDW, цикл 2017-2018, %",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), calibration_shift"
+  },
+  "screen.rdw_median.2021-2023": {
+   "value": 13.6,
+   "label_ru": "NHANES: медиана RDW, цикл 2021-2023, %",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), calibration_shift"
+  },
+  "screen.prevalence.F18_49.t15": {
+   "value": 0.072,
+   "label_ru": "NHANES тест, без анемии, F18-49: доля ферритина <15 (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), cohort",
+   "n": 2180
+  },
+  "screen.prevalence.F18_49.t30": {
+   "value": 0.276,
+   "label_ru": "NHANES тест, без анемии, F18-49: доля ферритина <30 (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), cohort",
+   "n": 2180
+  },
+  "screen.prevalence.F50.t15": {
+   "value": 0.015,
+   "label_ru": "NHANES тест, без анемии, F50+: доля ферритина <15 (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), cohort",
+   "n": 1242
+  },
+  "screen.prevalence.F50.t30": {
+   "value": 0.078,
+   "label_ru": "NHANES тест, без анемии, F50+: доля ферритина <30 (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), cohort",
+   "n": 1242
+  },
+  "screen.prevalence.M.t15": {
+   "value": 0.006,
+   "label_ru": "NHANES тест, без анемии, M: доля ферритина <15 (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), cohort",
+   "n": 2306
+  },
+  "screen.prevalence.M.t30": {
+   "value": 0.032,
+   "label_ru": "NHANES тест, без анемии, M: доля ферритина <30 (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), cohort",
+   "n": 2306
+  },
+  "screen.no_anemia_share.F18_49.t15": {
+   "value": 0.456,
+   "label_ru": "NHANES тест, F18-49: доля без анемии среди всех с ферритином <15 (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), cohort",
+   "n": 388
+  },
+  "screen.no_anemia_share.F18_49.t30": {
+   "value": 0.712,
+   "label_ru": "NHANES тест, F18-49: доля без анемии среди всех с ферритином <30 (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), cohort",
+   "n": 916
+  },
+  "screen.no_anemia_share.F50.t15": {
+   "value": 0.514,
+   "label_ru": "NHANES тест, F50+: доля без анемии среди всех с ферритином <15 (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), cohort",
+   "n": 33
+  },
+  "screen.no_anemia_share.F50.t30": {
+   "value": 0.748,
+   "label_ru": "NHANES тест, F50+: доля без анемии среди всех с ферритином <30 (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), cohort",
+   "n": 126
+  },
+  "screen.no_anemia_share.M.t15": {
+   "value": 0.486,
+   "label_ru": "NHANES тест, M: доля без анемии среди всех с ферритином <15 (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), cohort",
+   "n": 35
+  },
+  "screen.no_anemia_share.M.t30": {
+   "value": 0.746,
+   "label_ru": "NHANES тест, M: доля без анемии среди всех с ферритином <30 (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), cohort",
+   "n": 102
+  },
+  "screen.auc.ALL.t15": {
+   "value": 0.887,
+   "label_ru": "AUC ферритина <15, ALL, модель по ОАК со стандартизацией",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), summary.by_group",
+   "n": 5728,
+   "cases": 198,
+   "ci95": [
+    0.864,
+    0.909
+   ]
+  },
+  "screen.auc.ALL.t15.ci_low": {
+   "value": 0.864,
+   "label_ru": "нижняя граница 95 % ДИ AUC, ALL, <15",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023)"
+  },
+  "screen.auc.ALL.t15.ci_high": {
+   "value": 0.909,
+   "label_ru": "верхняя граница 95 % ДИ AUC, ALL, <15",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023)"
+  },
+  "screen.calibration_gap.ALL.t15": {
+   "value": 0.006,
+   "label_ru": "средняя предсказанная минус наблюдаемая доля, ALL, <15 (без весов)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023)",
+   "n": 5728
+  },
+  "screen.auc.ALL.t30": {
+   "value": 0.844,
+   "label_ru": "AUC ферритина <30, ALL, модель по ОАК со стандартизацией",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), summary.by_group",
+   "n": 5728,
+   "cases": 786,
+   "ci95": [
+    0.831,
+    0.858
+   ]
+  },
+  "screen.auc.ALL.t30.ci_low": {
+   "value": 0.831,
+   "label_ru": "нижняя граница 95 % ДИ AUC, ALL, <30",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023)"
+  },
+  "screen.auc.ALL.t30.ci_high": {
+   "value": 0.858,
+   "label_ru": "верхняя граница 95 % ДИ AUC, ALL, <30",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023)"
+  },
+  "screen.calibration_gap.ALL.t30": {
+   "value": -0.001,
+   "label_ru": "средняя предсказанная минус наблюдаемая доля, ALL, <30 (без весов)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023)",
+   "n": 5728
+  },
+  "screen.auc.F18_49.t15": {
+   "value": 0.822,
+   "label_ru": "AUC ферритина <15, F18-49, модель по ОАК со стандартизацией — главная метрика скрининга",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), summary.by_group",
+   "n": 2180,
+   "cases": 168,
+   "ci95": [
+    0.797,
+    0.855
+   ]
+  },
+  "screen.auc.F18_49.t15.ci_low": {
+   "value": 0.797,
+   "label_ru": "нижняя граница 95 % ДИ AUC, F18-49, <15",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023)"
+  },
+  "screen.auc.F18_49.t15.ci_high": {
+   "value": 0.855,
+   "label_ru": "верхняя граница 95 % ДИ AUC, F18-49, <15",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023)"
+  },
+  "screen.calibration_gap.F18_49.t15": {
+   "value": 0.021,
+   "label_ru": "средняя предсказанная минус наблюдаемая доля, F18-49, <15 (без весов)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023)",
+   "n": 2180
+  },
+  "screen.auc.F18_49.t30": {
+   "value": 0.727,
+   "label_ru": "AUC ферритина <30, F18-49, модель по ОАК со стандартизацией — главная метрика скрининга",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), summary.by_group",
+   "n": 2180,
+   "cases": 629,
+   "ci95": [
+    0.707,
+    0.749
+   ]
+  },
+  "screen.auc.F18_49.t30.ci_low": {
+   "value": 0.707,
+   "label_ru": "нижняя граница 95 % ДИ AUC, F18-49, <30",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023)"
+  },
+  "screen.auc.F18_49.t30.ci_high": {
+   "value": 0.749,
+   "label_ru": "верхняя граница 95 % ДИ AUC, F18-49, <30",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023)"
+  },
+  "screen.calibration_gap.F18_49.t30": {
+   "value": 0.015,
+   "label_ru": "средняя предсказанная минус наблюдаемая доля, F18-49, <30 (без весов)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023)",
+   "n": 2180
+  },
+  "screen.auc.F50.t15": {
+   "value": 0.802,
+   "label_ru": "AUC ферритина <15, F50+, модель по ОАК со стандартизацией",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), summary.by_group",
+   "n": 1242,
+   "cases": 17,
+   "ci95": [
+    0.696,
+    0.894
+   ]
+  },
+  "screen.auc.F50.t15.ci_low": {
+   "value": 0.696,
+   "label_ru": "нижняя граница 95 % ДИ AUC, F50+, <15",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023)"
+  },
+  "screen.auc.F50.t15.ci_high": {
+   "value": 0.894,
+   "label_ru": "верхняя граница 95 % ДИ AUC, F50+, <15",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023)"
+  },
+  "screen.calibration_gap.F50.t15": {
+   "value": -0.003,
+   "label_ru": "средняя предсказанная минус наблюдаемая доля, F50+, <15 (без весов)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023)",
+   "n": 1242
+  },
+  "screen.auc.F50.t30": {
+   "value": 0.707,
+   "label_ru": "AUC ферритина <30, F50+, модель по ОАК со стандартизацией",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), summary.by_group",
+   "n": 1242,
+   "cases": 90,
+   "ci95": [
+    0.65,
+    0.765
+   ]
+  },
+  "screen.auc.F50.t30.ci_low": {
+   "value": 0.65,
+   "label_ru": "нижняя граница 95 % ДИ AUC, F50+, <30",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023)"
+  },
+  "screen.auc.F50.t30.ci_high": {
+   "value": 0.765,
+   "label_ru": "верхняя граница 95 % ДИ AUC, F50+, <30",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023)"
+  },
+  "screen.calibration_gap.F50.t30": {
+   "value": -0.008,
+   "label_ru": "средняя предсказанная минус наблюдаемая доля, F50+, <30 (без весов)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023)",
+   "n": 1242
+  },
+  "screen.auc.M.t30": {
+   "value": 0.785,
+   "label_ru": "AUC ферритина <30, M, модель по ОАК со стандартизацией",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), summary.by_group",
+   "n": 2306,
+   "cases": 67,
+   "ci95": [
+    0.726,
+    0.847
+   ]
+  },
+  "screen.auc.M.t30.ci_low": {
+   "value": 0.726,
+   "label_ru": "нижняя граница 95 % ДИ AUC, M, <30",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023)"
+  },
+  "screen.auc.M.t30.ci_high": {
+   "value": 0.847,
+   "label_ru": "верхняя граница 95 % ДИ AUC, M, <30",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023)"
+  },
+  "screen.calibration_gap.M.t30": {
+   "value": -0.012,
+   "label_ru": "средняя предсказанная минус наблюдаемая доля, M, <30 (без весов)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023)",
+   "n": 2306
+  },
+  "screen.auc_hb_only.F18_49.t15": {
+   "value": 0.754,
+   "label_ru": "AUC ферритина <15, Ж 18–49, только Hb + возраст + пол",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), summary.hb_only_F18-49",
+   "n": 2180,
+   "cases": 168,
+   "ci95": [
+    0.717,
+    0.786
+   ]
+  },
+  "screen.auc_hb_only.F18_49.t30": {
+   "value": 0.661,
+   "label_ru": "AUC ферритина <30, Ж 18–49, только Hb + возраст + пол",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), summary.hb_only_F18-49",
+   "n": 2180,
+   "cases": 629,
+   "ci95": [
+    0.638,
+    0.686
+   ]
+  },
+  "screen.auc_raw.F18_49.t15": {
+   "value": 0.824,
+   "label_ru": "AUC ферритина <15, Ж 18–49, ОАК без стандартизации",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), summary.raw_features_F18-49",
+   "n": 2180,
+   "cases": 168,
+   "ci95": [
+    0.794,
+    0.855
+   ]
+  },
+  "screen.auc_raw.F18_49.t30": {
+   "value": 0.717,
+   "label_ru": "AUC ферритина <30, Ж 18–49, ОАК без стандартизации",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), summary.raw_features_F18-49",
+   "n": 2180,
+   "cases": 629,
+   "ci95": [
+    0.694,
+    0.74
+   ]
+  },
+  "screen.referral.t15.10.sensitivity": {
+   "value": 0.495,
+   "label_ru": "Ж 18–49, <15: направили 10 % → нашли, доля случаев (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral.tables",
+   "n": 2180,
+   "cases": 168
+  },
+  "screen.referral.t15.10.ppv": {
+   "value": 0.354,
+   "label_ru": "Ж 18–49, <15: направили 10 % → подтверждается, доля направленных (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral.tables",
+   "n": 2180,
+   "cases": 168
+  },
+  "screen.referral.t15.10.found_per1000": {
+   "value": 35,
+   "label_ru": "Ж 18–49, <15: направили 10 % → найдено на 1000 (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral.tables",
+   "n": 2180,
+   "cases": 168
+  },
+  "screen.referral.t15.10.rub_per_case_found": {
+   "value": 2388,
+   "label_ru": "Ж 18–49, <15: направили 10 % → ₽ на найденный случай (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral.tables",
+   "n": 2180,
+   "cases": 168
+  },
+  "screen.referral.t15.20.sensitivity": {
+   "value": 0.672,
+   "label_ru": "Ж 18–49, <15: направили 20 % → нашли, доля случаев (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral.tables",
+   "n": 2180,
+   "cases": 168
+  },
+  "screen.referral.t15.20.ppv": {
+   "value": 0.241,
+   "label_ru": "Ж 18–49, <15: направили 20 % → подтверждается, доля направленных (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral.tables",
+   "n": 2180,
+   "cases": 168
+  },
+  "screen.referral.t15.20.found_per1000": {
+   "value": 48,
+   "label_ru": "Ж 18–49, <15: направили 20 % → найдено на 1000 (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral.tables",
+   "n": 2180,
+   "cases": 168
+  },
+  "screen.referral.t15.20.rub_per_case_found": {
+   "value": 3508,
+   "label_ru": "Ж 18–49, <15: направили 20 % → ₽ на найденный случай (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral.tables",
+   "n": 2180,
+   "cases": 168
+  },
+  "screen.referral.t15.30.sensitivity": {
+   "value": 0.774,
+   "label_ru": "Ж 18–49, <15: направили 30 % → нашли, доля случаев (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral.tables",
+   "n": 2180,
+   "cases": 168
+  },
+  "screen.referral.t15.30.ppv": {
+   "value": 0.185,
+   "label_ru": "Ж 18–49, <15: направили 30 % → подтверждается, доля направленных (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral.tables",
+   "n": 2180,
+   "cases": 168
+  },
+  "screen.referral.t15.30.found_per1000": {
+   "value": 56,
+   "label_ru": "Ж 18–49, <15: направили 30 % → найдено на 1000 (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral.tables",
+   "n": 2180,
+   "cases": 168
+  },
+  "screen.referral.t15.30.rub_per_case_found": {
+   "value": 4568,
+   "label_ru": "Ж 18–49, <15: направили 30 % → ₽ на найденный случай (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral.tables",
+   "n": 2180,
+   "cases": 168
+  },
+  "screen.referral.t15.40.sensitivity": {
+   "value": 0.885,
+   "label_ru": "Ж 18–49, <15: направили 40 % → нашли, доля случаев (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral.tables",
+   "n": 2180,
+   "cases": 168
+  },
+  "screen.referral.t15.40.ppv": {
+   "value": 0.159,
+   "label_ru": "Ж 18–49, <15: направили 40 % → подтверждается, доля направленных (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral.tables",
+   "n": 2180,
+   "cases": 168
+  },
+  "screen.referral.t15.40.found_per1000": {
+   "value": 63,
+   "label_ru": "Ж 18–49, <15: направили 40 % → найдено на 1000 (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral.tables",
+   "n": 2180,
+   "cases": 168
+  },
+  "screen.referral.t15.40.rub_per_case_found": {
+   "value": 5326,
+   "label_ru": "Ж 18–49, <15: направили 40 % → ₽ на найденный случай (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral.tables",
+   "n": 2180,
+   "cases": 168
+  },
+  "screen.referral.t15.50.sensitivity": {
+   "value": 0.938,
+   "label_ru": "Ж 18–49, <15: направили 50 % → нашли, доля случаев (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral.tables",
+   "n": 2180,
+   "cases": 168
+  },
+  "screen.referral.t15.50.ppv": {
+   "value": 0.135,
+   "label_ru": "Ж 18–49, <15: направили 50 % → подтверждается, доля направленных (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral.tables",
+   "n": 2180,
+   "cases": 168
+  },
+  "screen.referral.t15.50.found_per1000": {
+   "value": 67,
+   "label_ru": "Ж 18–49, <15: направили 50 % → найдено на 1000 (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral.tables",
+   "n": 2180,
+   "cases": 168
+  },
+  "screen.referral.t15.50.rub_per_case_found": {
+   "value": 6279,
+   "label_ru": "Ж 18–49, <15: направили 50 % → ₽ на найденный случай (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral.tables",
+   "n": 2180,
+   "cases": 168
+  },
+  "screen.rule.t15.referred_share": {
+   "value": 0.148,
+   "label_ru": "Ж 18–49: доля, которую направляет правило «MCV < 80 фл, или MCH < 27 пг, или RDW > 14,5 %»",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), rule_comparison"
+  },
+  "screen.rule.t15.rule_sensitivity": {
+   "value": 0.51,
+   "label_ru": "Ж 18–49, <15: модель при тех же направлениях против правила — rule_sensitivity (бутстрэп B=500)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), rule_comparison",
+   "n": 2180,
+   "cases": 168
+  },
+  "screen.rule.t15.rule_ppv": {
+   "value": 0.247,
+   "label_ru": "Ж 18–49, <15: модель при тех же направлениях против правила — rule_ppv (бутстрэп B=500)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), rule_comparison",
+   "n": 2180,
+   "cases": 168
+  },
+  "screen.rule.t15.model_sensitivity": {
+   "value": 0.579,
+   "label_ru": "Ж 18–49, <15: модель при тех же направлениях против правила — model_sensitivity (бутстрэп B=500)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), rule_comparison",
+   "n": 2180,
+   "cases": 168
+  },
+  "screen.rule.t15.model_ppv": {
+   "value": 0.281,
+   "label_ru": "Ж 18–49, <15: модель при тех же направлениях против правила — model_ppv (бутстрэп B=500)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), rule_comparison",
+   "n": 2180,
+   "cases": 168
+  },
+  "screen.rule.t15.diff_sensitivity_pp": {
+   "value": 6.9,
+   "label_ru": "Ж 18–49, <15: модель при тех же направлениях против правила — diff_sensitivity_pp (бутстрэп B=500)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), rule_comparison",
+   "n": 2180,
+   "cases": 168
+  },
+  "screen.rule.t15.diff_ci_low_pp": {
+   "value": 0.6,
+   "label_ru": "Ж 18–49, <15: модель при тех же направлениях против правила — diff_ci_low_pp (бутстрэп B=500)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), rule_comparison",
+   "n": 2180,
+   "cases": 168
+  },
+  "screen.rule.t15.diff_ci_high_pp": {
+   "value": 13.9,
+   "label_ru": "Ж 18–49, <15: модель при тех же направлениях против правила — diff_ci_high_pp (бутстрэп B=500)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), rule_comparison",
+   "n": 2180,
+   "cases": 168
+  },
+  "screen.referral.t30.10.sensitivity": {
+   "value": 0.255,
+   "label_ru": "Ж 18–49, <30: направили 10 % → нашли, доля случаев (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral.tables",
+   "n": 2180,
+   "cases": 629
+  },
+  "screen.referral.t30.10.ppv": {
+   "value": 0.704,
+   "label_ru": "Ж 18–49, <30: направили 10 % → подтверждается, доля направленных (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral.tables",
+   "n": 2180,
+   "cases": 629
+  },
+  "screen.referral.t30.10.found_per1000": {
+   "value": 71,
+   "label_ru": "Ж 18–49, <30: направили 10 % → найдено на 1000 (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral.tables",
+   "n": 2180,
+   "cases": 629
+  },
+  "screen.referral.t30.10.rub_per_case_found": {
+   "value": 1200,
+   "label_ru": "Ж 18–49, <30: направили 10 % → ₽ на найденный случай (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral.tables",
+   "n": 2180,
+   "cases": 629
+  },
+  "screen.referral.t30.20.sensitivity": {
+   "value": 0.417,
+   "label_ru": "Ж 18–49, <30: направили 20 % → нашли, доля случаев (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral.tables",
+   "n": 2180,
+   "cases": 629
+  },
+  "screen.referral.t30.20.ppv": {
+   "value": 0.576,
+   "label_ru": "Ж 18–49, <30: направили 20 % → подтверждается, доля направленных (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral.tables",
+   "n": 2180,
+   "cases": 629
+  },
+  "screen.referral.t30.20.found_per1000": {
+   "value": 115,
+   "label_ru": "Ж 18–49, <30: направили 20 % → найдено на 1000 (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral.tables",
+   "n": 2180,
+   "cases": 629
+  },
+  "screen.referral.t30.20.rub_per_case_found": {
+   "value": 1468,
+   "label_ru": "Ж 18–49, <30: направили 20 % → ₽ на найденный случай (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral.tables",
+   "n": 2180,
+   "cases": 629
+  },
+  "screen.referral.t30.30.sensitivity": {
+   "value": 0.561,
+   "label_ru": "Ж 18–49, <30: направили 30 % → нашли, доля случаев (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral.tables",
+   "n": 2180,
+   "cases": 629
+  },
+  "screen.referral.t30.30.ppv": {
+   "value": 0.516,
+   "label_ru": "Ж 18–49, <30: направили 30 % → подтверждается, доля направленных (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral.tables",
+   "n": 2180,
+   "cases": 629
+  },
+  "screen.referral.t30.30.found_per1000": {
+   "value": 155,
+   "label_ru": "Ж 18–49, <30: направили 30 % → найдено на 1000 (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral.tables",
+   "n": 2180,
+   "cases": 629
+  },
+  "screen.referral.t30.30.rub_per_case_found": {
+   "value": 1637,
+   "label_ru": "Ж 18–49, <30: направили 30 % → ₽ на найденный случай (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral.tables",
+   "n": 2180,
+   "cases": 629
+  },
+  "screen.referral.t30.40.sensitivity": {
+   "value": 0.663,
+   "label_ru": "Ж 18–49, <30: направили 40 % → нашли, доля случаев (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral.tables",
+   "n": 2180,
+   "cases": 629
+  },
+  "screen.referral.t30.40.ppv": {
+   "value": 0.458,
+   "label_ru": "Ж 18–49, <30: направили 40 % → подтверждается, доля направленных (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral.tables",
+   "n": 2180,
+   "cases": 629
+  },
+  "screen.referral.t30.40.found_per1000": {
+   "value": 183,
+   "label_ru": "Ж 18–49, <30: направили 40 % → найдено на 1000 (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral.tables",
+   "n": 2180,
+   "cases": 629
+  },
+  "screen.referral.t30.40.rub_per_case_found": {
+   "value": 1846,
+   "label_ru": "Ж 18–49, <30: направили 40 % → ₽ на найденный случай (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral.tables",
+   "n": 2180,
+   "cases": 629
+  },
+  "screen.referral.t30.50.sensitivity": {
+   "value": 0.765,
+   "label_ru": "Ж 18–49, <30: направили 50 % → нашли, доля случаев (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral.tables",
+   "n": 2180,
+   "cases": 629
+  },
+  "screen.referral.t30.50.ppv": {
+   "value": 0.422,
+   "label_ru": "Ж 18–49, <30: направили 50 % → подтверждается, доля направленных (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral.tables",
+   "n": 2180,
+   "cases": 629
+  },
+  "screen.referral.t30.50.found_per1000": {
+   "value": 211,
+   "label_ru": "Ж 18–49, <30: направили 50 % → найдено на 1000 (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral.tables",
+   "n": 2180,
+   "cases": 629
+  },
+  "screen.referral.t30.50.rub_per_case_found": {
+   "value": 2003,
+   "label_ru": "Ж 18–49, <30: направили 50 % → ₽ на найденный случай (веса NHANES)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral.tables",
+   "n": 2180,
+   "cases": 629
+  },
+  "screen.rule.t30.referred_share": {
+   "value": 0.148,
+   "label_ru": "Ж 18–49: доля, которую направляет правило «MCV < 80 фл, или MCH < 27 пг, или RDW > 14,5 %»",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), rule_comparison"
+  },
+  "screen.rule.t30.rule_sensitivity": {
+   "value": 0.279,
+   "label_ru": "Ж 18–49, <30: модель при тех же направлениях против правила — rule_sensitivity (бутстрэп B=500)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), rule_comparison",
+   "n": 2180,
+   "cases": 629
+  },
+  "screen.rule.t30.rule_ppv": {
+   "value": 0.522,
+   "label_ru": "Ж 18–49, <30: модель при тех же направлениях против правила — rule_ppv (бутстрэп B=500)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), rule_comparison",
+   "n": 2180,
+   "cases": 629
+  },
+  "screen.rule.t30.model_sensitivity": {
+   "value": 0.329,
+   "label_ru": "Ж 18–49, <30: модель при тех же направлениях против правила — model_sensitivity (бутстрэп B=500)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), rule_comparison",
+   "n": 2180,
+   "cases": 629
+  },
+  "screen.rule.t30.model_ppv": {
+   "value": 0.611,
+   "label_ru": "Ж 18–49, <30: модель при тех же направлениях против правила — model_ppv (бутстрэп B=500)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), rule_comparison",
+   "n": 2180,
+   "cases": 629
+  },
+  "screen.rule.t30.diff_sensitivity_pp": {
+   "value": 4.9,
+   "label_ru": "Ж 18–49, <30: модель при тех же направлениях против правила — diff_sensitivity_pp (бутстрэп B=500)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), rule_comparison",
+   "n": 2180,
+   "cases": 629
+  },
+  "screen.rule.t30.diff_ci_low_pp": {
+   "value": 2.2,
+   "label_ru": "Ж 18–49, <30: модель при тех же направлениях против правила — diff_ci_low_pp (бутстрэп B=500)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), rule_comparison",
+   "n": 2180,
+   "cases": 629
+  },
+  "screen.rule.t30.diff_ci_high_pp": {
+   "value": 7.6,
+   "label_ru": "Ж 18–49, <30: модель при тех же направлениях против правила — diff_ci_high_pp (бутстрэп B=500)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), rule_comparison",
+   "n": 2180,
+   "cases": 629
+  },
+  "screen.rule.F18_49.t15.model_better": {
+   "value": true,
+   "label_ru": "F18-49, <15: ДИ разницы чувствительности выше нуля",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), rule_comparison"
+  },
+  "screen.rule.F18_49.t30.model_better": {
+   "value": true,
+   "label_ru": "F18-49, <30: ДИ разницы чувствительности выше нуля",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), rule_comparison"
+  },
+  "screen.rule.F50.t15.model_better": {
+   "value": false,
+   "label_ru": "F50+, <15: ДИ разницы чувствительности выше нуля",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), rule_comparison"
+  },
+  "screen.rule.F50.t30.model_better": {
+   "value": false,
+   "label_ru": "F50+, <30: ДИ разницы чувствительности выше нуля",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), rule_comparison"
+  },
+  "screen.rule.M.t30.model_better": {
+   "value": false,
+   "label_ru": "M, <30: ДИ разницы чувствительности выше нуля",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), rule_comparison"
+  },
+  "screen.economics.price_ferritin_rub": {
+   "value": 845,
+   "label_ru": "Цена ферритина, ₽ (медиана Москвы)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), summary"
+  },
+  "screen.economics.cases_per1000_t15": {
+   "value": 72,
+   "label_ru": "Ж 18–49: случаев ферритина <15 на 1000",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral (на 1000 человек, веса NHANES)"
+  },
+  "screen.economics.everyone.rub_per_case": {
+   "value": 11775,
+   "label_ru": "₽ на найденный случай: ферритин всем",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral (на 1000 человек, веса NHANES)"
+  },
+  "screen.economics.model_20.found_per1000": {
+   "value": 48,
+   "label_ru": "Модель, 20 %: найдено из 72",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral (на 1000 человек, веса NHANES)"
+  },
+  "screen.economics.model_20.rub_per_case": {
+   "value": 3508,
+   "label_ru": "₽ на найденный случай: модель, 20 %",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral (на 1000 человек, веса NHANES)"
+  },
+  "screen.economics.model_30.found_per1000": {
+   "value": 56,
+   "label_ru": "Модель, 30 %: найдено из 72",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral (на 1000 человек, веса NHANES)"
+  },
+  "screen.economics.model_30.rub_per_case": {
+   "value": 4568,
+   "label_ru": "₽ на найденный случай: модель, 30 %",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral (на 1000 человек, веса NHANES)"
+  },
+  "screen.economics.rule.referred_per1000": {
+   "value": 148,
+   "label_ru": "правило по индексам: анализов на 1000",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral (на 1000 человек, веса NHANES)"
+  },
+  "screen.economics.rule.found_per1000": {
+   "value": 37,
+   "label_ru": "правило по индексам: найдено из 72",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral (на 1000 человек, веса NHANES); найдено = sensitivity × cases_per1000, округлено"
+  },
+  "screen.economics.rule.rub_per_case": {
+   "value": 3416,
+   "label_ru": "₽ на найденный случай: правило по индексам",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral (на 1000 человек, веса NHANES)"
+  },
+  "screen.economics.model_at_rule.referred_per1000": {
+   "value": 148,
+   "label_ru": "модель при тех же направлениях: анализов на 1000",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral (на 1000 человек, веса NHANES)"
+  },
+  "screen.economics.model_at_rule.found_per1000": {
+   "value": 42,
+   "label_ru": "модель при тех же направлениях: найдено из 72",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral (на 1000 человек, веса NHANES); найдено = sensitivity × cases_per1000, округлено"
+  },
+  "screen.economics.model_at_rule.rub_per_case": {
+   "value": 3012,
+   "label_ru": "₽ на найденный случай: модель при тех же направлениях",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), referral (на 1000 человек, веса NHANES)"
+  },
+  "screen.calibration.ALL.t15.raw_mean_predicted": {
+   "value": 0.078,
+   "label_ru": "ALL, <15: средняя предсказанная, ОАК без стандартизации (без весов)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), calibration_shift"
+  },
+  "screen.calibration.ALL.t15.z_mean_predicted": {
+   "value": 0.041,
+   "label_ru": "ALL, <15: средняя предсказанная после стандартизации (без весов)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), calibration_shift"
+  },
+  "screen.calibration.ALL.t15.observed": {
+   "value": 0.035,
+   "label_ru": "ALL, <15: наблюдаемая доля (без весов)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), calibration_shift"
+  },
+  "screen.calibration.F18_49.t15.raw_mean_predicted": {
+   "value": 0.18,
+   "label_ru": "F18-49, <15: средняя предсказанная, ОАК без стандартизации (без весов)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), calibration_shift"
+  },
+  "screen.calibration.F18_49.t15.z_mean_predicted": {
+   "value": 0.098,
+   "label_ru": "F18-49, <15: средняя предсказанная после стандартизации (без весов)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), calibration_shift"
+  },
+  "screen.calibration.F18_49.t15.observed": {
+   "value": 0.077,
+   "label_ru": "F18-49, <15: наблюдаемая доля (без весов)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), calibration_shift"
+  },
+  "screen.calibration.F50.t15.raw_mean_predicted": {
+   "value": 0.024,
+   "label_ru": "F50+, <15: средняя предсказанная, ОАК без стандартизации (без весов)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), calibration_shift"
+  },
+  "screen.calibration.F50.t15.z_mean_predicted": {
+   "value": 0.01,
+   "label_ru": "F50+, <15: средняя предсказанная после стандартизации (без весов)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), calibration_shift"
+  },
+  "screen.calibration.F50.t15.observed": {
+   "value": 0.014,
+   "label_ru": "F50+, <15: наблюдаемая доля (без весов)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), calibration_shift"
+  },
+  "screen.calibration.ALL.t30.raw_mean_predicted": {
+   "value": 0.21,
+   "label_ru": "ALL, <30: средняя предсказанная, ОАК без стандартизации (без весов)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), calibration_shift"
+  },
+  "screen.calibration.ALL.t30.z_mean_predicted": {
+   "value": 0.136,
+   "label_ru": "ALL, <30: средняя предсказанная после стандартизации (без весов)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), calibration_shift"
+  },
+  "screen.calibration.ALL.t30.observed": {
+   "value": 0.137,
+   "label_ru": "ALL, <30: наблюдаемая доля (без весов)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), calibration_shift"
+  },
+  "screen.calibration.F18_49.t30.raw_mean_predicted": {
+   "value": 0.422,
+   "label_ru": "F18-49, <30: средняя предсказанная, ОАК без стандартизации (без весов)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), calibration_shift"
+  },
+  "screen.calibration.F18_49.t30.z_mean_predicted": {
+   "value": 0.303,
+   "label_ru": "F18-49, <30: средняя предсказанная после стандартизации (без весов)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), calibration_shift"
+  },
+  "screen.calibration.F18_49.t30.observed": {
+   "value": 0.289,
+   "label_ru": "F18-49, <30: наблюдаемая доля (без весов)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), calibration_shift"
+  },
+  "screen.calibration.F50.t30.raw_mean_predicted": {
+   "value": 0.135,
+   "label_ru": "F50+, <30: средняя предсказанная, ОАК без стандартизации (без весов)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), calibration_shift"
+  },
+  "screen.calibration.F50.t30.z_mean_predicted": {
+   "value": 0.065,
+   "label_ru": "F50+, <30: средняя предсказанная после стандартизации (без весов)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), calibration_shift"
+  },
+  "screen.calibration.F50.t30.observed": {
+   "value": 0.072,
+   "label_ru": "F50+, <30: наблюдаемая доля (без весов)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), calibration_shift"
+  },
+  "screen.calibration.M.t30.raw_mean_predicted": {
+   "value": 0.051,
+   "label_ru": "M, <30: средняя предсказанная, ОАК без стандартизации (без весов)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), calibration_shift"
+  },
+  "screen.calibration.M.t30.z_mean_predicted": {
+   "value": 0.017,
+   "label_ru": "M, <30: средняя предсказанная после стандартизации (без весов)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), calibration_shift"
+  },
+  "screen.calibration.M.t30.observed": {
+   "value": 0.029,
+   "label_ru": "M, <30: наблюдаемая доля (без весов)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), calibration_shift"
+  },
+  "screen.case_transfer.auc_raw_t30": {
+   "value": 0.676,
+   "label_ru": "Модель NHANES на учебном наборе кейса: AUC латентного дефицита против здоровых (<30, сырые)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), case_transfer",
+   "n": 195,
+   "cases": 85
+  },
+  "screen.case_transfer.auc_z_t30": {
+   "value": 0.714,
+   "label_ru": "То же, стандартизация по справочнику default",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), case_transfer",
+   "n": 195,
+   "cases": 85
+  },
+  "screen.importance_top": {
+   "value": "RDW_z",
+   "label_ru": "Самый важный признак, Ж 18–49, <15 (падение AUC 0.1153)",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), importance"
+  },
+  "screen.importance_order": {
+   "value": [
+    "RDW_z",
+    "hemoglobin_z",
+    "hematocrit_z",
+    "WBC_z",
+    "MCH_z"
+   ],
+   "label_ru": "Пять самых важных признаков, Ж 18–49, <15",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023), importance"
+  },
+  "screen.gates.passed": {
+   "value": true,
+   "label_ru": "Ворота скрининга пройдены",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023)"
+  },
+  "screen.prototype_identical": {
+   "value": true,
+   "label_ru": "Метрики скрининга совпали с прототипом",
+   "source": "docs/metrics/screen_metrics.json (модель screen-v1 от 2026-10-03; обучение 1999–2016, тест 2017–2018 и 2021–2023)"
+  },
+  "screen.hidden.F.18-29.t15": {
+   "value": 0.0922,
+   "label_ru": "Тест, без анемии, F 18–29: доля ферритина <15 (веса NHANES)",
+   "source": "scripts/make_figures.py по DL_NHANES_DATA (агрегаты, когорта как в screen.load_cohort); SHA-256 файла совпадает с screen_metrics.json",
+   "n": 772,
+   "cases": 72
+  },
+  "screen.hidden.F.18-29.t30": {
+   "value": 0.3355,
+   "label_ru": "Тест, без анемии, F 18–29: доля ферритина <30 (веса NHANES)",
+   "source": "scripts/make_figures.py по DL_NHANES_DATA (агрегаты, когорта как в screen.load_cohort); SHA-256 файла совпадает с screen_metrics.json",
+   "n": 772,
+   "cases": 267
+  },
+  "screen.hidden.F.30-39.t15": {
+   "value": 0.0607,
+   "label_ru": "Тест, без анемии, F 30–39: доля ферритина <15 (веса NHANES)",
+   "source": "scripts/make_figures.py по DL_NHANES_DATA (агрегаты, когорта как в screen.load_cohort); SHA-256 файла совпадает с screen_metrics.json",
+   "n": 737,
+   "cases": 48
+  },
+  "screen.hidden.F.30-39.t30": {
+   "value": 0.2646,
+   "label_ru": "Тест, без анемии, F 30–39: доля ферритина <30 (веса NHANES)",
+   "source": "scripts/make_figures.py по DL_NHANES_DATA (агрегаты, когорта как в screen.load_cohort); SHA-256 файла совпадает с screen_metrics.json",
+   "n": 737,
+   "cases": 197
+  },
+  "screen.hidden.F.40-49.t15": {
+   "value": 0.0586,
+   "label_ru": "Тест, без анемии, F 40–49: доля ферритина <15 (веса NHANES)",
+   "source": "scripts/make_figures.py по DL_NHANES_DATA (агрегаты, когорта как в screen.load_cohort); SHA-256 файла совпадает с screen_metrics.json",
+   "n": 671,
+   "cases": 48
+  },
+  "screen.hidden.F.40-49.t30": {
+   "value": 0.216,
+   "label_ru": "Тест, без анемии, F 40–49: доля ферритина <30 (веса NHANES)",
+   "source": "scripts/make_figures.py по DL_NHANES_DATA (агрегаты, когорта как в screen.load_cohort); SHA-256 файла совпадает с screen_metrics.json",
+   "n": 671,
+   "cases": 165
+  },
+  "screen.hidden.F.50-64.t15": {
+   "value": 0.0209,
+   "label_ru": "Тест, без анемии, F 50–64: доля ферритина <15 (веса NHANES)",
+   "source": "scripts/make_figures.py по DL_NHANES_DATA (агрегаты, когорта как в screen.load_cohort); SHA-256 файла совпадает с screen_metrics.json",
+   "n": 674,
+   "cases": 10
+  },
+  "screen.hidden.F.50-64.t30": {
+   "value": 0.0784,
+   "label_ru": "Тест, без анемии, F 50–64: доля ферритина <30 (веса NHANES)",
+   "source": "scripts/make_figures.py по DL_NHANES_DATA (агрегаты, когорта как в screen.load_cohort); SHA-256 файла совпадает с screen_metrics.json",
+   "n": 674,
+   "cases": 48
+  },
+  "screen.hidden.F.65+.t15": {
+   "value": 0.0083,
+   "label_ru": "Тест, без анемии, F 65+: доля ферритина <15 (веса NHANES)",
+   "source": "scripts/make_figures.py по DL_NHANES_DATA (агрегаты, когорта как в screen.load_cohort); SHA-256 файла совпадает с screen_metrics.json",
+   "n": 568,
+   "cases": 7
+  },
+  "screen.hidden.F.65+.t30": {
+   "value": 0.0773,
+   "label_ru": "Тест, без анемии, F 65+: доля ферритина <30 (веса NHANES)",
+   "source": "scripts/make_figures.py по DL_NHANES_DATA (агрегаты, когорта как в screen.load_cohort); SHA-256 файла совпадает с screen_metrics.json",
+   "n": 568,
+   "cases": 42
+  },
+  "screen.hidden.M.18-29.t15": {
+   "value": 0.0023,
+   "label_ru": "Тест, без анемии, M 18–29: доля ферритина <15 (веса NHANES)",
+   "source": "scripts/make_figures.py по DL_NHANES_DATA (агрегаты, когорта как в screen.load_cohort); SHA-256 файла совпадает с screen_metrics.json",
+   "n": 460,
+   "cases": 4
+  },
+  "screen.hidden.M.18-29.t30": {
+   "value": 0.0176,
+   "label_ru": "Тест, без анемии, M 18–29: доля ферритина <30 (веса NHANES)",
+   "source": "scripts/make_figures.py по DL_NHANES_DATA (агрегаты, когорта как в screen.load_cohort); SHA-256 файла совпадает с screen_metrics.json",
+   "n": 460,
+   "cases": 10
+  },
+  "screen.hidden.M.30-39.t15": {
+   "value": 0.018,
+   "label_ru": "Тест, без анемии, M 30–39: доля ферритина <15 (веса NHANES)",
+   "source": "scripts/make_figures.py по DL_NHANES_DATA (агрегаты, когорта как в screen.load_cohort); SHA-256 файла совпадает с screen_metrics.json",
+   "n": 335,
+   "cases": 4
+  },
+  "screen.hidden.M.30-39.t30": {
+   "value": 0.0441,
+   "label_ru": "Тест, без анемии, M 30–39: доля ферритина <30 (веса NHANES)",
+   "source": "scripts/make_figures.py по DL_NHANES_DATA (агрегаты, когорта как в screen.load_cohort); SHA-256 файла совпадает с screen_metrics.json",
+   "n": 335,
+   "cases": 10
+  },
+  "screen.hidden.M.40-49.t15": {
+   "value": 0.0025,
+   "label_ru": "Тест, без анемии, M 40–49: доля ферритина <15 (веса NHANES)",
+   "source": "scripts/make_figures.py по DL_NHANES_DATA (агрегаты, когорта как в screen.load_cohort); SHA-256 файла совпадает с screen_metrics.json",
+   "n": 329,
+   "cases": 2
+  },
+  "screen.hidden.M.40-49.t30": {
+   "value": 0.0083,
+   "label_ru": "Тест, без анемии, M 40–49: доля ферритина <30 (веса NHANES)",
+   "source": "scripts/make_figures.py по DL_NHANES_DATA (агрегаты, когорта как в screen.load_cohort); SHA-256 файла совпадает с screen_metrics.json",
+   "n": 329,
+   "cases": 4
+  },
+  "screen.hidden.M.50-64.t15": {
+   "value": 0.006,
+   "label_ru": "Тест, без анемии, M 50–64: доля ферритина <15 (веса NHANES)",
+   "source": "scripts/make_figures.py по DL_NHANES_DATA (агрегаты, когорта как в screen.load_cohort); SHA-256 файла совпадает с screen_metrics.json",
+   "n": 648,
+   "cases": 3
+  },
+  "screen.hidden.M.50-64.t30": {
+   "value": 0.0374,
+   "label_ru": "Тест, без анемии, M 50–64: доля ферритина <30 (веса NHANES)",
+   "source": "scripts/make_figures.py по DL_NHANES_DATA (агрегаты, когорта как в screen.load_cohort); SHA-256 файла совпадает с screen_metrics.json",
+   "n": 648,
+   "cases": 14
+  },
+  "screen.hidden.M.65+.t15": {
+   "value": 0.0,
+   "label_ru": "Тест, без анемии, M 65+: доля ферритина <15 (веса NHANES)",
+   "source": "scripts/make_figures.py по DL_NHANES_DATA (агрегаты, когорта как в screen.load_cohort); SHA-256 файла совпадает с screen_metrics.json",
+   "n": 534,
+   "cases": 0
+  },
+  "screen.hidden.M.65+.t30": {
+   "value": 0.0553,
+   "label_ru": "Тест, без анемии, M 65+: доля ферритина <30 (веса NHANES)",
+   "source": "scripts/make_figures.py по DL_NHANES_DATA (агрегаты, когорта как в screen.load_cohort); SHA-256 файла совпадает с screen_metrics.json",
+   "n": 534,
+   "cases": 29
+  },
+  "screen.hidden.check_F18_49.t15": {
+   "value": 0.0718,
+   "label_ru": "Сверка: Ж 18–49, тест, без анемии, доля <15 по файлу (должна совпасть с screen.prevalence)",
+   "source": "scripts/make_figures.py по DL_NHANES_DATA (агрегаты, когорта как в screen.load_cohort); SHA-256 файла совпадает с screen_metrics.json",
+   "n": 2180
+  },
+  "screen.hidden.check_F18_49.t30": {
+   "value": 0.2763,
+   "label_ru": "Сверка: Ж 18–49, тест, без анемии, доля <30 по файлу (должна совпасть с screen.prevalence)",
+   "source": "scripts/make_figures.py по DL_NHANES_DATA (агрегаты, когорта как в screen.load_cohort); SHA-256 файла совпадает с screen_metrics.json",
+   "n": 2180
+  },
+  "screen.stfr.crp_gt5.lt15": {
+   "value": 0.7735,
+   "label_ru": "Доля с повышенным sTfR, СРБ >5, ферритин <15 мкг/л (веса NHANES)",
+   "source": "scripts/make_figures.py по DL_NHANES_DATA (агрегаты, когорта как в screen.load_cohort); SHA-256 файла совпадает с screen_metrics.json",
+   "n": 277
+  },
+  "screen.stfr.crp_gt5.15-30": {
+   "value": 0.3658,
+   "label_ru": "Доля с повышенным sTfR, СРБ >5, ферритин 15–30 мкг/л (веса NHANES)",
+   "source": "scripts/make_figures.py по DL_NHANES_DATA (агрегаты, когорта как в screen.load_cohort); SHA-256 файла совпадает с screen_metrics.json",
+   "n": 446
+  },
+  "screen.stfr.crp_gt5.30-70": {
+   "value": 0.1992,
+   "label_ru": "Доля с повышенным sTfR, СРБ >5, ферритин 30–70 мкг/л (веса NHANES)",
+   "source": "scripts/make_figures.py по DL_NHANES_DATA (агрегаты, когорта как в screen.load_cohort); SHA-256 файла совпадает с screen_metrics.json",
+   "n": 963
+  },
+  "screen.stfr.crp_gt5.70-100": {
+   "value": 0.1098,
+   "label_ru": "Доля с повышенным sTfR, СРБ >5, ферритин 70–100 мкг/л (веса NHANES)",
+   "source": "scripts/make_figures.py по DL_NHANES_DATA (агрегаты, когорта как в screen.load_cohort); SHA-256 файла совпадает с screen_metrics.json",
+   "n": 458
+  },
+  "screen.stfr.crp_gt5.100+": {
+   "value": 0.1028,
+   "label_ru": "Доля с повышенным sTfR, СРБ >5, ферритин ≥100 мкг/л (веса NHANES)",
+   "source": "scripts/make_figures.py по DL_NHANES_DATA (агрегаты, когорта как в screen.load_cohort); SHA-256 файла совпадает с screen_metrics.json",
+   "n": 1112
+  },
+  "screen.stfr.crp_le5.lt15": {
+   "value": 0.6706,
+   "label_ru": "Доля с повышенным sTfR, СРБ ≤5, ферритин <15 мкг/л (веса NHANES)",
+   "source": "scripts/make_figures.py по DL_NHANES_DATA (агрегаты, когорта как в screen.load_cohort); SHA-256 файла совпадает с screen_metrics.json",
+   "n": 1233
+  },
+  "screen.stfr.crp_le5.15-30": {
+   "value": 0.1728,
+   "label_ru": "Доля с повышенным sTfR, СРБ ≤5, ферритин 15–30 мкг/л (веса NHANES)",
+   "source": "scripts/make_figures.py по DL_NHANES_DATA (агрегаты, когорта как в screen.load_cohort); SHA-256 файла совпадает с screen_metrics.json",
+   "n": 1501
+  },
+  "screen.stfr.crp_le5.30-70": {
+   "value": 0.0605,
+   "label_ru": "Доля с повышенным sTfR, СРБ ≤5, ферритин 30–70 мкг/л (веса NHANES)",
+   "source": "scripts/make_figures.py по DL_NHANES_DATA (агрегаты, когорта как в screen.load_cohort); SHA-256 файла совпадает с screen_metrics.json",
+   "n": 3088
+  },
+  "screen.stfr.crp_le5.70-100": {
+   "value": 0.0421,
+   "label_ru": "Доля с повышенным sTfR, СРБ ≤5, ферритин 70–100 мкг/л (веса NHANES)",
+   "source": "scripts/make_figures.py по DL_NHANES_DATA (агрегаты, когорта как в screen.load_cohort); SHA-256 файла совпадает с screen_metrics.json",
+   "n": 1268
+  },
+  "screen.stfr.crp_le5.100+": {
+   "value": 0.0438,
+   "label_ru": "Доля с повышенным sTfR, СРБ ≤5, ферритин ≥100 мкг/л (веса NHANES)",
+   "source": "scripts/make_figures.py по DL_NHANES_DATA (агрегаты, когорта как в screen.load_cohort); SHA-256 файла совпадает с screen_metrics.json",
+   "n": 2893
+  },
+  "screen.stfr.share_female": {
+   "value": 0.8138,
+   "label_ru": "Доля женщин в выборке sTfR (без весов)",
+   "source": "scripts/make_figures.py по DL_NHANES_DATA (агрегаты, когорта как в screen.load_cohort); SHA-256 файла совпадает с screen_metrics.json",
+   "n": 13239
+  },
+  "perf.analyze.p50_ms": {
+   "value": 19.8,
+   "label_ru": "engine.analyze, p50, мс",
+   "source": "docs/perf.md (scripts/perf.py)"
+  },
+  "perf.analyze.p95_ms": {
+   "value": 26.3,
+   "label_ru": "engine.analyze, p95, мс",
+   "source": "docs/perf.md (scripts/perf.py)"
+  },
+  "perf.models_load_s": {
+   "value": 0.79,
+   "label_ru": "загрузка моделей при старте, с",
+   "source": "docs/perf.md (scripts/perf.py)"
+  },
+  "perf.predict_10000_clinical_s": {
+   "value": 0.72,
+   "label_ru": "predict_table, 10 000 строк, режим клинический, без меток, с",
+   "source": "docs/perf.md (scripts/perf.py)"
+  },
+  "perf.predict_10000_benchmark_s": {
+   "value": 2.04,
+   "label_ru": "predict_table, 10 000 строк, режим бенчмарка, без меток, с",
+   "source": "docs/perf.md (scripts/perf.py)"
+  },
+  "perf.predict_100000_clinical_s": {
+   "value": 6.88,
+   "label_ru": "predict_table, 100 000 строк, режим клинический, без меток, с",
+   "source": "docs/perf.md (scripts/perf.py)"
+  },
+  "perf.predict_100000_benchmark_s": {
+   "value": 17.59,
+   "label_ru": "predict_table, 100 000 строк, режим бенчмарка, без меток, с",
+   "source": "docs/perf.md (scripts/perf.py)"
+  },
+  "perf.measured_at": {
+   "value": "03.10.2026, 23:55 UTC",
+   "label_ru": "дата замера",
+   "source": "docs/perf.md (scripts/perf.py)"
+  }
+ },
+ "comparison_with_NUMBERS_md": [
+  {
+   "key": "case.level1_match",
+   "numbers_md": 840,
+   "numbers_json": 840.0,
+   "delta": 0.0,
+   "kind": "relative",
+   "over_0_02": false
+  },
+  {
+   "key": "case.benchmark.extended.acc12",
+   "numbers_md": 0.919,
+   "numbers_json": 0.9187,
+   "delta": -0.0003,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "case.benchmark.extended.acc12_sd",
+   "numbers_md": 0.02,
+   "numbers_json": 0.0203,
+   "delta": 0.0003,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "case.benchmark.extended.f1_12",
+   "numbers_md": 0.91,
+   "numbers_json": 0.9101,
+   "delta": 0.0001,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "case.benchmark.extended.acc5",
+   "numbers_md": 0.952,
+   "numbers_json": 0.952,
+   "delta": 0.0,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "case.benchmark.extended.f1_5",
+   "numbers_md": 0.94,
+   "numbers_json": 0.9397,
+   "delta": -0.0003,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "case.benchmark.extended.f1_cause",
+   "numbers_md": 0.893,
+   "numbers_json": 0.8943,
+   "delta": 0.0013,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "case.clinical.extended.acc12",
+   "numbers_md": 0.849,
+   "numbers_json": 0.8492,
+   "delta": 0.0002,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "case.clinical.extended.acc5",
+   "numbers_md": 0.914,
+   "numbers_json": 0.9143,
+   "delta": 0.0003,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "case.clinical.cbc_iron_crp.acc12",
+   "numbers_md": 0.665,
+   "numbers_json": 0.6651,
+   "delta": 0.0001,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "case.clinical.cbc.acc12",
+   "numbers_md": 0.573,
+   "numbers_json": 0.573,
+   "delta": 0.0,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "case.clinical.cbc.acc5",
+   "numbers_md": 0.782,
+   "numbers_json": 0.7821,
+   "delta": 0.0001,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "case.clinical.cbc.auroc_hidden",
+   "numbers_md": 0.897,
+   "numbers_json": 0.897,
+   "delta": 0.0,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "case.clinical.extended.auroc_hidden",
+   "numbers_md": 0.973,
+   "numbers_json": 0.9729,
+   "delta": -0.0001,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "case.clinical.cbc_iron_crp.ece",
+   "numbers_md": 0.08,
+   "numbers_json": 0.076,
+   "delta": -0.004,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "case.naive.cbc_iron_crp.ece",
+   "numbers_md": 0.23,
+   "numbers_json": 0.2275,
+   "delta": -0.0025,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "case.benchmark.extended.acc5_anemic",
+   "numbers_md": 0.92,
+   "numbers_json": 0.9241,
+   "delta": 0.0041,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "case.clinical.extended.acc5_anemic",
+   "numbers_md": 0.86,
+   "numbers_json": 0.8644,
+   "delta": 0.0044,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "case.clinical.cbc.acc5_anemic",
+   "numbers_md": 0.66,
+   "numbers_json": 0.6553,
+   "delta": -0.0047,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "case.rows_with_anemia",
+   "numbers_md": 531,
+   "numbers_json": 531.0,
+   "delta": 0.0,
+   "kind": "relative",
+   "over_0_02": false
+  },
+  {
+   "key": "case.naive.extended.acc12",
+   "numbers_md": 0.881,
+   "numbers_json": 0.881,
+   "delta": 0.0,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "case.naive.cbc_iron_crp.acc12",
+   "numbers_md": 0.571,
+   "numbers_json": 0.571,
+   "delta": 0.0,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "case.naive.cbc.acc12",
+   "numbers_md": 0.411,
+   "numbers_json": 0.4107,
+   "delta": -0.0003,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "case.naive.extended.acc5",
+   "numbers_md": 0.94,
+   "numbers_json": 0.9361,
+   "delta": -0.0039,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.cohort.rows_total",
+   "numbers_md": 88320,
+   "numbers_json": 88320.0,
+   "delta": 0.0,
+   "kind": "relative",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.cohort.adults_18plus",
+   "numbers_md": 58731,
+   "numbers_json": 58731.0,
+   "delta": 0.0,
+   "kind": "relative",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.cohort.with_ferritin",
+   "numbers_md": 22752,
+   "numbers_json": 22752.0,
+   "delta": 0.0,
+   "kind": "relative",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.cohort.train",
+   "numbers_md": 16291,
+   "numbers_json": 16291.0,
+   "delta": 0.0,
+   "kind": "relative",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.cohort.test",
+   "numbers_md": 6461,
+   "numbers_json": 6461.0,
+   "delta": 0.0,
+   "kind": "relative",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.cohort.test_normal_hb",
+   "numbers_md": 5728,
+   "numbers_json": 5728.0,
+   "delta": 0.0,
+   "kind": "relative",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.cohort.test_normal_hb_F18_49",
+   "numbers_md": 2180,
+   "numbers_json": 2180.0,
+   "delta": 0.0,
+   "kind": "relative",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.prevalence.F18_49.t15",
+   "numbers_md": 0.072,
+   "numbers_json": 0.072,
+   "delta": 0.0,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.prevalence.F18_49.t30",
+   "numbers_md": 0.276,
+   "numbers_json": 0.276,
+   "delta": 0.0,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.prevalence.F50.t15",
+   "numbers_md": 0.015,
+   "numbers_json": 0.015,
+   "delta": 0.0,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.prevalence.F50.t30",
+   "numbers_md": 0.078,
+   "numbers_json": 0.078,
+   "delta": 0.0,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.prevalence.M.t15",
+   "numbers_md": 0.006,
+   "numbers_json": 0.006,
+   "delta": 0.0,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.prevalence.M.t30",
+   "numbers_md": 0.032,
+   "numbers_json": 0.032,
+   "delta": 0.0,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.no_anemia_share.F18_49.t15",
+   "numbers_md": 0.46,
+   "numbers_json": 0.456,
+   "delta": -0.004,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.no_anemia_share.F18_49.t30",
+   "numbers_md": 0.71,
+   "numbers_json": 0.712,
+   "delta": 0.002,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.auc.F18_49.t15",
+   "numbers_md": 0.82,
+   "numbers_json": 0.822,
+   "delta": 0.002,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.auc.F18_49.t15.ci_low",
+   "numbers_md": 0.8,
+   "numbers_json": 0.797,
+   "delta": -0.003,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.auc.F18_49.t15.ci_high",
+   "numbers_md": 0.86,
+   "numbers_json": 0.855,
+   "delta": -0.005,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.auc.F18_49.t30",
+   "numbers_md": 0.73,
+   "numbers_json": 0.727,
+   "delta": -0.003,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.auc.F18_49.t30.ci_low",
+   "numbers_md": 0.71,
+   "numbers_json": 0.707,
+   "delta": -0.003,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.auc.F18_49.t30.ci_high",
+   "numbers_md": 0.75,
+   "numbers_json": 0.749,
+   "delta": -0.001,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.auc_hb_only.F18_49.t15",
+   "numbers_md": 0.75,
+   "numbers_json": 0.754,
+   "delta": 0.004,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.auc_hb_only.F18_49.t30",
+   "numbers_md": 0.66,
+   "numbers_json": 0.661,
+   "delta": 0.001,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.auc.F50.t15",
+   "numbers_md": 0.8,
+   "numbers_json": 0.802,
+   "delta": 0.002,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.auc.F50.t30",
+   "numbers_md": 0.71,
+   "numbers_json": 0.707,
+   "delta": -0.003,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.auc.M.t30",
+   "numbers_md": 0.79,
+   "numbers_json": 0.785,
+   "delta": -0.005,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.auc.ALL.t15",
+   "numbers_md": 0.89,
+   "numbers_json": 0.887,
+   "delta": -0.003,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.auc.ALL.t30",
+   "numbers_md": 0.84,
+   "numbers_json": 0.844,
+   "delta": 0.004,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.referral.t15.20.sensitivity",
+   "numbers_md": 0.67,
+   "numbers_json": 0.672,
+   "delta": 0.002,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.referral.t15.20.ppv",
+   "numbers_md": 0.24,
+   "numbers_json": 0.241,
+   "delta": 0.001,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.referral.t15.30.sensitivity",
+   "numbers_md": 0.77,
+   "numbers_json": 0.774,
+   "delta": 0.004,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.referral.t15.30.ppv",
+   "numbers_md": 0.19,
+   "numbers_json": 0.185,
+   "delta": -0.005,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.referral.t15.40.sensitivity",
+   "numbers_md": 0.89,
+   "numbers_json": 0.885,
+   "delta": -0.005,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.referral.t15.40.ppv",
+   "numbers_md": 0.16,
+   "numbers_json": 0.159,
+   "delta": -0.001,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.referral.t30.20.sensitivity",
+   "numbers_md": 0.42,
+   "numbers_json": 0.417,
+   "delta": -0.003,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.referral.t30.20.ppv",
+   "numbers_md": 0.58,
+   "numbers_json": 0.576,
+   "delta": -0.004,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.referral.t30.30.sensitivity",
+   "numbers_md": 0.56,
+   "numbers_json": 0.561,
+   "delta": 0.001,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.referral.t30.30.ppv",
+   "numbers_md": 0.52,
+   "numbers_json": 0.516,
+   "delta": -0.004,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.referral.t30.40.sensitivity",
+   "numbers_md": 0.66,
+   "numbers_json": 0.663,
+   "delta": 0.003,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.referral.t30.40.ppv",
+   "numbers_md": 0.46,
+   "numbers_json": 0.458,
+   "delta": -0.002,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.rule.t15.referred_share",
+   "numbers_md": 0.15,
+   "numbers_json": 0.148,
+   "delta": -0.002,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.rule.t15.rule_sensitivity",
+   "numbers_md": 0.51,
+   "numbers_json": 0.51,
+   "delta": 0.0,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.rule.t15.rule_ppv",
+   "numbers_md": 0.25,
+   "numbers_json": 0.247,
+   "delta": -0.003,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.rule.t15.model_sensitivity",
+   "numbers_md": 0.58,
+   "numbers_json": 0.579,
+   "delta": -0.001,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.rule.t15.model_ppv",
+   "numbers_md": 0.28,
+   "numbers_json": 0.281,
+   "delta": 0.001,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.rule.t15.diff_sensitivity_pp",
+   "numbers_md": 7,
+   "numbers_json": 6.9,
+   "delta": -0.1,
+   "kind": "pp_rounded",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.rule.t15.diff_ci_low_pp",
+   "numbers_md": 1,
+   "numbers_json": 0.6,
+   "delta": -0.4,
+   "kind": "pp_rounded",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.rule.t15.diff_ci_high_pp",
+   "numbers_md": 14,
+   "numbers_json": 13.9,
+   "delta": -0.1,
+   "kind": "pp_rounded",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.rule.t30.rule_sensitivity",
+   "numbers_md": 0.28,
+   "numbers_json": 0.279,
+   "delta": -0.001,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.rule.t30.rule_ppv",
+   "numbers_md": 0.52,
+   "numbers_json": 0.522,
+   "delta": 0.002,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.rule.t30.model_sensitivity",
+   "numbers_md": 0.33,
+   "numbers_json": 0.329,
+   "delta": -0.001,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.rule.t30.model_ppv",
+   "numbers_md": 0.61,
+   "numbers_json": 0.611,
+   "delta": 0.001,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.rule.t30.diff_sensitivity_pp",
+   "numbers_md": 5,
+   "numbers_json": 4.9,
+   "delta": -0.1,
+   "kind": "pp_rounded",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.rule.t30.diff_ci_low_pp",
+   "numbers_md": 2,
+   "numbers_json": 2.2,
+   "delta": 0.2,
+   "kind": "pp_rounded",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.rule.t30.diff_ci_high_pp",
+   "numbers_md": 8,
+   "numbers_json": 7.6,
+   "delta": -0.4,
+   "kind": "pp_rounded",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.economics.cases_per1000_t15",
+   "numbers_md": 72,
+   "numbers_json": 72.0,
+   "delta": 0.0,
+   "kind": "relative",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.economics.price_ferritin_rub",
+   "numbers_md": 845,
+   "numbers_json": 845.0,
+   "delta": 0.0,
+   "kind": "relative",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.economics.everyone.rub_per_case",
+   "numbers_md": 11775,
+   "numbers_json": 11775.0,
+   "delta": 0.0,
+   "kind": "relative",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.economics.model_30.found_per1000",
+   "numbers_md": 56,
+   "numbers_json": 56.0,
+   "delta": 0.0,
+   "kind": "relative",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.economics.model_30.rub_per_case",
+   "numbers_md": 4568,
+   "numbers_json": 4568.0,
+   "delta": 0.0,
+   "kind": "relative",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.economics.model_20.found_per1000",
+   "numbers_md": 48,
+   "numbers_json": 48.0,
+   "delta": 0.0,
+   "kind": "relative",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.economics.model_20.rub_per_case",
+   "numbers_md": 3508,
+   "numbers_json": 3508.0,
+   "delta": 0.0,
+   "kind": "relative",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.economics.rule.referred_per1000",
+   "numbers_md": 148,
+   "numbers_json": 148.0,
+   "delta": 0.0,
+   "kind": "relative",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.economics.rule.found_per1000",
+   "numbers_md": 37,
+   "numbers_json": 37.0,
+   "delta": 0.0,
+   "kind": "relative",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.economics.rule.rub_per_case",
+   "numbers_md": 3416,
+   "numbers_json": 3416.0,
+   "delta": 0.0,
+   "kind": "relative",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.economics.model_at_rule.found_per1000",
+   "numbers_md": 42,
+   "numbers_json": 42.0,
+   "delta": 0.0,
+   "kind": "relative",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.economics.model_at_rule.rub_per_case",
+   "numbers_md": 3012,
+   "numbers_json": 3012.0,
+   "delta": 0.0,
+   "kind": "relative",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.case_transfer.auc_raw_t30",
+   "numbers_md": 0.68,
+   "numbers_json": 0.676,
+   "delta": -0.004,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.calibration.F18_49.t30.raw_mean_predicted",
+   "numbers_md": 0.42,
+   "numbers_json": 0.422,
+   "delta": 0.002,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.calibration.F18_49.t30.z_mean_predicted",
+   "numbers_md": 0.3,
+   "numbers_json": 0.303,
+   "delta": 0.003,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.calibration.F18_49.t30.observed",
+   "numbers_md": 0.29,
+   "numbers_json": 0.289,
+   "delta": -0.001,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.stfr.crp_gt5.30-70",
+   "numbers_md": 0.2,
+   "numbers_json": 0.1992,
+   "delta": -0.0008,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.stfr.crp_le5.30-70",
+   "numbers_md": 0.06,
+   "numbers_json": 0.0605,
+   "delta": 0.0005,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.stfr.crp_gt5.15-30",
+   "numbers_md": 0.37,
+   "numbers_json": 0.3658,
+   "delta": -0.0042,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.stfr.crp_le5.15-30",
+   "numbers_md": 0.17,
+   "numbers_json": 0.1728,
+   "delta": 0.0028,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.stfr.crp_gt5.100+",
+   "numbers_md": 0.1,
+   "numbers_json": 0.1028,
+   "delta": 0.0028,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "screen.stfr.crp_le5.100+",
+   "numbers_md": 0.04,
+   "numbers_json": 0.0438,
+   "delta": 0.0038,
+   "kind": "absolute",
+   "over_0_02": false
+  },
+  {
+   "key": "perf.predict_10000_clinical_s",
+   "numbers_md": 0.64,
+   "numbers_json": 0.72,
+   "delta": 0.08,
+   "kind": "absolute",
+   "over_0_02": true
+  }
+ ],
+ "NUMBERS_md_not_in_product_metrics": [
+  "Наивный бустинг с замком ВОЗ, 12 классов, строка как есть — 0,893",
+  "Пороговые правила без ML, строка как есть — 0,755",
+  "Мажоритарный класс — 0,137",
+  "Модель только на индикаторах «анализ сдан / не сдан» — 0,254",
+  "Данные без подсказки: наивный бустинг 0,677; слияние 0,746",
+  "Скорость прототипа: 9 мс на строку (только слияние) — в продукте мерится весь разбор (docs/perf.md)"
+ ]
+}

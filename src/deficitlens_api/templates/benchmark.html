@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Justmedit — проверить на своём файле{% endblock %}
+{% block hero %}
+<section class="hero hero--sub" aria-labelledby="bench-h">
+  <div class="hero__fx" aria-hidden="true"><span class="hero__blob hero__blob--a"></span><span class="hero__blob hero__blob--b"></span></div>
+  <div class="wrap hero__in">
+    <p class="hero__kicker"><span class="hero__dot" aria-hidden="true"></span>Пакетная проверка · CSV и XLSX · без хранения</p>
+    <h1 id="bench-h" class="hero__title">Проверить <span class="hero__accent">на своём файле</span></h1>
+    <p class="hero__lead">Таблица анализов — в схеме кейса или в своей структуре. Сервис сопоставит столбцы, предупредит,
+      чего не хватает для анализа, и рассчитает каждую строку.</p>
+  </div>
+</section>
+{% endblock %}
+{% block main %}
+<div class="bench">
+  <ol class="bench-steps" aria-label="Шаги">
+    <li class="is-on" id="bs-1"><span>1</span>Файл</li>
+    <li id="bs-2"><span>2</span>Столбцы</li>
+    <li id="bs-3"><span>3</span>Режим и расчёт</li>
+  </ol>
+
+  <form id="bench-form" class="panel bench-card" novalidate>
+    <section class="bench-step" aria-labelledby="st1-h">
+      <h2 id="st1-h" class="bench-step__title"><span class="bench-step__n" aria-hidden="true">1</span>Файл</h2>
+      <div class="drop drop--bench" id="bench-drop">
+        <span class="drop__icon" aria-hidden="true"><svg class="ico" viewBox="0 0 24 24" focusable="false"><path d="M7 3.5h7l4 4V19a1.5 1.5 0 0 1-1.5 1.5h-9.5A1.5 1.5 0 0 1 5.5 19V5A1.5 1.5 0 0 1 7 3.5z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M13.5 3.5V8h4.5M8.5 12.5h7M8.5 15.5h7" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
+        <input id="bench-file" class="vh" name="file" type="file" accept=".csv,.xlsx,.txt" aria-describedby="bench-file-hint">
+        <label for="bench-file" class="btn btn--primary btn--big" id="bench-file-label">Выбрать файл</label>
+        <p class="hint drop__hint" id="bench-file-hint"><span class="drop__dnd">или перетащите сюда CSV или XLSX. </span>До {{ max_upload_mb }} МБ; файл обрабатывается в памяти и не сохраняется.</p>
+        <p class="bench-file" id="bench-file-name" hidden></p>
+      </div>
+      <details class="bench-schema">
+        <summary>Какой файл подойдёт</summary>
+        <ul class="list">
+          <li>По строке на пациента; первая строка — названия столбцов. Разделитель CSV — «;» или «,», десятичный — запятая или точка.</li>
+          <li>Нужны пол, возраст и гемоглобин. Чем больше показателей общего анализа крови (MCV, MCH, RDW, RBC) и анализов вне его (ферритин, железо, B12, фолаты), тем надёжнее вывод.</li>
+          <li>Названия столбцов могут быть свои: «Гемоглобин», «HGB, г/дл», «Пол» — сервис предложит сопоставление, его можно поправить. Единицы, отличные от сервисных, выбираются у столбца.</li>
+          <li>Если в файле есть метки (<code>anemia</code>, <code>anemia_class</code>, <code>deficiency_cause</code>), будут посчитаны метрики.</li>
+        </ul>
+      </details>
+    </section>
+
+    <section class="bench-step" id="step-cols" aria-labelledby="st2-h" hidden>
+      <h2 id="st2-h" class="bench-step__title"><span class="bench-step__n" aria-hidden="true">2</span>Столбцы <span class="muted" id="cols-count"></span></h2>
+      <div id="req" class="req" aria-live="polite"></div>
+      <div class="tbl-wrap map-wrap">
+        <table class="map-tbl">
+          <thead><tr><th scope="col">Столбец файла</th><th scope="col">Пример</th><th scope="col">Что это</th><th scope="col">Единица</th></tr></thead>
+          <tbody id="map-rows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="bench-step" id="step-run" aria-labelledby="st3-h" hidden>
+      <h2 id="st3-h" class="bench-step__title"><span class="bench-step__n" aria-hidden="true">3</span>Режим и расчёт</h2>
+      <div class="mode-cards" role="radiogroup" aria-label="Режим расчёта">
+        <label class="mode-card"><input type="radio" name="mode" value="auto" checked>
+          <span class="mode-card__t">Авто</span><span class="mode-card__d">Сервис выберет сам и объяснит выбор.</span></label>
+        <label class="mode-card"><input type="radio" name="mode" value="clinical">
+          <span class="mode-card__t">Клинический</span><span class="mode-card__d">Несданный анализ не несёт информации — для реальных пациентов.</span></label>
+        <label class="mode-card"><input type="radio" name="mode" value="benchmark">
+          <span class="mode-card__t">Бенчмарк</span><span class="mode-card__d">Ансамбль для файлов, похожих на файл кейса.</span></label>
+      </div>
+      <div class="actions bench-run">
+        <button type="submit" class="btn btn--primary btn--big" id="bench-run">Рассчитать</button>
+        <button type="button" class="btn" id="bench-reset">Другой файл</button>
+      </div>
+    </section>
+  </form>
+  <div id="bench-alert" class="alert" role="alert" hidden></div>
+  <div id="bench-out" aria-live="polite"></div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="/static/benchmark.js?v={{ v }}" defer></script>
+{% endblock %}

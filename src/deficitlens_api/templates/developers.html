@@ -1,0 +1,433 @@
+{% extends "base.html" %}
+{% block title %}Justmedit — API для встраивания{% endblock %}
+{% block head %}
+  <link rel="stylesheet" href="/static/developers.css?v={{ v }}">
+{% endblock %}
+{% block hero %}
+<section class="hero hero--sub hero--dev" aria-labelledby="dev-h">
+  <div class="hero__fx" aria-hidden="true"><span class="hero__blob hero__blob--a"></span><span class="hero__blob hero__blob--b"></span></div>
+  <div class="wrap hero__in">
+    <p class="hero__kicker"><span class="hero__dot" aria-hidden="true"></span>REST · JSON · OpenAPI 3.0</p>
+    <h1 id="dev-h" class="hero__title">API для <span class="hero__accent">встраивания</span></h1>
+    <p class="hero__lead">Расшифровка анализов, разбор бланков и кабинет пациента — в вашей МИС, на сайте клиники
+      или в приложении. Запрос можно отправить прямо с этой страницы.</p>
+    <div class="hero__cta dev-cta">
+      <a class="btn btn--primary btn--hero" href="#console">Открыть консоль</a>
+      <a class="btn btn--ghost" href="/api/v1/openapi.json">openapi.json</a>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block main %}
+<div class="dev">
+  <ol class="dev-steps" aria-label="Как подключиться">
+    <li class="dev-step">
+      <span class="dev-step__n" aria-hidden="true">1</span>
+      <h2 class="dev-step__t">Получите ключ или токен</h2>
+      <p>Ключ <code>X-API-Key</code> — для запросов с вашего сервера, его задаёт администратор сервиса
+        (<code>DL_API_KEYS</code>). Токен пользователя — ответ <code>POST /api/v1/auth/login</code>: для браузера и чужих сайтов,
+        только в памяти страницы.</p>
+    </li>
+    <li class="dev-step">
+      <span class="dev-step__n" aria-hidden="true">2</span>
+      <h2 class="dev-step__t">Отправьте запрос</h2>
+      <p>JSON на <code>/api/v1/analyze</code>: пол, возраст и значения показателей. Заголовок
+        <code>Authorization: Bearer &lt;токен&gt;</code> или <code>X-API-Key</code>.</p>
+    </li>
+    <li class="dev-step">
+      <span class="dev-step__n" aria-hidden="true">3</span>
+      <h2 class="dev-step__t">Получите ответ</h2>
+      <p>Анемия по ВОЗ, вероятный тип, скрытый дефицит, что досдать и два отчёта — врачу и пациенту.
+        Ошибка — с понятным текстом и полем, которое нужно исправить.</p>
+    </li>
+  </ol>
+
+  <nav class="dev-toc" aria-label="Разделы страницы">
+    <a href="#console">Консоль</a>
+    <a href="#code">Примеры кода</a>
+    <a href="#reference">Справочник</a>
+    <a href="#embed">Встраивание</a>
+    <a href="#errors">Ошибки и лимиты</a>
+  </nav>
+
+  <!-- ===================================== Консоль ===================================== -->
+  <section class="dev-sec" id="console" aria-labelledby="console-h">
+    <div class="dev-sec__head">
+      <h2 id="console-h" class="dev-sec__title">Консоль</h2>
+      <p class="dev-sec__lead">Выберите маршрут и авторизацию, поправьте тело и отправьте запрос. Ключ и токен живут
+        только в этой вкладке: страница их не сохраняет и не отправляет cookie сайта.</p>
+    </div>
+    <div id="dev-load" class="alert" role="alert" hidden></div>
+    <div class="console">
+      <div class="console__req panel">
+        <div class="console__field">
+          <label for="c-route" class="console__label">Маршрут</label>
+          <select id="c-route" disabled><option>Загружаем описание API…</option></select>
+        </div>
+        <p class="console__line"><span class="method" id="c-method">POST</span><code class="console__path" id="c-path">/api/v1/analyze</code></p>
+        <p class="console__desc" id="c-desc"></p>
+        <div class="console__hint" id="c-hint" role="note" hidden>
+          <p>Нужен токен пользователя. Войдите через <code>POST /api/v1/auth/login</code>, скопируйте <code>token</code>
+            из ответа и вставьте в поле «Bearer-токен» — или нажмите «Использовать токен» под ответом.</p>
+          <button type="button" class="btn btn--small" id="c-go-login">Перейти ко входу</button>
+        </div>
+
+        <fieldset class="console__auth">
+          <legend class="console__label">Авторизация</legend>
+          <div class="seg__row" id="c-auth">
+            <label><input type="radio" name="c-auth" value="none"><span>Без авторизации</span></label>
+            <label><input type="radio" name="c-auth" value="key" checked><span>X-API-Key</span></label>
+            <label><input type="radio" name="c-auth" value="bearer"><span>Bearer-токен</span></label>
+          </div>
+          <div class="console__secret" id="c-secret-box">
+            <label for="c-secret" class="console__label" id="c-secret-label">Ключ API</label>
+            <input id="c-secret" type="text" autocomplete="off" spellcheck="false" autocapitalize="off"
+                   aria-describedby="c-secret-hint">
+            <p class="hint" id="c-secret-hint"></p>
+          </div>
+        </fieldset>
+
+        <div id="c-params" class="console__params"></div>
+
+        <div id="c-body-box" class="console__body">
+          <div class="console__body-head">
+            <span class="console__label" id="c-body-label">Тело запроса</span>
+            <div class="seg__row seg__row--mini" id="c-ctype" hidden>
+              <label><input type="radio" name="c-ctype" value="json" checked><span>JSON</span></label>
+              <label><input type="radio" name="c-ctype" value="file"><span>Файл</span></label>
+            </div>
+            <button type="button" class="btn btn--small" id="c-reset">Вернуть пример</button>
+          </div>
+          <textarea id="c-body" rows="12" spellcheck="false" autocomplete="off" aria-labelledby="c-body-label"></textarea>
+          <p class="field__error" id="c-body-error" hidden></p>
+          <div id="c-form" class="console__form" hidden></div>
+        </div>
+
+        <div class="actions console__actions">
+          <button type="button" class="btn btn--primary" id="c-send" disabled>Отправить</button>
+          <span class="kbd">или Ctrl + Enter в поле тела</span>
+        </div>
+      </div>
+
+      <div class="console__res panel" id="c-res-box">
+        <div class="console__res-head">
+          <h3 class="console__label">Ответ</h3>
+          <span class="status" id="c-status" hidden></span>
+          <span class="console__time" id="c-time"></span>
+          <button type="button" class="btn btn--small copy" data-copy="c-res" id="c-res-copy" hidden>Копировать</button>
+        </div>
+        <p class="console__empty" id="c-res-empty">Здесь появится ответ сервера: код, время, важные заголовки и тело.</p>
+        <div class="console__error" id="c-error" role="alert" hidden></div>
+        <div class="console__token" id="c-token" hidden>
+          <p>В ответе есть токен. Его можно подставить в авторизацию этой вкладки — он нигде не сохранится.</p>
+          <button type="button" class="btn btn--small" id="c-use-token">Использовать токен</button>
+        </div>
+        <dl class="console__headers" id="c-headers" hidden></dl>
+        <pre class="code code--res" id="c-res" tabindex="0" hidden><code id="c-res-code"></code></pre>
+        <p class="hint" id="c-res-note" hidden></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================== Примеры кода ===================================== -->
+  <section class="dev-sec" id="code" aria-labelledby="code-h">
+    <div class="dev-sec__head">
+      <h2 id="code-h" class="dev-sec__title">Примеры кода</h2>
+      <p class="dev-sec__lead">Код повторяет запрос из консоли и меняется вместе с ней. Настоящих ключа и пароля в коде нет:
+        вместо них — <code>$JUSTMEDIT_TOKEN</code>, <code>$JUSTMEDIT_API_KEY</code>, <code>$JUSTMEDIT_PASSWORD</code>
+        или <code>&lt;ваш ключ&gt;</code>.</p>
+    </div>
+    <div class="codebox">
+      <div class="codebox__bar">
+        <div class="codebox__tabs" role="tablist" aria-label="Язык примера">
+          <button type="button" role="tab" id="t-curl" data-lang="curl" aria-selected="true" aria-controls="code-out">curl</button>
+          <button type="button" role="tab" id="t-js" data-lang="js" aria-selected="false" aria-controls="code-out" tabindex="-1">JavaScript fetch</button>
+          <button type="button" role="tab" id="t-py" data-lang="py" aria-selected="false" aria-controls="code-out" tabindex="-1">Python requests</button>
+        </div>
+        <button type="button" class="btn btn--small copy copy--dark" data-copy="code-out">Копировать</button>
+      </div>
+      <pre class="code" id="code-out" role="tabpanel" aria-labelledby="t-curl" tabindex="0"><code id="code-out-code">Загружаем описание API…</code></pre>
+    </div>
+  </section>
+
+  <!-- ===================================== Справочник ===================================== -->
+  <section class="dev-sec" id="reference" aria-labelledby="ref-h">
+    <div class="dev-sec__head">
+      <h2 id="ref-h" class="dev-sec__title">Справочник</h2>
+      <p class="dev-sec__lead">Все маршруты по группам: кто может вызывать, что делает, пример запроса и ответа.
+        Машиночитаемое описание — <a href="/api/v1/openapi.json">/api/v1/openapi.json</a> (OpenAPI 3.0: Swagger UI,
+        Postman, генераторы клиентов).</p>
+    </div>
+    <div class="ref" id="ref-list"><p class="muted">Загружаем описание API…</p></div>
+  </section>
+
+  <!-- ===================================== Встраивание ===================================== -->
+  <section class="dev-sec" id="embed" aria-labelledby="embed-h">
+    <div class="dev-sec__head">
+      <h2 id="embed-h" class="dev-sec__title">Встраивание в свой сайт</h2>
+      <p class="dev-sec__lead">Форма расшифровки на сайте клиники, кабинет пациента в вашем приложении — на тех же
+        маршрутах, что и консоль выше.</p>
+    </div>
+
+    <div class="callout callout--warn" role="note">
+      <h3 class="callout__title">Ключ X-API-Key — только «сервер к серверу»</h3>
+      <p>Ключ не привязан к человеку и открывает расчёты от имени вашей организации. В коде страницы его увидит любой
+        посетитель. В браузере используйте токен пользователя (<code>Authorization: Bearer</code>): он принадлежит
+        одному человеку, его можно отозвать. Или отправляйте запросы через свой сервер, как в
+        <code>examples/clinic_site</code>.</p>
+    </div>
+
+    <div class="embed-grid">
+      <article class="panel embed-card">
+        <h3 class="embed-card__title"><span class="embed-card__n" aria-hidden="true">1</span>Разрешите свой домен</h3>
+        <p>Браузер отправит запрос на другой домен, только если сервис разрешил этот источник. Список — переменная
+          окружения <code>DL_CORS_ORIGINS</code>, через запятую, со схемой и без косой черты в конце:</p>
+        <div class="codebox codebox--small">
+          <div class="codebox__bar"><span class="codebox__name">.env или docker compose</span>
+            <button type="button" class="btn btn--small copy copy--dark" data-copy="cors-code">Копировать</button></div>
+          <pre class="code" id="cors-code" tabindex="0"><code>DL_CORS_ORIGINS=https://clinic.example,https://www.clinic.example</code></pre>
+        </div>
+        <p class="hint">CORS действует для <code>/api/v1/*</code> и без credentials: cookie сайта Justmedit чужой
+          странице не передаются, авторизация — только заголовком <code>Authorization</code>.</p>
+      </article>
+
+      <article class="panel embed-card">
+        <h3 class="embed-card__title"><span class="embed-card__n" aria-hidden="true">2</span>Получите токен пользователя</h3>
+        <p>Пользователь входит через ваш сайт: <code>POST /api/v1/auth/login</code> с логином и паролем, в ответе —
+          <code>token</code>. Храните его только на время сеанса и передавайте в заголовке
+          <code>Authorization: Bearer &lt;токен&gt;</code>. Для своих программ — постоянный токен:
+          <code>POST /api/v1/me/tokens</code>.</p>
+        <p class="hint">Пароли и токены не кладите в адрес страницы и в журналы.</p>
+      </article>
+    </div>
+
+    <h3 class="dev-sub">Форма расшифровки на вашем сайте</h3>
+    <p class="dev-p">Готовый фрагмент HTML и JavaScript: пользователь входит своим логином Justmedit прямо на сайте
+      клиники, затем пол, возраст, гемоглобин и ферритин → главный вывод для пациента. Токен из ответа входа живёт
+      только в памяти вкладки: закрыл вкладку — вошёл заново. Ответ выводится через <code>textContent</code> —
+      никакого HTML из ответа на странице.</p>
+    <div class="callout callout--warn" role="note">
+      <h3 class="callout__title">Не вставляйте токен в код страницы</h3>
+      <p>Токен в HTML или JavaScript страницы увидит любой посетитель и сможет читать и менять чужой кабинет. Не кладите
+        его и в <code>localStorage</code>, cookie или адрес страницы. Нужна форма без входа пользователя — отправляйте
+        запросы через сервер клиники с ключом <code>X-API-Key</code>, как в <code>examples/clinic_site</code>.</p>
+    </div>
+    <div class="codebox">
+      <div class="codebox__bar"><span class="codebox__name">form.html</span>
+        <button type="button" class="btn btn--small copy copy--dark" data-copy="embed-code">Копировать</button></div>
+      <pre class="code" id="embed-code" tabindex="0"><code data-origin>&lt;!-- Форма расшифровки анализа на сайте клиники (домен сайта — в DL_CORS_ORIGINS сервиса).
+     Пользователь входит своим логином Justmedit; токен из ответа — только в памяти вкладки (переменная token).
+     Токен не вставляйте в код страницы. Ключ X-API-Key в браузер не кладите. --&gt;
+&lt;form id="jm-login"&gt;
+  &lt;label&gt;Логин Justmedit &lt;input name="login" autocomplete="username" required&gt;&lt;/label&gt;
+  &lt;label&gt;Пароль &lt;input name="password" type="password" autocomplete="current-password" required&gt;&lt;/label&gt;
+  &lt;button&gt;Войти&lt;/button&gt;
+&lt;/form&gt;
+&lt;form id="jm-form" hidden&gt;
+  &lt;label&gt;Пол
+    &lt;select name="sex"&gt;&lt;option value="F"&gt;женский&lt;/option&gt;&lt;option value="M"&gt;мужской&lt;/option&gt;&lt;/select&gt;
+  &lt;/label&gt;
+  &lt;label&gt;Возраст, лет &lt;input name="age" type="number" min="18" max="120" required&gt;&lt;/label&gt;
+  &lt;label&gt;Гемоглобин, г/л &lt;input name="hemoglobin" type="number" step="0.1" required&gt;&lt;/label&gt;
+  &lt;label&gt;Ферритин, мкг/л &lt;input name="ferritin" type="number" step="0.1"&gt;&lt;/label&gt;
+  &lt;button&gt;Расшифровать&lt;/button&gt;
+&lt;/form&gt;
+&lt;p id="jm-out" aria-live="polite"&gt;&lt;/p&gt;
+
+&lt;script&gt;
+const JUSTMEDIT = "https://justmedit.example";      // адрес сервиса Justmedit
+let token = null;                                    // токен — только в памяти вкладки, нигде не сохраняется
+const loginForm = document.getElementById("jm-login");
+const form = document.getElementById("jm-form");
+const out = document.getElementById("jm-out");
+
+function signedIn(on) { loginForm.hidden = on; form.hidden = !on; }
+
+loginForm.addEventListener("submit", async (event) =&gt; {
+  event.preventDefault();
+  const f = new FormData(loginForm);
+  out.textContent = "Входим…";
+  try {
+    const res = await fetch(JUSTMEDIT + "/api/v1/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ login: f.get("login"), password: f.get("password") })
+    });
+    const data = await res.json();
+    loginForm.reset();                                 // пароль не остаётся в форме
+    if (!res.ok) { out.textContent = data.error.message; return; }
+    token = data.token;
+    signedIn(true);
+    out.textContent = "Вы вошли как " + data.user.login + ".";
+  } catch (e) {
+    out.textContent = "Сервис недоступен. Попробуйте позже.";
+  }
+});
+
+form.addEventListener("submit", async (event) =&gt; {
+  event.preventDefault();
+  const f = new FormData(form);
+  const values = { hemoglobin: Number(f.get("hemoglobin")) };
+  if (f.get("ferritin")) values.ferritin = Number(f.get("ferritin"));
+  out.textContent = "Считаем…";
+  try {
+    const res = await fetch(JUSTMEDIT + "/api/v1/analyze", {
+      method: "POST",
+      headers: { "Authorization": "Bearer " + token, "Content-Type": "application/json" },
+      body: JSON.stringify({ sex: f.get("sex"), age_years: Number(f.get("age")), values })
+    });
+    const data = await res.json();
+    if (res.status === 401) {                          // токен истёк или отозван — войти заново
+      token = null;
+      signedIn(false);
+      out.textContent = "Сеанс завершён — войдите снова.";
+      return;
+    }
+    out.textContent = res.ok ? data.reports.patient.headline : data.error.message;
+  } catch (e) {
+    out.textContent = "Сервис недоступен. Попробуйте позже.";
+  }
+});
+&lt;/script&gt;</code></pre>
+    </div>
+
+    <h3 class="dev-sub">Кабинет пациента через API</h3>
+    <p class="dev-p">Пять запросов: регистрация, вход, сохранить анализ, получить динамику, открыть доступ врачу.
+      Тела — JSON с заголовком <code>Content-Type: application/json</code>. Код <code>201</code> — у регистрации и новой
+      записи, остальные — <code>200</code>. Логин и пароль — свои, в переменных окружения
+      <code>$JUSTMEDIT_LOGIN</code> и <code>$JUSTMEDIT_PASSWORD</code>: пароль не пишите в команду и в код. Анализы
+      в кабинете хранятся зашифрованными; удалить всё — <code>DELETE /api/v1/me</code> с паролем.</p>
+    <ol class="flow">
+      <li class="flow__step">
+        <p class="flow__t"><span class="method method--post">POST</span> <code>/api/v1/auth/register</code> — регистрация</p>
+        <pre class="code code--small" tabindex="0"><code data-origin># свой логин и пароль: read -s не покажет пароль и не оставит его в истории команд
+export JUSTMEDIT_LOGIN="dev-$(openssl rand -hex 3)"
+read -rs -p "Пароль (от 8 символов): " JUSTMEDIT_PASSWORD; echo; export JUSTMEDIT_PASSWORD
+curl -sS -X POST "https://justmedit.example/api/v1/auth/register" \
+  -H "Content-Type: application/json" \
+  -d "{\"login\": \"$JUSTMEDIT_LOGIN\", \"password\": \"$JUSTMEDIT_PASSWORD\", \"role\": \"patient\", \"consent\": true}"</code></pre>
+      </li>
+      <li class="flow__step">
+        <p class="flow__t"><span class="method method--post">POST</span> <code>/api/v1/auth/login</code> — вход, токен в переменную</p>
+        <pre class="code code--small" tabindex="0"><code data-origin>export JUSTMEDIT_TOKEN=$(curl -sS -X POST "https://justmedit.example/api/v1/auth/login" \
+  -H "Content-Type: application/json" \
+  -d "{\"login\": \"$JUSTMEDIT_LOGIN\", \"password\": \"$JUSTMEDIT_PASSWORD\"}" \
+  | python3 -c 'import json, sys; print(json.load(sys.stdin)["token"])')</code></pre>
+      </li>
+      <li class="flow__step">
+        <p class="flow__t"><span class="method method--post">POST</span> <code>/api/v1/me/records</code> — сохранить анализ и получить расшифровку</p>
+        <pre class="code code--small" tabindex="0"><code data-origin>curl -sS -X POST "https://justmedit.example/api/v1/me/records" \
+  -H "Authorization: Bearer $JUSTMEDIT_TOKEN" -H "Content-Type: application/json" \
+  -d '{"date": "2026-04-16", "source": "form",
+       "input": {"sex": "F", "age_years": 34, "values": {"hemoglobin": 124, "MCV": 82, "RDW": 15.2}}}'</code></pre>
+      </li>
+      <li class="flow__step">
+        <p class="flow__t"><span class="method method--get">GET</span> <code>/api/v1/me/history</code> — динамика и что давно не сдавалось</p>
+        <pre class="code code--small" tabindex="0"><code data-origin>curl -sS "https://justmedit.example/api/v1/me/history" -H "Authorization: Bearer $JUSTMEDIT_TOKEN"</code></pre>
+      </li>
+      <li class="flow__step">
+        <p class="flow__t"><span class="method method--post">POST</span> <code>/api/v1/me/shares</code> — доступ врачу на 30 дней</p>
+        <p class="dev-p">По токену API ссылку врачу создают только с паролем аккаунта в поле <code>password</code> — так же
+          новый токен (<code>POST /api/v1/me/tokens</code>) и «выйти везде» (<code>POST /api/v1/me/logout-all</code>):
+          украденный токен не откроет историю постороннему. Без пароля — <code>403 password_required</code>, с неверным —
+          <code>403 wrong_password</code>.</p>
+        <pre class="code code--small" tabindex="0"><code data-origin>curl -sS -X POST "https://justmedit.example/api/v1/me/shares" \
+  -H "Authorization: Bearer $JUSTMEDIT_TOKEN" -H "Content-Type: application/json" \
+  -d "{\"days\": 30, \"password\": \"$JUSTMEDIT_PASSWORD\"}"
+# ответ 200: {"share": {…, "status": "pending"}, "link_token": "…", "link": "/share#…"}
+# ссылка для врача: https://justmedit.example/share#&lt;link_token&gt; (живёт 48 ч, одноразовая)
+# врач со своим токеном: POST /api/v1/shares/accept {"token": "&lt;link_token&gt;"}</code></pre>
+      </li>
+    </ol>
+  </section>
+
+  <!-- ===================================== Ошибки и лимиты ===================================== -->
+  <section class="dev-sec" id="errors" aria-labelledby="errors-h">
+    <div class="dev-sec__head">
+      <h2 id="errors-h" class="dev-sec__title">Ошибки и лимиты</h2>
+      <p class="dev-sec__lead">Тело ошибки всегда одного вида: <code>{"error": {"code", "message", "field"}}</code>.
+        Сообщение по-русски говорит, что исправить; значений анализов в нём нет.</p>
+    </div>
+    <div class="panel errs">
+      <div class="tbl-wrap">
+        <table class="errs__tbl stack">
+          <thead><tr><th scope="col">Код</th><th scope="col">Когда</th><th scope="col">Что делать</th></tr></thead>
+          <tbody>
+            <tr><th scope="row"><span class="status status--4xx">401</span> <code>unauthorized</code></th>
+              <td data-label="Когда">нет ключа или токена, токен просрочен</td>
+              <td data-label="Что делать">передайте <code>X-API-Key</code> или войдите заново через <code>/api/v1/auth/login</code></td></tr>
+            <tr><th scope="row"><span class="status status--4xx">401</span> <code>invalid_credentials</code></th>
+              <td data-label="Когда">вход: неверный логин или пароль (ответ одинаковый)</td>
+              <td data-label="Что делать">проверьте логин и пароль; аккаунта нет — <code>/api/v1/auth/register</code></td></tr>
+            <tr><th scope="row"><span class="status status--4xx">403</span> <code>forbidden</code>, <code>csrf</code></th>
+              <td data-label="Когда">ключ не подходит; не та роль (пациент вызвал маршрут врача); нет доступа к пациенту; запрос с cookie без <code>X-Justmedit: 1</code></td>
+              <td data-label="Что делать">проверьте ключ, роль и срок доступа</td></tr>
+            <tr><th scope="row"><span class="status status--4xx">403</span> <code>password_required</code></th>
+              <td data-label="Когда">по токену API: новый токен, ссылка врачу или «выйти везде» без поля <code>password</code></td>
+              <td data-label="Что делать">добавьте в тело <code>"password"</code> — пароль аккаунта; с cookie сайта он не нужен</td></tr>
+            <tr><th scope="row"><span class="status status--4xx">403</span> <code>wrong_password</code></th>
+              <td data-label="Когда">неверный пароль: удаление аккаунта, смена пароля (поле <code>old</code>), токен, ссылка врачу, «выйти везде» по токену</td>
+              <td data-label="Что делать">передайте текущий пароль; действие не выполнено (при удалении — ничего не удалено)</td></tr>
+            <tr><th scope="row"><span class="status status--4xx">404</span> <code>not_found</code></th>
+              <td data-label="Когда">нет такой записи или маршрута</td>
+              <td data-label="Что делать">проверьте путь и id (32 шестнадцатеричных знака)</td></tr>
+            <tr><th scope="row"><span class="status status--4xx">404</span> <code>share_invalid</code></th>
+              <td data-label="Когда">ссылка врачу уже использована, отозвана или истекла (48 ч)</td>
+              <td data-label="Что делать">попросите пациента создать новую ссылку</td></tr>
+            <tr><th scope="row"><span class="status status--4xx">409</span> <code>login_taken</code></th>
+              <td data-label="Когда">регистрация: логин занят (регистр не важен)</td>
+              <td data-label="Что делать">выберите другой логин или войдите</td></tr>
+            <tr><th scope="row"><span class="status status--4xx">413</span> <code>payload_too_large</code></th>
+              <td data-label="Когда">тело или файл больше {{ max_upload_mb }} МБ</td>
+              <td data-label="Что делать">разбейте пакет на части</td></tr>
+            <tr><th scope="row"><span class="status status--4xx">413</span> <code>record_too_large</code></th>
+              <td data-label="Когда">запись кабинета: вход анализа больше 16 КБ</td>
+              <td data-label="Что делать">уберите лишние показатели, референсы или <code>patient_ref</code></td></tr>
+            <tr><th scope="row"><span class="status status--4xx">415</span> <code>unsupported_media_type</code></th>
+              <td data-label="Когда">тело запроса кабинета без <code>Content-Type: application/json</code></td>
+              <td data-label="Что делать">отправьте JSON с этим заголовком</td></tr>
+            <tr><th scope="row"><span class="status status--4xx">422</span> <code>invalid_*</code>, <code>file_required</code>…</th>
+              <td data-label="Когда">ошибка ввода: возраст вне 18–120, нет гемоглобина, неизвестная единица, не тот файл</td>
+              <td data-label="Что делать">исправьте поле из <code>field</code> по тексту <code>message</code></td></tr>
+            <tr><th scope="row"><span class="status status--4xx">422</span> <code>unknown_analyte</code></th>
+              <td data-label="Когда">кабинет и референсы врача: показатель не из справочника</td>
+              <td data-label="Что делать">коды и названия — <code>GET /api/v1/reference</code></td></tr>
+            <tr><th scope="row"><span class="status status--4xx">422</span> <code>missing_field</code></th>
+              <td data-label="Когда"><code>PATCH /api/v1/doctor/lab-refs/{id}</code> с пустым телом</td>
+              <td data-label="Что делать">передайте хотя бы одно из полей <code>name</code>, <code>default</code>, <code>ranges</code></td></tr>
+            <tr><th scope="row"><span class="status status--4xx">422</span> <code>too_many_tokens</code>, <code>quota_exceeded</code></th>
+              <td data-label="Когда">именованных токенов уже 20; данных пользователя больше 5 МБ</td>
+              <td data-label="Что делать">отзовите ненужный токен; удалите старые записи</td></tr>
+            <tr><th scope="row"><span class="status status--4xx">429</span> <code>rate_limited</code></th>
+              <td data-label="Когда">превышен лимит запросов в минуту</td>
+              <td data-label="Что делать">повторите через <code>Retry-After</code> секунд</td></tr>
+            <tr><th scope="row"><span class="status status--5xx">503</span> <code>service_busy</code>, <code>storage_unavailable</code></th>
+              <td data-label="Когда">заняты оба слота тяжёлых расчётов; хранилище кабинета недоступно</td>
+              <td data-label="Что делать">повторите через <code>Retry-After</code> секунд</td></tr>
+            <tr><th scope="row"><span class="status status--5xx">503</span> <code>signups_paused</code></th>
+              <td data-label="Когда">регистрация: достигнут суточный предел новых аккаунтов</td>
+              <td data-label="Что делать">повторите позже (<code>Retry-After</code>); вход работает</td></tr>
+            <tr><th scope="row"><span class="status status--5xx">507</span> <code>storage_full</code></th>
+              <td data-label="Когда">хранилище кабинета заполнено: новые записи, наборы, ссылки и регистрации не принимаются</td>
+              <td data-label="Что делать">повторите позже; чтение, выгрузка и удаление работают</td></tr>
+            <tr><th scope="row"><span class="status status--5xx">500</span> <code>internal</code></th>
+              <td data-label="Когда">внутренняя ошибка; подробностей и трассировки в ответе нет</td>
+              <td data-label="Что делать">повторите позже; если ошибка повторяется — сообщите время запроса</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <ul class="limits">
+      <li><b>{{ max_upload_mb }} МБ</b><span>тело запроса и файл (<code>DL_MAX_UPLOAD_MB</code>); один анализ JSON — до 256 КБ</span></li>
+      <li><b>10 000</b><span>записей в пакете и строк в файле (<code>DL_MAX_BATCH</code>); 200 столбцов; бланк — до 400 строк</span></li>
+      <li><b>2</b><span>тяжёлых расчёта одновременно (batch, benchmark, columns, parse); иначе 503</span></li>
+      <li><b>30 в минуту</b><span>тяжёлых запросов на ключ или токен по умолчанию (<code>DL_UI_RATE_PER_MIN</code>); иначе 429</span></li>
+      <li><b>25 Мп · 20 с</b><span>фото бланка: размер снимка и время распознавания</span></li>
+    </ul>
+  </section>
+  <p class="vh" id="dev-live" aria-live="polite"></p>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="/static/developers.js?v={{ v }}" defer></script>
+{% endblock %}

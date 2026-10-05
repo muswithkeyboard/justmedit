@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block title %}Justmedit — вход в кабинет{% endblock %}
+{% block head %}
+  <link rel="stylesheet" href="/static/cabinet.css?v={{ v }}">
+{% endblock %}
+{% block skip %}auth{% endblock %}
+{% block hero %}
+<section class="hero hero--auth" aria-labelledby="auth-h">
+  <div class="hero__fx" aria-hidden="true"><span class="hero__blob hero__blob--a"></span><span class="hero__blob hero__blob--b"></span><span class="hero__blob hero__blob--c"></span></div>
+  <img class="hero__mark" src="/static/logo-tree-white.png?v={{ v }}" alt="" aria-hidden="true" width="233" height="192">
+  <div class="wrap auth">
+    <div class="auth__intro">
+      <p class="hero__kicker"><span class="hero__dot" aria-hidden="true"></span>Личный кабинет</p>
+      <h1 id="auth-h" class="auth__title">Вся история анализов <span class="hero__accent">в одном месте</span></h1>
+      <p class="auth__lead">Сохраняйте анализы, смотрите динамику показателей и открывайте её врачу по ссылке — на выбранный срок.</p>
+      <ul class="auth__feats">
+        <li><span class="auth__ico" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M4 18 9 12l4 3 7-8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 21h16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+          <span><b>Динамика</b> — графики гемоглобина, ферритина и других показателей с полосой нормы</span></li>
+        <li><span class="auth__ico" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+          <span><b>Доступ врачу</b> — одноразовая ссылка на 1–90 дней, журнал просмотров, закрыть доступ можно в любой момент</span></li>
+        <li><span class="auth__ico" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><rect x="5" y="10.5" width="14" height="9.5" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+          <span><b>Шифрование</b> — значения анализов хранятся зашифрованно, удаление всего — одной кнопкой</span></li>
+      </ul>
+    </div>
+
+    <div class="auth-card" id="auth" tabindex="-1">
+      <div id="auth-note" class="auth-note" role="status" hidden></div>
+      <div class="auth-tabs" role="tablist" aria-label="Вход или регистрация">
+        <button type="button" role="tab" id="tab-login" aria-controls="pane-login" aria-selected="true">Вход</button>
+        <button type="button" role="tab" id="tab-register" aria-controls="pane-register" aria-selected="false" tabindex="-1">Регистрация</button>
+      </div>
+
+      <div id="auth-alert" class="cab-alert" role="alert" hidden></div>
+
+      <form id="pane-login" class="auth-form" role="tabpanel" aria-labelledby="tab-login" novalidate autocomplete="on">
+        <div class="fx">
+          <label class="fx__label" for="login-login">Логин</label>
+          <input class="fx__input" id="login-login" name="username" type="text" autocomplete="username" autocapitalize="off" spellcheck="false" maxlength="64" required aria-describedby="err-login-login">
+          <p class="field__error" id="err-login-login" hidden></p>
+        </div>
+        <div class="fx">
+          <label class="fx__label" for="login-password">Пароль</label>
+          <div class="pw">
+            <input class="fx__input" id="login-password" name="password" type="password" autocomplete="current-password" maxlength="128" required aria-describedby="err-login-password">
+            <button type="button" class="pw__eye" data-for="login-password" aria-pressed="false" aria-label="Показать пароль"></button>
+          </div>
+          <p class="field__error" id="err-login-password" hidden></p>
+        </div>
+        <button type="submit" class="btn btn--primary btn--wide" id="login-submit">Войти</button>
+        <p class="auth-form__alt">Нет кабинета? <button type="button" class="link-btn" data-goto="register">Зарегистрируйтесь</button> — это минута.</p>
+      </form>
+
+      <form id="pane-register" class="auth-form" role="tabpanel" aria-labelledby="tab-register" novalidate autocomplete="on" hidden>
+        <fieldset class="fx">
+          <legend class="fx__label">Кто вы</legend>
+          <div class="role-cards">
+            <label class="role-card"><input type="radio" name="role" value="patient" checked>
+              <span class="role-card__t">Пациент</span>
+              <span class="role-card__d">Храните анализы, смотрите динамику, открывайте её врачу</span></label>
+            <label class="role-card"><input type="radio" name="role" value="doctor">
+              <span class="role-card__t">Врач</span>
+              <span class="role-card__d">История пациентов по их ссылкам и референсы вашей лаборатории</span></label>
+          </div>
+        </fieldset>
+        <div class="fx">
+          <label class="fx__label" for="reg-login">Логин</label>
+          <input class="fx__input" id="reg-login" name="username" type="text" autocomplete="username" autocapitalize="off" spellcheck="false" maxlength="64" required aria-describedby="hint-reg-login err-reg-login">
+          <p class="fx__hint" id="hint-reg-login">3–64 символа: буквы одного алфавита — латиница или кириллица, не вперемешку, — цифры и «._-@». Не используйте имя и фамилию.</p>
+          <p class="field__error" id="err-reg-login" hidden></p>
+        </div>
+        <div class="fx">
+          <label class="fx__label" for="reg-password">Пароль</label>
+          <div class="pw">
+            <input class="fx__input" id="reg-password" name="new-password" type="password" autocomplete="new-password" maxlength="128" required aria-describedby="hint-reg-password err-reg-password">
+            <button type="button" class="pw__eye" data-for="reg-password" aria-pressed="false" aria-label="Показать пароль"></button>
+          </div>
+          <div class="pw-meter" aria-hidden="true"><span class="pw-meter__bar" id="pw-meter"></span></div>
+          <p class="fx__hint" id="hint-reg-password">Не меньше 8 символов.</p>
+          <p class="field__error" id="err-reg-password" hidden></p>
+        </div>
+        <div class="fx" id="reg-clinic-box" hidden>
+          <label class="fx__label" for="reg-clinic">Клиника</label>
+          <input class="fx__input" id="reg-clinic" name="organization" type="text" autocomplete="organization" maxlength="120" placeholder="Например, «Клиника на Лесной»" aria-describedby="hint-reg-clinic err-reg-clinic">
+          <p class="fx__hint" id="hint-reg-clinic">Пациент увидит её в списке врачей с доступом.</p>
+          <p class="field__error" id="err-reg-clinic" hidden></p>
+        </div>
+        <div class="fx">
+          <label class="consent"><input type="checkbox" id="reg-consent" aria-describedby="err-reg-consent">
+            <span>Я согласен(на) на хранение моих анализов в кабинете. <b>Демо: не вводите реальные данные.</b> Анализы хранятся зашифрованно до удаления (можно удалить всё в кабинете).</span></label>
+          <p class="field__error" id="err-reg-consent" hidden></p>
+        </div>
+        <button type="submit" class="btn btn--primary btn--wide" id="reg-submit">Создать кабинет</button>
+        <p class="auth-form__alt">Уже есть кабинет? <button type="button" class="link-btn" data-goto="login">Войдите</button></p>
+      </form>
+
+      <div id="auth-signed" class="auth-signed" hidden>
+        <p class="auth-signed__t">Вы уже вошли как <b id="auth-signed-name"></b></p>
+        <div class="auth-signed__btns">
+          <a class="btn btn--primary" href="/cabinet" id="auth-signed-go">Открыть кабинет</a>
+          <button type="button" class="btn" id="auth-signed-out">Выйти</button>
+        </div>
+      </div>
+
+      <p class="auth-card__foot">Без входа расшифровка работает как раньше и ничего не хранит.</p>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block main %}
+<section class="auth-facts" aria-labelledby="facts-h">
+  <h2 id="facts-h" class="vh">Что происходит с данными</h2>
+  <div class="auth-fact">
+    <span class="auth-fact__n" aria-hidden="true">1</span>
+    <h3 class="auth-fact__t">Что хранится</h3>
+    <p>Логин, роль, даты и значения анализов. Значения и отчёты — в зашифрованном виде; пароль — только как хэш.</p>
+  </div>
+  <div class="auth-fact">
+    <span class="auth-fact__n" aria-hidden="true">2</span>
+    <h3 class="auth-fact__t">Кто видит</h3>
+    <p>Только вы и врач, которому вы сами открыли доступ по ссылке. Каждый просмотр врача попадает в ваш журнал.</p>
+  </div>
+  <div class="auth-fact">
+    <span class="auth-fact__n" aria-hidden="true">3</span>
+    <h3 class="auth-fact__t">Как удалить</h3>
+    <p>«Мои данные» → «Удалить всё»: аккаунт, анализы, ссылки и журнал стираются сразу и целиком.</p>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="/static/cabinet.js?v={{ v }}" defer></script>
+{% endblock %}

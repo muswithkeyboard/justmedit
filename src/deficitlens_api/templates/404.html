@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Justmedit — страница не найдена{% endblock %}
+{% block hero %}
+<section class="hero hero--sub" aria-labelledby="nf-h">
+  <div class="hero__fx" aria-hidden="true"><span class="hero__blob hero__blob--a"></span><span class="hero__blob hero__blob--b"></span></div>
+  <div class="wrap hero__in">
+    <p class="hero__kicker"><span class="hero__dot" aria-hidden="true"></span>Ошибка 404</p>
+    <h1 id="nf-h" class="hero__title">Страница <span class="hero__accent">не найдена</span></h1>
+    <p class="hero__lead">Такого адреса на сайте нет: возможно, ссылка устарела или в ней опечатка.</p>
+  </div>
+</section>
+{% endblock %}
+{% block main %}
+<section class="panel" aria-label="Куда перейти">
+  <p><a class="btn btn--primary" href="/">На главную — расшифровка анализов</a></p>
+  <p class="hint">Ещё разделы: <a href="/benchmark">проверить на своём файле</a>, <a href="/developers">API</a>,
+    <a href="/login">вход в кабинет</a>.</p>
+</section>
+{% endblock %}

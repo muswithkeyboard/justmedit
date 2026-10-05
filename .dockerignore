@@ -1,0 +1,47 @@
+# В контекст сборки идёт только то, что копирует Dockerfile:
+#   app    — pyproject.toml, uv.lock, src, config, models, data/demo, docs/metrics;
+#   verify — дополнительно tests, scripts, examples/clinic_site, examples/lis_batch.py, docs/norms.md, docs/pitch,
+#            docs/CONTRACTS.md (tests/api/test_openapi.py сверяет openapi.json с контрактом).
+# Данные кейса и NHANES — никогда (они монтируются в verify томами только для чтения).
+data/*
+!data/demo
+
+# История, исследования, кэши, окружения
+.git
+.gitignore
+research
+**/__pycache__
+**/*.pyc
+**/.DS_Store
+.ruff_cache
+.pytest_cache
+.venv
+venv
+*.egg-info
+.env
+.env.*
+
+# Документы: только сводные метрики (app) и документ порогов (сверка в verify)
+docs/*
+!docs/metrics
+!docs/norms.md
+!docs/pitch
+!docs/facts
+!docs/CONTRACTS.md
+
+# Примеры: только мини-сайт клиники (его тесты идут в verify)
+examples/*
+!examples/clinic_site
+!examples/lis_batch.py
+
+# Остальное сервису не нужно
+Makefile
+docker-compose.yml
+Dockerfile
+.dockerignore
+*.md
+!docs/norms.md
+!docs/pitch/NUMBERS.md
+!docs/facts/reference_table.md
+!examples/clinic_site/*.md
+requirements.txt

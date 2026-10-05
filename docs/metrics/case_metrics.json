@@ -1,0 +1,1492 @@
+{
+ "summary": {
+  "n_rows": 840,
+  "level1_match": 840,
+  "cv": "5 фолдов × 3 повтора, стратификация по 14 профилям, seed 20261003",
+  "acc12": {
+   "clinical": {
+    "cbc": 0.573,
+    "cbc_iron_crp": 0.6651,
+    "standard": 0.7659,
+    "extended": 0.8492
+   },
+   "benchmark": {
+    "cbc": 0.5044,
+    "cbc_iron_crp": 0.6385,
+    "standard": 0.7968,
+    "extended": 0.9187
+   },
+   "naive": {
+    "cbc": 0.4107,
+    "cbc_iron_crp": 0.571,
+    "standard": 0.7516,
+    "extended": 0.881
+   }
+  },
+  "benchmark_extended": {
+   "acc12": 0.9187,
+   "f1_12": 0.9101,
+   "acc5": 0.952,
+   "f1_5": 0.9397,
+   "f1_cause": 0.8943,
+   "f1_cause_proto": 0.8932,
+   "logloss12": 0.2633,
+   "ece": 0.0476,
+   "ece_pooled": 0.0228,
+   "auroc_hidden": 0.983,
+   "acc5_anemic": 0.9241
+  },
+  "clinical_extended": {
+   "acc12": 0.8492,
+   "f1_12": 0.8255,
+   "acc5": 0.9143,
+   "f1_5": 0.8929,
+   "f1_cause": 0.803,
+   "f1_cause_proto": 0.8052,
+   "logloss12": 0.4106,
+   "ece": 0.0492,
+   "ece_pooled": 0.0169,
+   "auroc_hidden": 0.9729,
+   "acc5_anemic": 0.8644
+  },
+  "clinical_cbc": {
+   "acc12": 0.573,
+   "f1_12": 0.496,
+   "acc5": 0.7821,
+   "f1_5": 0.707,
+   "f1_cause": 0.4199,
+   "f1_cause_proto": 0.4092,
+   "logloss12": 1.1825,
+   "ece": 0.0877,
+   "ece_pooled": 0.0435,
+   "auroc_hidden": 0.897,
+   "acc5_anemic": 0.6553
+  },
+  "acc5_anemic": {
+   "benchmark_extended": 0.9241,
+   "clinical_extended": 0.8644,
+   "clinical_cbc": 0.6553
+  },
+  "auroc_hidden_clinical": {
+   "cbc": 0.897,
+   "cbc_iron_crp": 0.9396,
+   "standard": 0.9512,
+   "extended": 0.9729
+  },
+  "ece_pooled_clinical": {
+   "cbc": 0.0435,
+   "cbc_iron_crp": 0.0365,
+   "standard": 0.0362,
+   "extended": 0.0169
+  },
+  "hidden_flag_clinical": {
+   "cbc": {
+    "specificity": 0.9212,
+    "sensitivity": 0.685
+   },
+   "cbc_iron_crp": {
+    "specificity": 0.9303,
+    "sensitivity": 0.8085
+   },
+   "standard": {
+    "specificity": 0.9152,
+    "sensitivity": 0.8449
+   },
+   "extended": {
+    "specificity": 0.9182,
+    "sensitivity": 0.9334
+   }
+  },
+  "prototype_check": {
+   "reference_acc12": {
+    "clinical": {
+     "cbc": 0.573,
+     "cbc_iron_crp": 0.665,
+     "standard": 0.766,
+     "extended": 0.849
+    },
+    "benchmark": {
+     "cbc": 0.504,
+     "cbc_iron_crp": 0.638,
+     "standard": 0.797,
+     "extended": 0.919
+    },
+    "naive": {
+     "cbc": 0.411,
+     "cbc_iron_crp": 0.571,
+     "standard": 0.752,
+     "extended": 0.881
+    }
+   },
+   "diff_acc12": {
+    "clinical/cbc": 0.0,
+    "clinical/cbc_iron_crp": 0.0001,
+    "clinical/standard": -0.0001,
+    "clinical/extended": 0.0002,
+    "benchmark/cbc": 0.0004,
+    "benchmark/cbc_iron_crp": 0.0005,
+    "benchmark/standard": -0.0002,
+    "benchmark/extended": -0.0003,
+    "naive/cbc": -0.0003,
+    "naive/cbc_iron_crp": 0.0,
+    "naive/standard": -0.0004,
+    "naive/extended": -0.0
+   },
+   "max_abs_diff": 0.0005
+  },
+  "gates": {
+   "thresholds": {
+    "level1_match": 840,
+    "benchmark_extended_acc12": 0.9,
+    "benchmark_extended_acc5": 0.93,
+    "clinical_extended_acc12": 0.83,
+    "clinical_cbc_iron_crp_acc12": 0.64,
+    "clinical_cbc_acc12": 0.55,
+    "clinical_cbc_auroc_hidden": 0.87,
+    "clinical_ece_pooled_max": 0.06
+   },
+   "passed": {
+    "level1_match": true,
+    "benchmark_extended_acc12": true,
+    "benchmark_extended_acc5": true,
+    "clinical_extended_acc12": true,
+    "clinical_cbc_iron_crp_acc12": true,
+    "clinical_cbc_acc12": true,
+    "clinical_cbc_auroc_hidden": true,
+    "clinical_ece_pooled_max": true
+   },
+   "all_passed": true
+  },
+  "seconds": 109.7
+ },
+ "by_mode_level": {
+  "clinical": {
+   "cbc": {
+    "acc12": {
+     "mean": 0.5730158730158731,
+     "sd": 0.026853341185718894
+    },
+    "f1_12": {
+     "mean": 0.49597292904579265,
+     "sd": 0.029812727175970246
+    },
+    "acc5": {
+     "mean": 0.782142857142857,
+     "sd": 0.03140047187462026
+    },
+    "f1_5": {
+     "mean": 0.707024737054019,
+     "sd": 0.040432487717142036
+    },
+    "f1_cause": {
+     "mean": 0.41990221143048057,
+     "sd": 0.034858465507128136
+    },
+    "f1_cause_proto": {
+     "mean": 0.40918547776144437,
+     "sd": 0.04167562067708532
+    },
+    "acc_cause": {
+     "mean": 0.5313492063492065,
+     "sd": 0.02759699839235765
+    },
+    "logloss12": {
+     "mean": 1.182466039275851,
+     "sd": 0.05947008539781173
+    },
+    "ece": {
+     "mean": 0.0877065783578808,
+     "sd": 0.021213619181784216
+    },
+    "auroc_hidden": {
+     "mean": 0.8970003231559491,
+     "sd": 0.03220871918236617
+    },
+    "acc5_anemic": {
+     "mean": 0.6553222565361086,
+     "sd": 0.04898577939019386
+    },
+    "hidden_specificity": {
+     "mean": 0.9212121212121211,
+     "sd": 0.05285996142117633
+    },
+    "hidden_sensitivity": {
+     "mean": 0.6849746537294676,
+     "sd": 0.06479042575852922
+    },
+    "ece_pooled": {
+     "mean": 0.04353029646683134,
+     "sd": 0.004770891015921674
+    }
+   },
+   "cbc_iron_crp": {
+    "acc12": {
+     "mean": 0.665079365079365,
+     "sd": 0.031774363774648
+    },
+    "f1_12": {
+     "mean": 0.5827643818153386,
+     "sd": 0.03742779604185079
+    },
+    "acc5": {
+     "mean": 0.8166666666666665,
+     "sd": 0.025273848375872546
+    },
+    "f1_5": {
+     "mean": 0.754137726882833,
+     "sd": 0.030984680121382252
+    },
+    "f1_cause": {
+     "mean": 0.5020982537063857,
+     "sd": 0.047391257780767124
+    },
+    "f1_cause_proto": {
+     "mean": 0.5000063525182044,
+     "sd": 0.04699895658828417
+    },
+    "acc_cause": {
+     "mean": 0.6234126984126985,
+     "sd": 0.031373594807404294
+    },
+    "logloss12": {
+     "mean": 0.8691626444533395,
+     "sd": 0.06506187820929957
+    },
+    "ece": {
+     "mean": 0.0759890103118703,
+     "sd": 0.027228158776837503
+    },
+    "auroc_hidden": {
+     "mean": 0.939603883339218,
+     "sd": 0.027722210469437177
+    },
+    "acc5_anemic": {
+     "mean": 0.7099701553017216,
+     "sd": 0.03944907904804633
+    },
+    "hidden_specificity": {
+     "mean": 0.9303030303030301,
+     "sd": 0.056633900288997556
+    },
+    "hidden_sensitivity": {
+     "mean": 0.8085110812770006,
+     "sd": 0.05518882482615529
+    },
+    "ece_pooled": {
+     "mean": 0.03649687902488166,
+     "sd": 0.010213474761465325
+    }
+   },
+   "standard": {
+    "acc12": {
+     "mean": 0.7658730158730159,
+     "sd": 0.020080754256302163
+    },
+    "f1_12": {
+     "mean": 0.7042613502508528,
+     "sd": 0.029215031843868942
+    },
+    "acc5": {
+     "mean": 0.8813492063492063,
+     "sd": 0.020676849952560365
+    },
+    "f1_5": {
+     "mean": 0.8482099090420161,
+     "sd": 0.027253736567974213
+    },
+    "f1_cause": {
+     "mean": 0.6783826389354141,
+     "sd": 0.04257419838714645
+    },
+    "f1_cause_proto": {
+     "mean": 0.683695499906728,
+     "sd": 0.0458793329173921
+    },
+    "acc_cause": {
+     "mean": 0.7583333333333333,
+     "sd": 0.022249032256391896
+    },
+    "logloss12": {
+     "mean": 0.6616642643744182,
+     "sd": 0.0555133120505049
+    },
+    "ece": {
+     "mean": 0.06327891085591558,
+     "sd": 0.01593847559053754
+    },
+    "auroc_hidden": {
+     "mean": 0.9512004585065605,
+     "sd": 0.020940629436787442
+    },
+    "acc5_anemic": {
+     "mean": 0.8124381072375405,
+     "sd": 0.03172440451956937
+    },
+    "hidden_specificity": {
+     "mean": 0.9151515151515152,
+     "sd": 0.061625623194261264
+    },
+    "hidden_sensitivity": {
+     "mean": 0.8448668993661084,
+     "sd": 0.052996890098750825
+    },
+    "ece_pooled": {
+     "mean": 0.03622091775729484,
+     "sd": 0.0045612118850092255
+    }
+   },
+   "extended": {
+    "acc12": {
+     "mean": 0.8492063492063492,
+     "sd": 0.024713562614214642
+    },
+    "f1_12": {
+     "mean": 0.8254976962262434,
+     "sd": 0.02417788197403261
+    },
+    "acc5": {
+     "mean": 0.9142857142857143,
+     "sd": 0.019716158838352964
+    },
+    "f1_5": {
+     "mean": 0.8928699128187058,
+     "sd": 0.024567378836940035
+    },
+    "f1_cause": {
+     "mean": 0.8030460594686957,
+     "sd": 0.032263705295392034
+    },
+    "f1_cause_proto": {
+     "mean": 0.8051953601834081,
+     "sd": 0.031603392714705296
+    },
+    "acc_cause": {
+     "mean": 0.8464285714285713,
+     "sd": 0.023830772830985975
+    },
+    "logloss12": {
+     "mean": 0.41063431527790506,
+     "sd": 0.047669733479185045
+    },
+    "ece": {
+     "mean": 0.049222298220538134,
+     "sd": 0.014536067906583178
+    },
+    "auroc_hidden": {
+     "mean": 0.9728725917409978,
+     "sd": 0.017400053904119653
+    },
+    "acc5_anemic": {
+     "mean": 0.8643789231906922,
+     "sd": 0.03149512040181955
+    },
+    "hidden_specificity": {
+     "mean": 0.9181818181818183,
+     "sd": 0.08275081725752723
+    },
+    "hidden_sensitivity": {
+     "mean": 0.933377447777842,
+     "sd": 0.033377991892106884
+    },
+    "ece_pooled": {
+     "mean": 0.01686849052517796,
+     "sd": 0.002097251260219916
+    }
+   }
+  },
+  "benchmark": {
+   "cbc": {
+    "acc12": {
+     "mean": 0.5043650793650795,
+     "sd": 0.03459606170003735
+    },
+    "f1_12": {
+     "mean": 0.39048150628849626,
+     "sd": 0.035162089674707395
+    },
+    "acc5": {
+     "mean": 0.7416666666666667,
+     "sd": 0.028617451595054213
+    },
+    "f1_5": {
+     "mean": 0.6556780308340004,
+     "sd": 0.04280939726131969
+    },
+    "f1_cause": {
+     "mean": 0.3182348536241897,
+     "sd": 0.03733793339223162
+    },
+    "f1_cause_proto": {
+     "mean": 0.3059416094215092,
+     "sd": 0.02584294468018677
+    },
+    "acc_cause": {
+     "mean": 0.4749999999999999,
+     "sd": 0.03119021654355239
+    },
+    "logloss12": {
+     "mean": 1.366269632527552,
+     "sd": 0.07781041277190628
+    },
+    "ece": {
+     "mean": 0.1477234433864211,
+     "sd": 0.02771826323171687
+    },
+    "auroc_hidden": {
+     "mean": 0.8996768250411112,
+     "sd": 0.03080335067112457
+    },
+    "acc5_anemic": {
+     "mean": 0.5911370135616517,
+     "sd": 0.04621461503605052
+    },
+    "hidden_specificity": {
+     "mean": null,
+     "sd": null
+    },
+    "hidden_sensitivity": {
+     "mean": null,
+     "sd": null
+    },
+    "ece_pooled": {
+     "mean": 0.1149224585688267,
+     "sd": 0.00716611372427183
+    }
+   },
+   "cbc_iron_crp": {
+    "acc12": {
+     "mean": 0.6384920634920633,
+     "sd": 0.030803759707816805
+    },
+    "f1_12": {
+     "mean": 0.5312914268463731,
+     "sd": 0.040663984104861085
+    },
+    "acc5": {
+     "mean": 0.7797619047619049,
+     "sd": 0.02614018052540713
+    },
+    "f1_5": {
+     "mean": 0.6998792057166153,
+     "sd": 0.04620628691903286
+    },
+    "f1_cause": {
+     "mean": 0.44378305765462556,
+     "sd": 0.04079200248510167
+    },
+    "f1_cause_proto": {
+     "mean": 0.4365821029326996,
+     "sd": 0.03942682655722138
+    },
+    "acc_cause": {
+     "mean": 0.6234126984126984,
+     "sd": 0.029970921371355354
+    },
+    "logloss12": {
+     "mean": 0.9703282297252132,
+     "sd": 0.07151923456684971
+    },
+    "ece": {
+     "mean": 0.15301383105215297,
+     "sd": 0.026690037920465336
+    },
+    "auroc_hidden": {
+     "mean": 0.9540299820895844,
+     "sd": 0.022233363768528722
+    },
+    "acc5_anemic": {
+     "mean": 0.6516837348199026,
+     "sd": 0.03964846259705272
+    },
+    "hidden_specificity": {
+     "mean": null,
+     "sd": null
+    },
+    "hidden_sensitivity": {
+     "mean": null,
+     "sd": null
+    },
+    "ece_pooled": {
+     "mean": 0.1360069827448436,
+     "sd": 0.009531008378695256
+    }
+   },
+   "standard": {
+    "acc12": {
+     "mean": 0.7968253968253968,
+     "sd": 0.0250391120461404
+    },
+    "f1_12": {
+     "mean": 0.720610611473964,
+     "sd": 0.034418325133709356
+    },
+    "acc5": {
+     "mean": 0.8793650793650795,
+     "sd": 0.022884526302934634
+    },
+    "f1_5": {
+     "mean": 0.8480565535200717,
+     "sd": 0.03301735410144509
+    },
+    "f1_cause": {
+     "mean": 0.6912188867976214,
+     "sd": 0.044029451049375376
+    },
+    "f1_cause_proto": {
+     "mean": 0.6901257067542951,
+     "sd": 0.044348299482078475
+    },
+    "acc_cause": {
+     "mean": 0.7944444444444444,
+     "sd": 0.0270785828481842
+    },
+    "logloss12": {
+     "mean": 0.6038532814690701,
+     "sd": 0.07277437447306352
+    },
+    "ece": {
+     "mean": 0.06598982723007181,
+     "sd": 0.017575322574808414
+    },
+    "auroc_hidden": {
+     "mean": 0.9697483499045579,
+     "sd": 0.015248478275938579
+    },
+    "acc5_anemic": {
+     "mean": 0.8092995618639651,
+     "sd": 0.035021792037383696
+    },
+    "hidden_specificity": {
+     "mean": null,
+     "sd": null
+    },
+    "hidden_sensitivity": {
+     "mean": null,
+     "sd": null
+    },
+    "ece_pooled": {
+     "mean": 0.044152666546871853,
+     "sd": 0.009827611629739252
+    }
+   },
+   "extended": {
+    "acc12": {
+     "mean": 0.9186507936507936,
+     "sd": 0.020331251519761086
+    },
+    "f1_12": {
+     "mean": 0.9100928044588631,
+     "sd": 0.02185351176634736
+    },
+    "acc5": {
+     "mean": 0.9519841269841269,
+     "sd": 0.016755513108309455
+    },
+    "f1_5": {
+     "mean": 0.939719206047329,
+     "sd": 0.021994547933896155
+    },
+    "f1_cause": {
+     "mean": 0.8943439663964619,
+     "sd": 0.029058841131922898
+    },
+    "f1_cause_proto": {
+     "mean": 0.8931965096848519,
+     "sd": 0.028140574957332864
+    },
+    "acc_cause": {
+     "mean": 0.917063492063492,
+     "sd": 0.019544262280798343
+    },
+    "logloss12": {
+     "mean": 0.26330091266006933,
+     "sd": 0.05064921858280961
+    },
+    "ece": {
+     "mean": 0.04763967587816006,
+     "sd": 0.011472931416990021
+    },
+    "auroc_hidden": {
+     "mean": 0.9829623734980931,
+     "sd": 0.011894840393942473
+    },
+    "acc5_anemic": {
+     "mean": 0.9240798503785391,
+     "sd": 0.026649502660535035
+    },
+    "hidden_specificity": {
+     "mean": null,
+     "sd": null
+    },
+    "hidden_sensitivity": {
+     "mean": null,
+     "sd": null
+    },
+    "ece_pooled": {
+     "mean": 0.022808709853098564,
+     "sd": 0.006925383809746502
+    }
+   }
+  },
+  "naive": {
+   "cbc": {
+    "acc12": {
+     "mean": 0.41071428571428575,
+     "sd": 0.035214760613688195
+    },
+    "f1_12": {
+     "mean": 0.28130554963966137,
+     "sd": 0.026125328056936938
+    },
+    "acc5": {
+     "mean": 0.6944444444444445,
+     "sd": 0.04041278213292883
+    },
+    "f1_5": {
+     "mean": 0.5818440788594178,
+     "sd": 0.04602463705243703
+    },
+    "f1_cause": {
+     "mean": 0.24807271363185945,
+     "sd": 0.026009345513594774
+    },
+    "f1_cause_proto": {
+     "mean": 0.22887303667940065,
+     "sd": 0.01885795126278517
+    },
+    "acc_cause": {
+     "mean": 0.3988095238095238,
+     "sd": 0.028368753941517482
+    },
+    "logloss12": {
+     "mean": 1.973536653212744,
+     "sd": 0.10900586826811857
+    },
+    "ece": {
+     "mean": 0.23506462196677844,
+     "sd": 0.041234296270147436
+    },
+    "auroc_hidden": {
+     "mean": 0.8764773194149705,
+     "sd": 0.03498594674782722
+    },
+    "acc5_anemic": {
+     "mean": 0.5169199062337977,
+     "sd": 0.06050972152366298
+    },
+    "hidden_specificity": {
+     "mean": null,
+     "sd": null
+    },
+    "hidden_sensitivity": {
+     "mean": null,
+     "sd": null
+    },
+    "ece_pooled": {
+     "mean": 0.20857782173351094,
+     "sd": 0.015475175549796006
+    }
+   },
+   "cbc_iron_crp": {
+    "acc12": {
+     "mean": 0.571031746031746,
+     "sd": 0.030556291771912245
+    },
+    "f1_12": {
+     "mean": 0.43168613319261046,
+     "sd": 0.03396441073858469
+    },
+    "acc5": {
+     "mean": 0.7448412698412697,
+     "sd": 0.013473710339634766
+    },
+    "f1_5": {
+     "mean": 0.6300773879688829,
+     "sd": 0.04435648758465522
+    },
+    "f1_cause": {
+     "mean": 0.35993957053315156,
+     "sd": 0.027343817445907897
+    },
+    "f1_cause_proto": {
+     "mean": 0.3528335522531854,
+     "sd": 0.027470185648553427
+    },
+    "acc_cause": {
+     "mean": 0.5722222222222222,
+     "sd": 0.028177796759376338
+    },
+    "logloss12": {
+     "mean": 1.4284167284887974,
+     "sd": 0.12246405873832782
+    },
+    "ece": {
+     "mean": 0.22748723484276753,
+     "sd": 0.037736033833785536
+    },
+    "auroc_hidden": {
+     "mean": 0.9439722538393315,
+     "sd": 0.023811769628373138
+    },
+    "acc5_anemic": {
+     "mean": 0.5962291037476021,
+     "sd": 0.022216838137459297
+    },
+    "hidden_specificity": {
+     "mean": null,
+     "sd": null
+    },
+    "hidden_sensitivity": {
+     "mean": null,
+     "sd": null
+    },
+    "ece_pooled": {
+     "mean": 0.22219738258991528,
+     "sd": 0.00938227417429957
+    }
+   },
+   "standard": {
+    "acc12": {
+     "mean": 0.7515873015873016,
+     "sd": 0.025400368233614187
+    },
+    "f1_12": {
+     "mean": 0.6612576554051884,
+     "sd": 0.027379715714353922
+    },
+    "acc5": {
+     "mean": 0.8638888888888889,
+     "sd": 0.023901466468426686
+    },
+    "f1_5": {
+     "mean": 0.8267122100531272,
+     "sd": 0.03471983936381278
+    },
+    "f1_cause": {
+     "mean": 0.6377483100797126,
+     "sd": 0.02583592513151078
+    },
+    "f1_cause_proto": {
+     "mean": 0.6362471915329363,
+     "sd": 0.02865206158570485
+    },
+    "acc_cause": {
+     "mean": 0.7595238095238095,
+     "sd": 0.023031506145891438
+    },
+    "logloss12": {
+     "mean": 0.8776553865386936,
+     "sd": 0.1227232213713432
+    },
+    "ece": {
+     "mean": 0.10285106230000823,
+     "sd": 0.022739306509457886
+    },
+    "auroc_hidden": {
+     "mean": 0.9616609767546418,
+     "sd": 0.019932400666152858
+    },
+    "acc5_anemic": {
+     "mean": 0.7849991246437326,
+     "sd": 0.03563329319812458
+    },
+    "hidden_specificity": {
+     "mean": null,
+     "sd": null
+    },
+    "hidden_sensitivity": {
+     "mean": null,
+     "sd": null
+    },
+    "ece_pooled": {
+     "mean": 0.08677908317282425,
+     "sd": 0.006804973005565378
+    }
+   },
+   "extended": {
+    "acc12": {
+     "mean": 0.8809523809523809,
+     "sd": 0.026714758626539138
+    },
+    "f1_12": {
+     "mean": 0.8777032040664625,
+     "sd": 0.029439232457170707
+    },
+    "acc5": {
+     "mean": 0.9361111111111111,
+     "sd": 0.01517009344841935
+    },
+    "f1_5": {
+     "mean": 0.9170324408459506,
+     "sd": 0.020312383064230485
+    },
+    "f1_cause": {
+     "mean": 0.8626300136203257,
+     "sd": 0.028309570810823765
+    },
+    "f1_cause_proto": {
+     "mean": 0.8637861049448433,
+     "sd": 0.027771305979628316
+    },
+    "acc_cause": {
+     "mean": 0.8880952380952382,
+     "sd": 0.025867676785903442
+    },
+    "logloss12": {
+     "mean": 0.40115983076739364,
+     "sd": 0.08698615529447373
+    },
+    "ece": {
+     "mean": 0.050988703342713944,
+     "sd": 0.023393209572100615
+    },
+    "auroc_hidden": {
+     "mean": 0.9784504507206541,
+     "sd": 0.01367200992973648
+    },
+    "acc5_anemic": {
+     "mean": 0.8990178389948852,
+     "sd": 0.02356497313716016
+    },
+    "hidden_specificity": {
+     "mean": null,
+     "sd": null
+    },
+    "hidden_sensitivity": {
+     "mean": null,
+     "sd": null
+    },
+    "ece_pooled": {
+     "mean": 0.03348344624362561,
+     "sd": 0.009185833788045784
+    }
+   }
+  }
+ },
+ "confusion": {
+  "clinical": {
+   "level": "extended",
+   "repeat": 0,
+   "rows_true_columns_predicted": true,
+   "groups5": {
+    "labels": [
+     "healthy",
+     "iron_deficiency_anemia",
+     "vitamin_B12_deficiency_anemia",
+     "unexplained_anemia",
+     "other_deficiency_anemia"
+    ],
+    "matrix": [
+     [
+      309,
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      101,
+      0,
+      1,
+      13
+     ],
+     [
+      0,
+      0,
+      54,
+      0,
+      11
+     ],
+     [
+      0,
+      0,
+      0,
+      130,
+      10
+     ],
+     [
+      0,
+      12,
+      10,
+      14,
+      175
+     ]
+    ]
+   },
+   "classes12": {
+    "labels": [
+     "no_anemia_no_deficiency",
+     "latent_deficiency",
+     "B12_deficiency_no_anemia",
+     "folate_deficiency_no_anemia",
+     "iron_deficiency_anemia",
+     "B12_deficiency_anemia",
+     "folate_deficiency_anemia",
+     "mixed_deficiency",
+     "inflammation_anemia",
+     "anemia_other",
+     "B6_deficiency",
+     "copper_deficiency"
+    ],
+    "matrix": [
+     [
+      97,
+      6,
+      0,
+      4,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      2
+     ],
+     [
+      2,
+      83,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      0,
+      48,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+     ],
+     [
+      7,
+      1,
+      5,
+      26,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+     ],
+     [
+      0,
+      0,
+      0,
+      0,
+      101,
+      0,
+      1,
+      12,
+      1,
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      0,
+      0,
+      0,
+      0,
+      54,
+      2,
+      8,
+      0,
+      0,
+      1,
+      0
+     ],
+     [
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      39,
+      4,
+      0,
+      4,
+      1,
+      1
+     ],
+     [
+      0,
+      0,
+      0,
+      0,
+      11,
+      9,
+      3,
+      91,
+      1,
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      64,
+      1,
+      0,
+      0
+     ],
+     [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      3,
+      0,
+      2,
+      63,
+      3,
+      4
+     ],
+     [
+      3,
+      1,
+      1,
+      0,
+      1,
+      0,
+      0,
+      0,
+      1,
+      6,
+      21,
+      1
+     ],
+     [
+      0,
+      0,
+      0,
+      2,
+      0,
+      0,
+      1,
+      0,
+      0,
+      2,
+      2,
+      28
+     ]
+    ]
+   }
+  },
+  "benchmark": {
+   "level": "extended",
+   "repeat": 0,
+   "rows_true_columns_predicted": true,
+   "groups5": {
+    "labels": [
+     "healthy",
+     "iron_deficiency_anemia",
+     "vitamin_B12_deficiency_anemia",
+     "unexplained_anemia",
+     "other_deficiency_anemia"
+    ],
+    "matrix": [
+     [
+      309,
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      111,
+      0,
+      0,
+      4
+     ],
+     [
+      0,
+      0,
+      60,
+      0,
+      5
+     ],
+     [
+      0,
+      0,
+      0,
+      137,
+      3
+     ],
+     [
+      0,
+      14,
+      8,
+      8,
+      181
+     ]
+    ]
+   },
+   "classes12": {
+    "labels": [
+     "no_anemia_no_deficiency",
+     "latent_deficiency",
+     "B12_deficiency_no_anemia",
+     "folate_deficiency_no_anemia",
+     "iron_deficiency_anemia",
+     "B12_deficiency_anemia",
+     "folate_deficiency_anemia",
+     "mixed_deficiency",
+     "inflammation_anemia",
+     "anemia_other",
+     "B6_deficiency",
+     "copper_deficiency"
+    ],
+    "matrix": [
+     [
+      106,
+      1,
+      1,
+      2,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      1,
+      84,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      3,
+      0,
+      46,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      6,
+      0,
+      2,
+      32,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      0,
+      0,
+      0,
+      111,
+      0,
+      1,
+      3,
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      0,
+      0,
+      0,
+      0,
+      60,
+      2,
+      2,
+      0,
+      0,
+      1,
+      0
+     ],
+     [
+      0,
+      0,
+      0,
+      0,
+      0,
+      2,
+      43,
+      2,
+      0,
+      1,
+      1,
+      1
+     ],
+     [
+      0,
+      0,
+      0,
+      0,
+      13,
+      6,
+      3,
+      93,
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      65,
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2,
+      0,
+      0,
+      72,
+      1,
+      0
+     ],
+     [
+      3,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      5,
+      26,
+      0
+     ],
+     [
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2,
+      0,
+      32
+     ]
+    ]
+   }
+  }
+ },
+ "config": {
+  "model": "case-v1",
+  "data_sha256": "9d97e125c961a92222eb31c86188ba7a7736ece1ba59ce296d32e300b107dbb6",
+  "rows": 840,
+  "n_splits": 5,
+  "n_repeats": 3,
+  "random_state": 20261003,
+  "fold_seed": "1000 + номер фолда",
+  "stratify": "14 профилей",
+  "levels": {
+   "cbc": [],
+   "cbc_iron_crp": [
+    "ferritin",
+    "serum_iron",
+    "transferrin",
+    "TIBC",
+    "UIBC",
+    "TSAT",
+    "CRP"
+   ],
+   "standard": [
+    "ferritin",
+    "serum_iron",
+    "transferrin",
+    "TIBC",
+    "UIBC",
+    "TSAT",
+    "CRP",
+    "vitamin_B12",
+    "folate"
+   ],
+   "extended": [
+    "ferritin",
+    "serum_iron",
+    "transferrin",
+    "TIBC",
+    "UIBC",
+    "TSAT",
+    "sTfR",
+    "Ret_He",
+    "vitamin_B12",
+    "active_B12",
+    "MMA",
+    "homocysteine",
+    "folate",
+    "copper",
+    "ceruloplasmin",
+    "vitamin_B6",
+    "CRP",
+    "ESR",
+    "LDH",
+    "indirect_bilirubin",
+    "haptoglobin",
+    "reticulocytes",
+    "creatinine",
+    "eGFR",
+    "TSH",
+    "albumin"
+   ]
+  },
+  "modes": {
+   "clinical": "слияние без утечки",
+   "benchmark": "ансамбль бустинг × слияние + замок ВОЗ",
+   "naive": "бустинг на всех столбцах без замка (V2 прототипа)"
+  },
+  "prior_and_naive_gbm": {
+   "learning_rate": 0.08,
+   "max_iter": 120,
+   "max_leaf_nodes": 8,
+   "min_samples_leaf": 10,
+   "l2_regularization": 1.0,
+   "early_stopping": false
+  },
+  "benchmark_gbm": {
+   "learning_rate": 0.05,
+   "max_iter": 300,
+   "max_leaf_nodes": 8,
+   "min_samples_leaf": 8,
+   "l2_regularization": 1.0,
+   "early_stopping": false
+  },
+  "fusion": {
+   "n_bins": 5,
+   "alpha": 1.0,
+   "w_grid": [
+    1.0,
+    0.7,
+    0.5,
+    0.35,
+    0.25,
+    0.0
+   ],
+   "t_grid": [
+    1.0,
+    0.7,
+    0.5,
+    0.35,
+    0.25
+   ],
+   "inner_folds": 5,
+   "passes": 2
+  },
+  "fusion_params_median_over_folds": {
+   "prior_power_t": 0.5,
+   "group_weights": {
+    "iron": 0.7,
+    "b12": 1.0,
+    "folate": 1.0,
+    "copper": 1.0,
+    "b6": 1.0,
+    "inflammation": 0.5,
+    "hemolysis": 0.5,
+    "kidney": 0.35,
+    "tsh": 0.0,
+    "albumin": 0.25
+   }
+  },
+  "group5_if_anemia": {
+   "no_anemia_no_deficiency": "unexplained_anemia",
+   "latent_deficiency": "iron_deficiency_anemia",
+   "B12_deficiency_no_anemia": "vitamin_B12_deficiency_anemia",
+   "folate_deficiency_no_anemia": "other_deficiency_anemia",
+   "iron_deficiency_anemia": "iron_deficiency_anemia",
+   "B12_deficiency_anemia": "vitamin_B12_deficiency_anemia",
+   "folate_deficiency_anemia": "other_deficiency_anemia",
+   "mixed_deficiency": "other_deficiency_anemia",
+   "inflammation_anemia": "unexplained_anemia",
+   "anemia_other": "unexplained_anemia",
+   "B6_deficiency": "other_deficiency_anemia",
+   "copper_deficiency": "other_deficiency_anemia"
+  },
+  "metric_notes": {
+   "sd": "стандартное отклонение по 15 тестовым фолдам (ddof=1); фолды повторов зависимы",
+   "f1_cause": "причина = причина лучшего профиля внутри лучшего класса (как в продукте)",
+   "f1_cause_proto": "причина = argmax по суммам вероятностей причин (как в прототипе)",
+   "ece": "по фолду, 10 равнонаполненных бинов; ece_pooled — по объединённым предсказаниям повтора",
+   "auroc_hidden": "строки без анемии: 1 − P(«анемии и дефицитов нет») против наличия дефицита",
+   "acc5_anemic": "точность по 5 группам только на строках с анемией",
+   "hidden_specificity / hidden_sensitivity": "флаг скрытого дефицита на тестовых строках без анемии; порог выбран на обучающей части фолда (цель 0,90)"
+  },
+  "versions": {
+   "python": "3.13.16",
+   "scikit-learn": "1.9.1",
+   "numpy": "2.5.3",
+   "pandas": "3.0.5",
+   "joblib": "1.6.0"
+  },
+  "n_jobs": 2,
+  "mean_fit_seconds_per_fold": 13.2
+ }
+}

@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% block title %}Justmedit — личный кабинет{% endblock %}
+{% block head %}
+  <link rel="stylesheet" href="/static/cabinet.css?v={{ v }}">
+{% endblock %}
+{% block hero %}
+<section class="hero hero--cab" aria-labelledby="cab-h">
+  <div class="hero__fx" aria-hidden="true"><span class="hero__blob hero__blob--a"></span><span class="hero__blob hero__blob--b"></span><span class="hero__blob hero__blob--c"></span></div>
+  <img class="hero__mark" src="/static/logo-tree-white.png?v={{ v }}" alt="" aria-hidden="true" width="233" height="192">
+  <div class="wrap cab-hero">
+    <div class="cab-hero__main">
+      <div class="cab-hero__bar">
+        <p class="hero__kicker cab-hero__kicker"><span class="hero__dot" aria-hidden="true"></span><span id="cab-kicker">Личный кабинет</span></p>
+        <div class="cab-user" id="cab-user" hidden>
+          <span class="cab-user__ava" id="cab-user-ava" aria-hidden="true"></span>
+          <span class="cab-user__name" id="cab-user-name"></span>
+          <span class="cab-user__role" id="cab-user-role"></span>
+          <button type="button" class="cab-user__out" id="cab-logout">Выйти</button>
+        </div>
+      </div>
+      <h1 id="cab-h" class="cab-hero__title">Личный кабинет</h1>
+      <p class="cab-hero__clinic" id="cab-clinic" hidden></p>
+      <p class="cab-hero__lead" id="cab-lead">Загружаем ваш кабинет…</p>
+      <div class="cab-hero__cta" id="cab-cta"></div>
+    </div>
+    <ul class="cab-tiles" id="cab-tiles" aria-label="Коротко о кабинете"></ul>
+  </div>
+</section>
+{% endblock %}
+{% block main %}
+<div class="cab" id="cab">
+  <div id="cab-alert" class="cab-alert" role="alert" hidden></div>
+
+  <div class="cab-loading" id="cab-loading" role="status" aria-label="Загружаем кабинет">
+    <div class="skel skel--toc"></div>
+    <div class="skel skel--chart"></div>
+    <div class="cab-grid2"><div class="skel skel--card"></div><div class="skel skel--card"></div></div>
+  </div>
+
+  <!-- ===================== Кабинет пациента ===================== -->
+  <div id="cab-patient" hidden>
+    <nav class="cab-toc" aria-label="Разделы кабинета">
+      <a href="#sec-dyn">Динамика</a><a href="#sec-events">Главное</a><a href="#sec-todo">Что досдать</a><a href="#sec-add">Добавить анализ</a><a href="#sec-feed">Анализы</a><a href="#sec-doctors">Врачи</a><a href="#sec-data">Мои данные</a>
+    </nav>
+
+    <section class="cab-sec" id="sec-dyn" aria-labelledby="h-dyn">
+      <div class="cab-sec__head">
+        <h2 class="cab-sec__title" id="h-dyn">Динамика показателей</h2>
+        <p class="cab-sec__lead">Точки — ваши анализы, светлая полоса — норма. Выберите показатель.</p>
+      </div>
+      <div class="cab-card chart-card" id="p-chart"></div>
+    </section>
+
+    <div class="cab-grid2">
+      <section class="cab-sec" id="sec-events" aria-labelledby="h-events">
+        <div class="cab-sec__head">
+          <h2 class="cab-sec__title" id="h-events">Главное по истории</h2>
+          <p class="cab-sec__lead">Что изменилось между анализами — для разговора с врачом.</p>
+        </div>
+        <div class="cab-card" id="p-events"></div>
+      </section>
+      <section class="cab-sec" id="sec-todo" aria-labelledby="h-todo">
+        <div class="cab-sec__head">
+          <h2 class="cab-sec__title" id="h-todo">Что досдать для полной картины</h2>
+          <p class="cab-sec__lead" id="p-todo-lead">Базовый набор анализов и когда вы сдавали каждый.</p>
+        </div>
+        <div class="cab-card" id="p-todo"></div>
+      </section>
+    </div>
+
+    <section class="cab-sec" id="sec-add" aria-labelledby="h-add">
+      <div class="cab-sec__head">
+        <h2 class="cab-sec__title" id="h-add">Добавить анализ</h2>
+        <p class="cab-sec__lead">Фото или PDF бланка — значения и дата подставятся сами; проверьте их перед сохранением.</p>
+      </div>
+      <div class="cab-card add" id="p-add"></div>
+    </section>
+
+    <section class="cab-sec" id="sec-feed" aria-labelledby="h-feed">
+      <div class="cab-sec__head">
+        <h2 class="cab-sec__title" id="h-feed">Мои анализы</h2>
+        <p class="cab-sec__lead">От нового к старому. Нажмите на анализ, чтобы открыть памятку.</p>
+      </div>
+      <div id="p-feed"></div>
+    </section>
+
+    <section class="cab-sec" id="sec-doctors" aria-labelledby="h-doctors">
+      <div class="cab-sec__head">
+        <h2 class="cab-sec__title" id="h-doctors">Врачи с доступом</h2>
+        <p class="cab-sec__lead">Откройте врачу историю по ссылке на выбранный срок. Закрыть доступ можно в любой момент.</p>
+      </div>
+      <div class="cab-grid2 cab-grid2--share">
+        <div class="cab-card" id="p-share-new"></div>
+        <div class="cab-card" id="p-shares"></div>
+      </div>
+      <div class="cab-card" id="p-log"></div>
+    </section>
+
+    <section class="cab-sec" id="sec-data" aria-labelledby="h-data">
+      <div class="cab-sec__head">
+        <h2 class="cab-sec__title" id="h-data">Мои данные</h2>
+        <p class="cab-sec__lead">Выгрузка, перенос из другого кабинета, токены для приложений, пароль и входы, полное удаление.</p>
+      </div>
+      <div class="data-grid" id="p-data"></div>
+      <div class="cab-card" id="p-tokens"></div>
+      <div class="cab-card" id="p-account"></div>
+      <div class="cab-card danger-zone" id="p-delete"></div>
+    </section>
+  </div>
+
+  <!-- ===================== Кабинет врача ===================== -->
+  <div id="cab-doctor" hidden>
+    <nav class="cab-toc" aria-label="Разделы кабинета">
+      <a href="#sec-patients">Пациенты</a><a href="#sec-labrefs">Референсы лаборатории</a><a href="#sec-dtokens">Токены API</a><a href="#sec-daccount">Аккаунт</a>
+    </nav>
+
+    <section class="cab-sec" id="sec-patients" aria-labelledby="h-patients">
+      <div class="cab-sec__head">
+        <h2 class="cab-sec__title" id="h-patients">Пациенты с доступом</h2>
+        <p class="cab-sec__lead">Пациенты, которые открыли вам историю по ссылке. Каждый просмотр попадает в их журнал.</p>
+      </div>
+      <div id="d-patients"></div>
+      <div id="d-patient" class="dpat" hidden></div>
+    </section>
+
+    <section class="cab-sec" id="sec-labrefs" aria-labelledby="h-labrefs">
+      <div class="cab-sec__head">
+        <h2 class="cab-sec__title" id="h-labrefs">Референсы лаборатории</h2>
+        <p class="cab-sec__lead">Границы норм вашей лаборатории. Набор «по умолчанию» подставляется во все ваши расчёты на главной странице.</p>
+      </div>
+      <div id="d-labrefs"></div>
+    </section>
+
+    <section class="cab-sec" id="sec-dtokens" aria-labelledby="h-dtokens">
+      <div class="cab-sec__head">
+        <h2 class="cab-sec__title" id="h-dtokens">Токены API</h2>
+        <p class="cab-sec__lead">Для подключения МИС или своего сайта: запросы с заголовком <code>Authorization: Bearer …</code>. <a href="/developers">Документация API</a>.</p>
+      </div>
+      <div class="cab-card" id="d-tokens"></div>
+    </section>
+
+    <section class="cab-sec" id="sec-daccount" aria-labelledby="h-daccount">
+      <div class="cab-sec__head">
+        <h2 class="cab-sec__title" id="h-daccount">Аккаунт</h2>
+        <p class="cab-sec__lead">Пароль, входы на других устройствах и удаление аккаунта.</p>
+      </div>
+      <div class="cab-card" id="d-account"></div>
+      <div class="cab-card danger-zone" id="d-delete"></div>
+    </section>
+  </div>
+
+  <div class="toast" id="cab-toast" role="status" aria-live="polite" hidden></div>
+</div>
+<dialog class="dlg" id="cab-dialog" aria-labelledby="cab-dialog-t"></dialog>
+{% endblock %}
+{% block scripts %}
+<script src="/static/export.js?v={{ v }}" defer></script>
+<script src="/static/cabinet.js?v={{ v }}" defer></script>
+{% endblock %}

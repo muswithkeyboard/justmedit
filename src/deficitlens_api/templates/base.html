@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Justmedit{% endblock %}</title>
+  <meta name="description" content="Justmedit: скрининг анемий и скрытых дефицитов по лабораторным анализам. Исследовательский прототип.">
+  <link rel="icon" type="image/png" href="/static/favicon.png?v={{ v }}">
+  {# Основные начертания (кириллица 400 и 700) — заранее, вместе с CSS: без этого браузер узнаёт о шрифте только
+     после разбора app.css, и текст перескакивает при подмене шрифта (CLS). Адреса — как в @font-face app.css. #}
+  <link rel="preload" href="/static/fonts/ibm-plex-sans-cyrillic-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/static/fonts/ibm-plex-sans-cyrillic-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/static/app.css?v={{ v }}">
+  {% block head %}{% endblock %}
+</head>
+<body data-session="{{ '1' if has_session else '0' }}">
+  <a class="skip" href="#{% block skip %}main{% endblock %}">Перейти к содержимому</a>
+  <header class="top">
+    <div class="wrap top__in">
+      <a class="brand" href="/">
+        <img class="brand__logo" src="/static/logo-tree-white.png?v={{ v }}" alt="" width="44" height="36">
+        <span class="brand__name">Justmed<span class="brand__it">it</span></span>
+      </a>
+      <p class="brand__tag">Анемии и скрытые дефициты по анализам крови</p>
+      <nav class="nav" aria-label="Разделы">
+        <a href="/" {% if active == "index" %}aria-current="page"{% endif %}>Расшифровка</a>
+        <a href="/benchmark" {% if active == "benchmark" %}aria-current="page"{% endif %}>Проверить на своём файле</a>
+        <a href="/developers" class="nav__push" {% if active == "developers" %}aria-current="page"{% endif %}>API</a>
+        <a href="{{ '/cabinet' if has_session else '/login' }}" class="nav__cabinet" id="nav-cabinet" {% if active == "cabinet" %}aria-current="page"{% endif %}>{{ 'Кабинет' if has_session else 'Войти' }}</a>
+      </nav>
+    </div>
+  </header>
+  <div class="notice" role="note">
+    <div class="wrap">Демо. Не вводите персональные данные. Не медицинское изделие.</div>
+  </div>
+  {% block hero %}{% endblock %}
+  <main id="main" class="wrap main">
+    {% block main %}{% endblock %}
+  </main>
+  <footer class="foot">
+    <div class="wrap foot__in">
+      <a class="foot__brand" href="/"><img src="/static/logo-tree-white.png?v={{ v }}" alt="" width="34" height="28"><span>Justmed<span class="brand__it">it</span></span></a>
+      <p><strong>Ограничения.</strong> {{ disclaimer }} Уровень 2 обучен на учебном наборе кейса и на других
+        пациентах не проверялся; скрининг по общему анализу крови проверен на данных NHANES (США).
+        Без входа сервис ничего не хранит: значения анализов не записываются ни на сервере, ни в браузере. В личном кабинете анализы хранятся зашифрованно до удаления — не вводите туда реальные данные.</p>
+      <p class="foot__ver">Движок {{ versions.engine }} · модель кейса {{ versions.case_model }} ·
+        скрининг {{ versions.screen_model }} · пороги {{ versions.norms }}</p>
+    </div>
+  </footer>
+  <script src="/static/nav.js?v={{ v }}" defer></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

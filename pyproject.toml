@@ -1,0 +1,48 @@
+[project]
+name = "deficitlens"
+version = "0.1.0"
+description = "DeficitLens — ИИ-скрининг анемий и скрытых дефицитов по лабораторным анализам (прототип хакатона MedITron 2026, не медицинское изделие)"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "numpy==2.5.3",
+    "pandas==3.0.5",
+    "scikit-learn==1.9.1",   # версия закреплена: файлы моделей (joblib) привязаны к версии
+    "joblib>=1.5",
+    "pydantic>=2.9",
+    "pyyaml>=6.0",
+    "starlette>=1.0",
+    "uvicorn>=0.30",
+    "python-multipart>=0.0.20",
+    "openpyxl>=3.1",
+    "jinja2>=3.1",
+    "pdfplumber>=0.11",   # таблица сверки: только текстовый слой PDF, без OCR
+    "pytesseract==0.3.13",   # фото бланка: обёртка над локальным Tesseract (ADR 0007), бинарник — apt в Dockerfile
+    "pillow==12.3.0",        # фото бланка: проверка размера до декодирования, EXIF-поворот, подготовка снимка
+    "cryptography>=44",      # кабинет (ADR 0009): Fernet — шифрование значений анализов, сводок и референсов в SQLite
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "httpx2>=2.13", "requests>=2.31", "ruff", "matplotlib"]
+
+[project.scripts]
+deficitlens = "deficitlens_core.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src", "tests"]
+python_functions = ["test_*"]
+markers = [
+    "case_data: нужен файл кейса (переменная DL_CASE_DATA)",
+    "nhanes_data: нужен файл NHANES (переменная DL_NHANES_DATA)",
+]
+
+[tool.ruff]
+line-length = 120

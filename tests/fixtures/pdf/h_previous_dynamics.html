@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<!-- Синтетический бланк (ревизия разбора: H2, H4): столбец «Предыдущий результат» ЛЕВЕЕ «Результат»; таблица
+     динамики с датами в заголовке вместо «Результат»; дата рождения в ячейке «Дата р. | …» и нет подписанной даты
+     анализа. ВСЕ данные придуманы (ФИО, полис, дата рождения, значения). PDF собирает scripts/make_pdf_fixtures.py. -->
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Бланк З</title>
+<style>
+  body { font-family: 'DejaVu Sans', sans-serif; font-size: 9pt; }
+  td { font-size: 9pt; }
+  p { margin: 6pt 0 3pt 0; }
+</style>
+</head>
+<body>
+<table border="1" cellpadding="3" cellspacing="0">
+  <tr><td width="120">Пациент</td><td width="260">Проверочная Анна Сергеевна</td></tr>
+  <tr><td>Полис ОМС</td><td>7712 3456 7890 1234</td></tr>
+  <tr><td>Дата р.</td><td>14.06.2023</td></tr>
+</table>
+<p>Клинический анализ крови</p>
+<table border="1" cellpadding="3" cellspacing="0">
+  <tr><td width="150">Тест</td><td width="170">Предыдущий результат</td><td width="90">Результат</td><td width="80">Ед. изм.</td><td width="150">Референсные значения</td></tr>
+  <tr><td>Гемоглобин</td><td>141</td><td>102</td><td>г/л</td><td>117 - 160</td></tr>
+  <tr><td>Ферритин</td><td>45</td><td>8</td><td>мкг/л</td><td>10 - 120</td></tr>
+  <tr><td>MCV</td><td>90</td><td>74</td><td>фл</td><td>80 - 100</td></tr>
+</table>
+<p>Динамика показателей</p>
+<table border="1" cellpadding="3" cellspacing="0">
+  <tr><td width="150">Тест</td><td width="100">12.01.2025</td><td width="100">05.02.2026</td><td width="80">Единицы</td><td width="150">Референсные значения</td></tr>
+  <tr><td>MCH</td><td>29,1</td><td>24,0</td><td>пг</td><td>27 - 34</td></tr>
+  <tr><td>Тромбоциты</td><td>310</td><td>255</td><td>10^9/л</td><td>150 - 400</td></tr>
+</table>
+</body>
+</html>

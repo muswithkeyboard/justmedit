@@ -1,0 +1,263 @@
+{% extends "base.html" %}
+{% block title %}Justmedit — расшифровка анализа{% endblock %}
+{% block hero %}
+<section class="hero" aria-labelledby="examples-h">
+  <div class="hero__fx" aria-hidden="true"><span class="hero__blob hero__blob--a"></span><span class="hero__blob hero__blob--b"></span><span class="hero__blob hero__blob--c"></span></div>
+  <img class="hero__mark" src="/static/logo-tree-white.png?v={{ v }}" alt="" aria-hidden="true" width="233" height="192">
+  <div class="wrap hero__in">
+    <p class="hero__kicker"><span class="hero__dot" aria-hidden="true"></span>ИИ-скрининг · ВОЗ 2024 · без хранения данных</p>
+    <h1 class="hero__title">Анемии и <span class="hero__accent">скрытые дефициты</span> по анализу крови</h1>
+    <p class="hero__lead">Сфотографируйте бланк — сервис покажет, что обсудить с врачом и какие анализы досдать.</p>
+    <div class="hero__cta">
+      <button type="button" class="btn btn--primary btn--hero" id="hero-photo" data-file="paste-photo">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h1.6l1.2-1.8A1.5 1.5 0 0 1 10.6 3.5h2.8a1.5 1.5 0 0 1 1.3.7L15.9 6h1.6A2.5 2.5 0 0 1 20 8.5v8a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 16.5z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><circle cx="12" cy="12.3" r="3.4" fill="none" stroke="currentColor" stroke-width="1.7"/></svg>
+        Сфотографировать бланк
+      </button>
+      <button type="button" class="btn btn--primary btn--hero" id="hero-pdf" data-file="paste-pdf">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7.5 3.5h6L18 8v11a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 19V5a1.5 1.5 0 0 1 1.5-1.5z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M13.5 3.5V8H18M9 12.5h6M9 16h4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Загрузить PDF
+      </button>
+      <a href="#manual" class="btn btn--ghost" id="hero-manual">Ввести вручную</a>
+    </div>
+    <p class="hero__pdf">PDF — результаты из ЕМИАС, Госуслуг или лаборатории</p>
+    <ul class="hero__trust">
+      <li>Данные не сохраняются</li>
+      <li>Пороги с источниками: ВОЗ, NICE</li>
+      <li>Отчёт врачу и пациенту</li>
+    </ul>
+    <div class="glass hero__panel">
+      <h2 id="examples-h" class="hero__label">Или попробуйте пример</h2>
+      <div id="examples" class="examples__grid"></div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block main %}
+
+<div class="layout" id="layout">
+  <section class="panel form-panel" id="form-panel" aria-labelledby="form-h">
+    <div class="form-head">
+      <h2 id="form-h" class="form-head__title">Ваш анализ</h2>
+      <p class="form-head__sub">Пол и возраст нужны, чтобы выбрать нормы. Затем — фото бланка или значения вручную.</p>
+    </div>
+    <form id="form" novalidate autocomplete="off">
+      <div class="person">
+        <fieldset class="seg" id="sex-set">
+          <legend>Пол</legend>
+          <div class="seg__row">
+            <label><input type="radio" name="sex" value="F" checked><span>Женский</span></label>
+            <label><input type="radio" name="sex" value="M"><span>Мужской</span></label>
+          </div>
+          <p class="field__error" id="err-sex" hidden></p>
+        </fieldset>
+        <div class="field field--stack">
+          <label for="age">Возраст, лет</label>
+          <input id="age" name="age" type="text" inputmode="numeric" maxlength="3" placeholder="18–120" aria-describedby="age-hint err-age_years">
+          <p class="hint field__hint" id="age-hint" hidden></p>
+          <p class="field__error" id="err-age_years" hidden></p>
+        </div>
+        <div class="field field--stack" id="pregnancy-box">
+          <label for="pregnancy">Беременность</label>
+          <select id="pregnancy" name="pregnancy" aria-describedby="err-pregnancy">
+            <option value="no" selected>нет</option>
+            <option value="yes">да</option>
+            <option value="unknown">неизвестно</option>
+          </select>
+          <p class="field__error" id="err-pregnancy" hidden></p>
+        </div>
+        <div class="field field--stack" id="trimester-box" hidden>
+          <label for="trimester">Триместр</label>
+          <select id="trimester" name="trimester">
+            <option value="">не указан</option>
+            <option value="1">I</option>
+            <option value="2">II</option>
+            <option value="3">III</option>
+          </select>
+        </div>
+      </div>
+
+      <details class="settings" id="settings">
+        <summary>Настройки для врача</summary>
+        <fieldset class="opt-set" id="norms-set">
+          <legend>Порог ферритина</legend>
+          <p class="hint opt-set__hint" id="norms-hint">Ферритин ниже порога считается дефицитом железа.</p>
+          <div class="opt-cards opt-cards--2">
+            <label class="opt-card"><input type="radio" name="norms" value="who" checked>
+              <span class="opt-card__t" id="norms-who">ВОЗ</span><span class="opt-card__d" id="norms-who-src"></span></label>
+            <label class="opt-card"><input type="radio" name="norms" value="ru">
+              <span class="opt-card__t" id="norms-ru">Практика РФ</span><span class="opt-card__d" id="norms-ru-src"></span></label>
+          </div>
+        </fieldset>
+        <fieldset class="opt-set" id="refer-set">
+          <legend>Кому предложить ферритин, если анемии нет</legend>
+          <p class="hint opt-set__hint">Модель скрининга оценивает по общему анализу крови риск низкого ферритина. Сдать ферритин предлагаем доле людей с наибольшим риском: чем больше доля, тем больше скрытых дефицитов найдём и тем чаще направление не подтвердится.</p>
+          <div class="opt-cards" id="refer-cards">
+            <label class="opt-card opt-card--row"><input type="radio" name="refer_card" value="0.2">
+              <span class="opt-card__t">20 %</span><span class="opt-card__d" data-refer="0.2"></span></label>
+            <label class="opt-card opt-card--row"><input type="radio" name="refer_card" value="0.3" checked>
+              <span class="opt-card__t">30 %</span><span class="opt-card__d" data-refer="0.3"></span></label>
+            <label class="opt-card opt-card--row"><input type="radio" name="refer_card" value="0.4">
+              <span class="opt-card__t">40 %</span><span class="opt-card__d" data-refer="0.4"></span></label>
+          </div>
+          <!-- значение для запроса (refer_share); выбирается карточками выше -->
+          <select id="refer-share" name="refer_share" hidden>
+            <option value="0.2">20 %</option>
+            <option value="0.3" selected>30 %</option>
+            <option value="0.4">40 %</option>
+          </select>
+          <p class="source opt-set__src" id="refer-src"></p>
+        </fieldset>
+        <details class="labref" id="labref">
+          <summary>Референсы лаборатории <span class="muted" id="labref-count"></span></summary>
+          <p class="hint" id="labref-hint">Необязательно. Впишите границы с бланка своей лаборатории — они заменят референс проекта по умолчанию (серым в полях). Пустое поле — значение по умолчанию. Единицы — как в форме выше. В отчёте врачу появится предупреждение, что использованы референсы лаборатории.</p>
+          <div class="tbl-wrap">
+            <table class="labref__tbl stack" id="labref-tbl">
+              <thead><tr><th scope="col">Показатель (по умолчанию)</th><th scope="col">Нижняя</th><th scope="col">Верхняя</th></tr></thead>
+              <tbody id="labref-rows"></tbody>
+            </table>
+          </div>
+          <p class="field__error" id="err-labref" hidden></p>
+          <div class="actions">
+            <button type="button" class="btn" id="labref-reset">Вернуть значения по умолчанию</button>
+          </div>
+        </details>
+      </details>
+
+      <div class="upload" id="paste">
+        <input id="paste-photo" class="vh" name="photo" type="file" accept="image/*" aria-describedby="paste-photo-hint">
+        <input id="paste-pdf" class="vh" name="pdf" type="file" accept=".pdf,application/pdf" aria-describedby="paste-pdf-hint">
+        <div class="drop" id="drop">
+          <span class="drop__icon" aria-hidden="true"><svg class="ico" viewBox="0 0 24 24" focusable="false"><path d="M12 15.5V4.5M7.5 9 12 4.5 16.5 9" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 14.5v3a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
+          <div class="drop__btns">
+            <label for="paste-photo" class="btn btn--primary btn--big" id="paste-photo-label">Сфотографировать бланк</label>
+            <label for="paste-pdf" class="btn btn--primary btn--big" id="paste-pdf-label">Загрузить PDF</label>
+          </div>
+          <p class="hint drop__hint" id="paste-pdf-hint">PDF — результаты из ЕМИАС, Госуслуг или лаборатории.</p>
+          <p class="hint drop__hint" id="paste-photo-hint"><span class="drop__dnd">Или перетащите сюда фото, PDF, CSV или XLSX. </span>Файл не сохраняется — потом проверьте каждую строку.</p>
+        </div>
+        <details class="upload__more" id="upload-more">
+          <summary>Загрузить файл или вставить текст</summary>
+          <div class="actions upload__file">
+            <input id="paste-file" class="vh" name="file" type="file" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp,.pdf,.txt,.csv,.xlsx" aria-describedby="paste-file-hint">
+            <label for="paste-file" class="btn" id="paste-file-label">Выбрать файл</label>
+          </div>
+          <p class="hint" id="paste-file-hint">Фото, PDF с текстом, TXT, CSV или XLSX — распознаётся сразу после выбора.</p>
+          <label for="paste-text" class="hint">Или вставьте текст: «Гемоглобин 124 г/л».</label>
+          <textarea id="paste-text" rows="4" spellcheck="false" placeholder="Гемоглобин 124 г/л&#10;Ферритин 9 мкг/л"></textarea>
+          <div class="actions">
+            <button type="button" class="btn" id="paste-run">Распознать текст</button>
+          </div>
+        </details>
+        <div id="paste-out" class="paste__out" aria-live="polite"></div>
+      </div>
+
+      <details class="manual" id="manual">
+        <summary>Ввести вручную <span class="muted" id="manual-count"></span></summary>
+        <p class="hint">Пустое поле — анализ не сдан. Десятичный разделитель — запятая или точка.</p>
+        <div id="fields" class="groups" aria-live="off">
+          <p class="muted" id="fields-loading">Загрузка списка показателей…</p>
+        </div>
+      </details>
+
+
+      <div class="actions">
+        <button type="submit" class="btn btn--primary" id="submit">Рассчитать</button>
+        <button type="button" class="btn" id="clear">Очистить</button>
+      </div>
+    </form>
+
+  </section>
+
+  <section class="result" aria-labelledby="result-h">
+    <h2 id="result-h" class="vh">Результат</h2>
+    <p id="result-live" class="vh" role="status" aria-live="polite"></p>
+    <div id="alert" class="alert" role="alert" hidden></div>
+    <div id="empty" class="panel empty">
+      <p>Сфотографируйте бланк или выберите пример — расшифровка появится здесь.</p>
+    </div>
+    <div id="result" hidden>
+      <div class="result-sum" id="result-sum" tabindex="-1" role="group" aria-labelledby="result-sum-text">
+        <div class="result-sum__main">
+          <p class="result-sum__text" id="result-sum-text"></p>
+          <div class="result-sum__refs" id="result-refs" hidden></div>
+        </div>
+        <div class="result-sum__btns">
+          <button type="button" class="btn btn--small" id="edit-data" aria-controls="form-panel" aria-expanded="false">Изменить данные</button>
+          <button type="button" class="btn btn--small" id="new-analysis">Новый анализ</button>
+        </div>
+      </div>
+      <div id="followup" class="followup" hidden></div>
+      <div class="print-head" id="print-head" aria-hidden="true"></div>
+      <div class="result-bar">
+        <div class="tabs" role="tablist" aria-label="Вид отчёта">
+          <button type="button" role="tab" id="tab-doctor" aria-controls="panel-doctor" aria-selected="true">Врачу</button>
+          <button type="button" role="tab" id="tab-patient" aria-controls="panel-patient" aria-selected="false" tabindex="-1">Пациенту</button>
+        </div>
+        <div class="result-bar__dl" role="group" aria-label="Скачать отчёт">
+          <button type="button" class="btn btn--dl" id="dl-docx" title="Файл Word: открывается в Word, LibreOffice, Google Документах">
+            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19.5h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>DOCX</button>
+          <button type="button" class="btn btn--dl" id="dl-pdf" title="Откроется окно печати — выберите «Сохранить как PDF»">
+            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19.5h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>PDF</button>
+        </div>
+      </div>
+      <p class="hint result-bar__hint" id="dl-hint">Скачивается открытая вкладка. Файл создаётся в браузере и никуда не отправляется.</p>
+      <div id="panel-doctor" role="tabpanel" aria-labelledby="tab-doctor" tabindex="0"></div>
+      <div id="panel-patient" role="tabpanel" aria-labelledby="tab-patient" tabindex="0" hidden></div>
+      <!-- Личный кабинет (home-cabinet.js): «Сохранить в кабинет» и «С учётом вашей истории» — для вошедшего
+           пациента; без входа — подсказка «Войдите, чтобы сохранять анализы». -->
+      <section class="cabsave" id="cab-save" aria-label="Личный кабинет" hidden></section>
+
+      <details class="card nearby" id="nearby" hidden>
+        <summary class="nearby__sum"><h3 id="nearby-h">Где сдать рядом</h3><span class="vh"> · </span><span class="nearby__sumprice" id="nearby-sum"></span></summary>
+        <div class="nearby__head">
+          <p class="hint" id="nearby-sub">Пункты сетей лабораторий Москвы и области. Положение определяется в браузере и никуда не отправляется.</p>
+          <div class="nearby__btns">
+            <button type="button" class="btn btn--primary btn--small" id="nearby-geo">
+              <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="10" r="2.4" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>Определить моё положение</button>
+            <button type="button" class="btn btn--small" id="nearby-map-btn">Выбрать на карте</button>
+          </div>
+        </div>
+        <div class="nearby__region">
+          <label for="nearby-region">Регион цен</label>
+          <select id="nearby-region"></select>
+          <span class="hint" id="nearby-region-hint"></span>
+        </div>
+        <div class="prices" id="nearby-prices" aria-live="polite"></div>
+        <p class="nearby__status" id="nearby-status" aria-live="polite"></p>
+        <div class="nearby__mapbox" id="nearby-mapbox" hidden>
+          <div class="nearby__map" id="nearby-map"></div>
+          <p class="nearby__loading" id="nearby-loading" role="status">Загружаем карту…</p>
+        </div>
+        <p class="nearby__credit" id="nearby-credit" hidden>Карта и пункты: © участники <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> (ODbL)</p>
+        <ol class="nearby__list" id="nearby-list"></ol>
+        <details class="fold fold--more" id="nearby-rest" hidden>
+          <summary id="nearby-rest-sum"></summary>
+          <ol class="nearby__list" id="nearby-rest-list" start="4"></ol>
+        </details>
+        <p class="nearby__more" id="nearby-more"></p>
+      </details>
+    </div>
+  </section>
+</div>
+
+<details class="panel api-check">
+  <summary><h2 id="api-h">Для проверяющих: проверка API</h2></summary>
+  <p class="muted">Запрос из браузера в <code>POST /api/v1/analyze</code> с текущими значениями формы
+    (если форма пуста — с примером 1). Ключ задаётся переменной <code>DL_API_KEYS</code> или печатается при запуске
+    строкой <code>DL_API_KEY=…</code>. Ключ никуда не сохраняется.</p>
+  <div class="api-check__row">
+    <div class="field field--stack api-check__key">
+      <label for="api-key">Ключ API (заголовок X-API-Key)</label>
+      <input id="api-key" type="text" autocomplete="off" spellcheck="false" autocapitalize="off">
+    </div>
+    <button type="button" class="btn" id="api-nokey">Запрос без ключа</button>
+    <button type="button" class="btn btn--primary" id="api-withkey">Запрос с ключом</button>
+  </div>
+  <ul id="api-out" class="api-check__out" aria-live="polite"></ul>
+</details>
+{% endblock %}
+{% block scripts %}
+<script src="/static/export.js?v={{ v }}" defer></script>
+<script src="/static/app.js?v={{ v }}" defer></script>
+<script src="/static/home-cabinet.js?v={{ v }}" defer></script>
+{% endblock %}

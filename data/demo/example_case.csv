@@ -1,0 +1,4 @@
+patient_id,sex,age_years,hemoglobin,RBC,hematocrit,MCV,MCH,MCHC,RDW,platelets,WBC,ferritin
+demo-1,F,34,124,4.59,37.7,82,27.0,329,15.2,310,6.1,
+demo-2,M,61,104,4.10,32.4,79,25.4,321,16.0,340,8.9,62
+demo-3,F,58,96,3.35,30.5,91,28.7,315,19.5,280,5.2,8

@@ -1,0 +1,40 @@
+# Цены анализов: Москва, 03.10.2026, медиана по 2–4 лабораториям (Хеликс, Гемотест, KDL; CMD — где есть),
+# без стоимости взятия крови, рубли. Источники и ссылки — docs/facts/FACTS.md, таблица B.
+# Используются в «следующем анализе» (польза на рубль) и в экономическом расчёте.
+version: "2026-10-03"
+currency: RUB
+blood_draw: {min: 285, max: 330}
+# Регион цен для блока «Где сдать рядом» (решение пользователя 04.10.2026): средняя цена показывается, когда выбранная
+# точка (геолокация или карта) внутри рамки региона. Цены есть только для Москвы; для области — те же, с оговоркой.
+# Рамка — как у списка пунктов static/labs/labs_msk.json (Москва и Московская область).
+regions:
+  - {code: msk, name_ru: "Москва и Московская область", bbox: [54.2, 35.1, 56.97, 40.25],
+     note: "медиана по лабораториям Москвы на 03.10.2026, без взятия крови; в области цены могут отличаться"}
+prices:
+  cbc: {price: 820, name_ru: "Общий анализ крови с формулой и СОЭ"}
+  reticulocytes: {price: 485}
+  ferritin: {price: 845}
+  serum_iron: {price: 390}
+  TIBC: {price: 465}
+  UIBC: {price: 465, note: "обычно считается вместе с ОЖСС"}
+  transferrin: {price: 820}
+  TSAT: {price: 855, note: "расчётный показатель: железо + ОЖСС"}
+  sTfR: {price: 2250}
+  Ret_He: {price: null, available: false, note: "входит в ОАК на анализаторах с этой опцией; отдельной цены нет"}
+  vitamin_B12: {price: 1208}
+  active_B12: {price: 2068}
+  MMA: {price: null, available: false, note: "в рознице Москвы отдельным анализом крови не продаётся"}
+  homocysteine: {price: 2378}
+  folate: {price: 1330}
+  vitamin_B6: {price: 2940}
+  copper: {price: 1210}
+  ceruloplasmin: {price: 855}
+  CRP: {price: 710}
+  ESR: {price: null, available: true, note: "входит в общий анализ крови"}
+  creatinine: {price: 395}
+  eGFR: {price: 395, note: "рассчитывается по креатинину"}
+  TSH: {price: 610}
+  albumin: {price: 460}
+  LDH: {price: 395}
+  indirect_bilirubin: {price: 400, note: "оценка: в проверенных прайсах отдельной строки нет"}
+  haptoglobin: {price: 893}

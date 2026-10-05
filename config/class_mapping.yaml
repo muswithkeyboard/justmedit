@@ -1,0 +1,139 @@
+# Названия классов, причин и групп; свёртка 12 классов файла кейса в 5 групп кейса.
+# Формат проверки жюри неизвестен (в тексте кейса — 5 групп и столбец anemia_cause, в выданном файле —
+# 12 классов и deficiency_cause), поэтому все соответствия лежат здесь, а не в коде.
+version: "2026-10-05"
+
+groups5:
+  healthy: "анемии нет"
+  iron_deficiency_anemia: "железодефицитная анемия"
+  vitamin_B12_deficiency_anemia: "B12-дефицитная анемия"
+  unexplained_anemia: "анемия неясного генеза"
+  other_deficiency_anemia: "другая дефицитная анемия (фолаты, медь, B6, смешанная)"
+
+classes12:
+  no_anemia_no_deficiency: "анемии и дефицитов не выявлено"
+  latent_deficiency: "скрытый (латентный) дефицит железа"
+  B12_deficiency_no_anemia: "дефицит витамина B12 без анемии"
+  folate_deficiency_no_anemia: "дефицит фолатов без анемии"
+  iron_deficiency_anemia: "железодефицитная анемия"
+  B12_deficiency_anemia: "B12-дефицитная анемия"
+  folate_deficiency_anemia: "фолиеводефицитная анемия"
+  mixed_deficiency: "анемия смешанного дефицита"
+  inflammation_anemia: "анемия воспаления (хронических заболеваний)"
+  anemia_other: "анемия без выявленного дефицита"
+  B6_deficiency: "дефицит витамина B6"
+  copper_deficiency: "дефицит меди"
+
+causes11:
+  none: "дефицит не выявлен"
+  iron_deficiency: "дефицит железа"
+  B12_deficiency: "дефицит витамина B12"
+  folate_deficiency: "дефицит фолатов"
+  iron_B12: "сочетание: железо и B12"
+  iron_folate: "сочетание: железо и фолаты"
+  B12_folate: "сочетание: B12 и фолаты"
+  inflammation: "воспаление"
+  undetermined: "причина не установлена"
+  B6_deficiency: "дефицит витамина B6"
+  copper_deficiency: "дефицит меди"
+
+nutrients:
+  iron: "железо"
+  b12: "витамин B12"
+  folate: "фолаты"
+  b6: "витамин B6"
+  copper: "медь"
+
+# Группа кейса при наличии анемии (без анемии группа всегда healthy; скрытый дефицит — отдельное поле).
+class_to_group5_if_anemia:
+  iron_deficiency_anemia: iron_deficiency_anemia
+  B12_deficiency_anemia: vitamin_B12_deficiency_anemia
+  folate_deficiency_anemia: other_deficiency_anemia
+  mixed_deficiency: other_deficiency_anemia
+  B6_deficiency: other_deficiency_anemia
+  copper_deficiency: other_deficiency_anemia
+  inflammation_anemia: unexplained_anemia      # открытый вопрос наставнику
+  anemia_other: unexplained_anemia
+
+# Импорт файлов: какие столбцы считать метками и как называются те же вещи в другой схеме файла.
+label_columns:
+  anemia: [anemia]
+  anemia_class: [anemia_class]
+  cause: [deficiency_cause, anemia_cause]
+id_columns: [patient_id, id]
+ignored_columns: [record_origin, birth_date, age_group, anchor_sample_date, neutrophils, neutrophils_abs, absolute_neutrophils,
+                  iron_deficiency, B12_deficiency, folate_deficiency, B6_deficiency, copper_deficiency, inflammation_anemia, mixed_deficiency]
+sex_values: {F: [f, female, ж, жен, женский, "0"], M: [m, male, м, муж, мужской, "1"]}
+
+# Синонимы значений меток в файле жюри -> наши коды (регистр не важен).
+class_aliases:
+  healthy: [healthy, no_anemia, norm, normal]
+  iron_deficiency_anemia: [iron_deficiency_anemia, ida]
+  vitamin_B12_deficiency_anemia: [vitamin_b12_deficiency_anemia, b12_deficiency_anemia, b12da]
+  unexplained_anemia: [unexplained_anemia, anemia_other, unexplained]
+  other_deficiency_anemia: [other_deficiency_anemia, other]
+cause_aliases:
+  none: [none, no, healthy, ""]
+  iron_deficiency: [iron_deficiency, iron]
+  B12_deficiency: [b12_deficiency, vitamin_b12_deficiency, b12]
+  folate_deficiency: [folate_deficiency, folate, isolated_folate_deficiency]
+  iron_B12: [iron_b12, iron+b12, iron_and_b12]
+  iron_folate: [iron_folate, iron+folate, iron_and_folate]
+  B12_folate: [b12_folate, b12+folate, b12_and_folate]
+  inflammation: [inflammation, anemia_of_inflammation]
+  undetermined: [undetermined, unexplained, unknown]
+  B6_deficiency: [b6_deficiency, vitamin_b6_deficiency, b6, plp_deficiency]
+  copper_deficiency: [copper_deficiency, copper]
+
+# Ключевые анализы класса: словесная уверенность «высокая» возможна, только если сдан хотя бы один из
+# перечисленных в КАЖДОЙ строке списка (для смешанного дефицита и для «дефицитов нет» нужны все оси).
+key_tests:
+  no_anemia_no_deficiency: [[ferritin, TSAT], [vitamin_B12, active_B12], [folate]]
+  latent_deficiency: [[ferritin, TSAT, sTfR]]
+  B12_deficiency_no_anemia: [[vitamin_B12, active_B12, MMA]]
+  folate_deficiency_no_anemia: [[folate]]
+  iron_deficiency_anemia: [[ferritin, TSAT, sTfR]]
+  B12_deficiency_anemia: [[vitamin_B12, active_B12, MMA]]
+  folate_deficiency_anemia: [[folate]]
+  mixed_deficiency: [[ferritin, TSAT, sTfR], [vitamin_B12, active_B12, folate]]
+  inflammation_anemia: [[CRP, ESR], [ferritin]]
+  anemia_other: [[ferritin, TSAT], [vitamin_B12, active_B12], [folate]]
+  B6_deficiency: [[vitamin_B6]]
+  copper_deficiency: [[copper, ceruloplasmin]]
+
+completeness_ru:
+  cbc: "только общий анализ крови"
+  cbc_iron_crp: "общий анализ крови, обмен железа, СРБ"
+  standard: "общий анализ крови, обмен железа, СРБ, B12 и фолаты"
+  extended: "расширенная панель"
+
+confidence:            # словесная уверенность по вероятности лучшего класса
+  high_from: 0.80
+  moderate_from: 0.55
+  ru: {low: "низкая", moderate: "средняя", high: "высокая"}
+plausible:             # правдоподобные альтернативы: классы по убыванию вероятности до суммы cumulative, не больше max_items
+  cumulative: 0.90
+  max_items: 3
+  ambiguous_if_top_below: 0.75
+
+# Объяснение «за и против» (engine.py → _level2). «Против» сравнивает лучший класс со второй альтернативой; если её
+# вероятность ниже against_min_runner_p, строки «против» не показываются (ни врачу, ни в таблице значений): фраза
+# «скорее в пользу варианта, вероятность которого меньше 1 %» вводит в заблуждение. Это интерфейсный порог проекта,
+# а не медицинский (ревизия содержания 05.10.2026, п. 5).
+explanation:
+  against_min_runner_p: 0.10
+
+# Режим «auto» пакетной расшифровки: ансамбль бенчмарка включается только для больших файлов в схеме кейса.
+auto_mode:
+  min_rows: 30                 # меньше — всегда клинический режим
+  measured_share: [0.38, 0.58] # средняя доля сданных анализов вне ОАК на строку, при которой файл «похож на кейс»
+
+# Правила-маски понижают словесную уверенность модели до «средней»: модель обучена на файле кейса,
+# а правило видит ситуацию, в которой показатель обманывает.
+confidence_caps:
+  flags: [ferritin_masked_by_inflammation, normal_mcv_high_rdw, b12_gray_zone, microcytosis_not_iron, hemolysis_suspected]
+  checklist_suspected: true
+
+# Флаги по неуверенности модели (без числовых порогов показателя).
+model_flags:
+  b12_uncertain: [0.15, 0.85]   # вероятность участия B12, при которой общий B12 требует функционального подтверждения

@@ -1,0 +1,763 @@
+{
+ "version": "screen-v1",
+ "created": "2026-10-03T22:45:53+00:00",
+ "description": "Скрининг скрытого дефицита железа по общему анализу крови: вероятность ферритина ниже 15 и ниже 30 мкг/л у взрослых с нормальным гемоглобином. Прототип хакатона, не медицинское изделие; данные обучения — США (NHANES).",
+ "scope": {
+  "age_min": 18,
+  "pregnant": false,
+  "anemia_who": false,
+  "who_hb_g_l": {
+   "F": 120.0,
+   "M": 130.0
+  },
+  "ferritin_measured": "не сдан (иначе запас железа оценивается по измеренному значению)",
+  "validated_groups": [
+   "F18-49"
+  ]
+ },
+ "targets": {
+  "t15": {
+   "ferritin_below_ug_l": 15.0,
+   "output": "p_lt15",
+   "source": "ВОЗ, 2020"
+  },
+  "t30": {
+   "ferritin_below_ug_l": 30.0,
+   "output": "p_lt30",
+   "source": "порог практики (КР ЖДА, 2024)"
+  }
+ },
+ "features": {
+  "full_cbc": [
+   "hemoglobin_z",
+   "RBC_z",
+   "hematocrit_z",
+   "MCV_z",
+   "MCH_z",
+   "MCHC_z",
+   "RDW_z",
+   "platelets_z",
+   "WBC_z",
+   "age_years",
+   "female"
+  ],
+  "hb_only": [
+   "hemoglobin_z",
+   "age_years",
+   "female"
+  ]
+ },
+ "units": {
+  "hemoglobin": "г/л",
+  "RBC": "10^12/л",
+  "hematocrit": "%",
+  "MCV": "фл",
+  "MCH": "пг",
+  "MCHC": "г/л",
+  "RDW": "%",
+  "platelets": "10^9/л",
+  "WBC": "10^9/л",
+  "age_years": "лет",
+  "female": "1 — женщина"
+ },
+ "standardization": {
+  "formula": "z = (x − медиана) / (q75 − q25), отдельно по полу, без меток",
+  "training": "внутри цикла NHANES — по всем небеременным взрослым цикла с полным ОАК",
+  "application": "по справочнику лаборатории config/lab_reference.yaml (по умолчанию 'default')"
+ },
+ "algorithm": {
+  "model": "CalibratedClassifierCV(HistGradientBoostingClassifier, method='isotonic', cv=5)",
+  "hgb": {
+   "max_iter": 250,
+   "learning_rate": 0.05,
+   "max_leaf_nodes": 15,
+   "l2_regularization": 1.0,
+   "min_samples_leaf": 40,
+   "random_state": 0
+  },
+  "calibration": {
+   "method": "isotonic",
+   "cv": 5
+  },
+  "sample_weight": null,
+  "post_processing": "p_lt30 = max(p_lt30, p_lt15) — вероятности двух моделей согласуются при выдаче",
+  "n_iter": {
+   "t15_full_cbc.joblib": [
+    125,
+    96,
+    77,
+    75,
+    77
+   ],
+   "t15_hb_only.joblib": [
+    79,
+    63,
+    144,
+    94,
+    100
+   ],
+   "t30_full_cbc.joblib": [
+    169,
+    115,
+    78,
+    67,
+    110
+   ],
+   "t30_hb_only.joblib": [
+    104,
+    64,
+    64,
+    65,
+    57
+   ]
+  }
+ },
+ "data": {
+  "file": "nhanes_deficiency_real.csv",
+  "sha256": "e118411f8b3a358ffa77f2de873f5b1dea183a9aafff7e4f0c472007a0a4c3ad",
+  "rows": 88320,
+  "cycles": [
+   "1999-2000",
+   "2001-2002",
+   "2003-2004",
+   "2005-2006",
+   "2007-2008",
+   "2009-2010",
+   "2015-2016",
+   "2017-2018",
+   "2021-2023"
+  ]
+ },
+ "cohort": {
+  "rows_total": 88320,
+  "adults_18plus": 58731,
+  "children": 29589,
+  "adults_nonpregnant_full_cbc": 57224,
+  "with_ferritin": 22752,
+  "with_ferritin_train_1999_2016": 16291,
+  "with_ferritin_test_2017_2023": 6461,
+  "no_anemia": 20539,
+  "no_anemia_train_1999_2016": 14811,
+  "no_anemia_test_2017_2023": 5728,
+  "train_rows": 20539,
+  "train_by_group": {
+   "F18-49": 10572,
+   "F50+": 3166,
+   "M": 6801
+  },
+  "train_cases": {
+   "t15": 977,
+   "t30": 3378
+  },
+  "train_prevalence_unweighted": {
+   "t15": 0.0476,
+   "t30": 0.1645
+  }
+ },
+ "files": {
+  "t15_full_cbc.joblib": {
+   "sha256": "9835aa17c21a6c28dfd2ad2e4f7566e220d12a83a62e5776ac6b29e561ad7e19",
+   "bytes": 367973
+  },
+  "t15_hb_only.joblib": {
+   "sha256": "7ca850760170aba2ea22ff5268a222d003c91cc4445440751a02d25d73f82969",
+   "bytes": 307999
+  },
+  "t30_full_cbc.joblib": {
+   "sha256": "55c6f94b4ab70289403503c9bc90ae96b2b260f8bf324b5561faaac079b5d4f4",
+   "bytes": 434087
+  },
+  "t30_hb_only.joblib": {
+   "sha256": "6d2ff687759edf320db54c05e0cbda656f8167c834423452a4c885fe2ed94477",
+   "bytes": 240615
+  }
+ },
+ "versions": {
+  "python": "3.13.16",
+  "scikit-learn": "1.9.1",
+  "numpy": "2.5.3",
+  "joblib": "1.6.0"
+ },
+ "thresholds": {
+  "target": "p_lt15",
+  "rule": "p_lt15 ≥ threshold",
+  "shares": [
+   0.1,
+   0.2,
+   0.3,
+   0.4,
+   0.5
+  ],
+  "high_share": 0.1,
+  "population": "NHANES 2017-2018, 2021-2023: взрослые 18+, не беременные, полный ОАК, без анемии по ВОЗ (с ферритином и без него); веса mec_weight; стандартизация внутри цикла по полу",
+  "note": "взвешенные квантили предсказаний итоговой модели; при совпадающих вероятностях берётся ближайшая достижимая доля — фактическая доля людей на уровне порога и выше записана в share_at_or_above",
+  "n_by_group": {
+   "F18-49": 2188,
+   "F50+": 2888,
+   "M": 4740
+  },
+  "by_features": {
+   "full_cbc": {
+    "F18-49": [
+     {
+      "share": 0.1,
+      "threshold": 0.2207446584002203,
+      "share_at_or_above": 0.0997
+     },
+     {
+      "share": 0.2,
+      "threshold": 0.12533001409834255,
+      "share_at_or_above": 0.2001
+     },
+     {
+      "share": 0.3,
+      "threshold": 0.08217685691258829,
+      "share_at_or_above": 0.3003
+     },
+     {
+      "share": 0.4,
+      "threshold": 0.05384731200496129,
+      "share_at_or_above": 0.3999
+     },
+     {
+      "share": 0.5,
+      "threshold": 0.03715289955589218,
+      "share_at_or_above": 0.5001
+     }
+    ],
+    "F50+": [
+     {
+      "share": 0.1,
+      "threshold": 0.02464436817972201,
+      "share_at_or_above": 0.1
+     },
+     {
+      "share": 0.2,
+      "threshold": 0.010487825870361081,
+      "share_at_or_above": 0.1975
+     },
+     {
+      "share": 0.3,
+      "threshold": 0.00634124925015145,
+      "share_at_or_above": 0.2952
+     },
+     {
+      "share": 0.4,
+      "threshold": 0.004543879407433076,
+      "share_at_or_above": 0.4016
+     },
+     {
+      "share": 0.5,
+      "threshold": 0.002985404744504221,
+      "share_at_or_above": 0.4849
+     }
+    ],
+    "M": [
+     {
+      "share": 0.1,
+      "threshold": 0.0032865474304477247,
+      "share_at_or_above": 0.1001
+     },
+     {
+      "share": 0.2,
+      "threshold": 0.0018591404399378952,
+      "share_at_or_above": 0.1859
+     },
+     {
+      "share": 0.3,
+      "threshold": 0.0015744319562064513,
+      "share_at_or_above": 0.2744
+     },
+     {
+      "share": 0.4,
+      "threshold": 0.0012718600953895071,
+      "share_at_or_above": 0.3977
+     },
+     {
+      "share": 0.5,
+      "threshold": 0.0007227399280438347,
+      "share_at_or_above": 0.4571
+     }
+    ]
+   },
+   "hb_only": {
+    "F18-49": [
+     {
+      "share": 0.1,
+      "threshold": 0.21742911779051405,
+      "share_at_or_above": 0.0999
+     },
+     {
+      "share": 0.2,
+      "threshold": 0.14586116694648416,
+      "share_at_or_above": 0.2002
+     },
+     {
+      "share": 0.3,
+      "threshold": 0.13181160855677257,
+      "share_at_or_above": 0.302
+     },
+     {
+      "share": 0.4,
+      "threshold": 0.07669181899702093,
+      "share_at_or_above": 0.4018
+     },
+     {
+      "share": 0.5,
+      "threshold": 0.05497302447714012,
+      "share_at_or_above": 0.4998
+     }
+    ],
+    "F50+": [
+     {
+      "share": 0.1,
+      "threshold": 0.018608839096312918,
+      "share_at_or_above": 0.1024
+     },
+     {
+      "share": 0.2,
+      "threshold": 0.010399759281015487,
+      "share_at_or_above": 0.2007
+     },
+     {
+      "share": 0.3,
+      "threshold": 0.008176994843332787,
+      "share_at_or_above": 0.2969
+     },
+     {
+      "share": 0.4,
+      "threshold": 0.007955319966485496,
+      "share_at_or_above": 0.4989
+     },
+     {
+      "share": 0.5,
+      "threshold": 0.007955319966485496,
+      "share_at_or_above": 0.4989
+     }
+    ],
+    "M": [
+     {
+      "share": 0.1,
+      "threshold": 0.00698565679277483,
+      "share_at_or_above": 0.1029
+     },
+     {
+      "share": 0.2,
+      "threshold": 0.0028299914031459836,
+      "share_at_or_above": 0.1753
+     },
+     {
+      "share": 0.3,
+      "threshold": 0.00280288645608416,
+      "share_at_or_above": 0.303
+     },
+     {
+      "share": 0.4,
+      "threshold": 0.0010362694300518134,
+      "share_at_or_above": 0.3911
+     },
+     {
+      "share": 0.5,
+      "threshold": 0.0009594849020537807,
+      "share_at_or_above": 0.6005
+     }
+    ]
+   }
+  }
+ },
+ "validation": {
+  "source": "docs/metrics/screen_metrics.json",
+  "validation": "обучение 1999–2016 → тест 2017–2018 и 2021–2023; взрослые без анемии по ВОЗ; признаки full_cbc со стандартизацией",
+  "n_train": 14811,
+  "n_test": 5728,
+  "by_group": {
+   "ALL": {
+    "t15": {
+     "n": 5728,
+     "cases": 198,
+     "auc": 0.887,
+     "ci95": [
+      0.864,
+      0.909
+     ],
+     "pr_auc": 0.301,
+     "brier": 0.0284,
+     "mean_predicted": 0.041,
+     "observed": 0.035,
+     "calibration_gap": 0.006
+    },
+    "t30": {
+     "n": 5728,
+     "cases": 786,
+     "auc": 0.844,
+     "ci95": [
+      0.831,
+      0.858
+     ],
+     "pr_auc": 0.471,
+     "brier": 0.0919,
+     "mean_predicted": 0.136,
+     "observed": 0.137,
+     "calibration_gap": -0.001
+    }
+   },
+   "F18-49": {
+    "t15": {
+     "n": 2180,
+     "cases": 168,
+     "auc": 0.822,
+     "ci95": [
+      0.797,
+      0.855
+     ],
+     "pr_auc": 0.334,
+     "brier": 0.0616,
+     "mean_predicted": 0.098,
+     "observed": 0.077,
+     "calibration_gap": 0.021
+    },
+    "t30": {
+     "n": 2180,
+     "cases": 629,
+     "auc": 0.727,
+     "ci95": [
+      0.707,
+      0.749
+     ],
+     "pr_auc": 0.521,
+     "brier": 0.1776,
+     "mean_predicted": 0.303,
+     "observed": 0.289,
+     "calibration_gap": 0.015
+    }
+   },
+   "F50+": {
+    "t15": {
+     "n": 1242,
+     "cases": 17,
+     "auc": 0.802,
+     "ci95": [
+      0.696,
+      0.894
+     ],
+     "pr_auc": 0.155,
+     "brier": 0.0127,
+     "mean_predicted": 0.01,
+     "observed": 0.014,
+     "calibration_gap": -0.003
+    },
+    "t30": {
+     "n": 1242,
+     "cases": 90,
+     "auc": 0.707,
+     "ci95": [
+      0.65,
+      0.765
+     ],
+     "pr_auc": 0.207,
+     "brier": 0.0633,
+     "mean_predicted": 0.065,
+     "observed": 0.072,
+     "calibration_gap": -0.008
+    }
+   },
+   "M": {
+    "t15": null,
+    "t30": {
+     "n": 2306,
+     "cases": 67,
+     "auc": 0.785,
+     "ci95": [
+      0.726,
+      0.847
+     ],
+     "pr_auc": 0.187,
+     "brier": 0.0263,
+     "mean_predicted": 0.017,
+     "observed": 0.029,
+     "calibration_gap": -0.012
+    }
+   }
+  },
+  "hb_only_F18-49": {
+   "t15": {
+    "n": 2180,
+    "cases": 168,
+    "auc": 0.754,
+    "ci95": [
+     0.717,
+     0.786
+    ],
+    "pr_auc": 0.192,
+    "brier": 0.068,
+    "mean_predicted": 0.104,
+    "observed": 0.077,
+    "calibration_gap": 0.027
+   },
+   "t30": {
+    "n": 2180,
+    "cases": 629,
+    "auc": 0.661,
+    "ci95": [
+     0.638,
+     0.686
+    ],
+    "pr_auc": 0.432,
+    "brier": 0.193,
+    "mean_predicted": 0.315,
+    "observed": 0.289,
+    "calibration_gap": 0.027
+   }
+  },
+  "referral_F18-49_t15": [
+   {
+    "refer_share": 0.1,
+    "referred_per1000": 100,
+    "cases_per1000": 72,
+    "found_per1000": 35,
+    "sensitivity": 0.495,
+    "ppv": 0.354,
+    "referred_per_case_found": 2.83,
+    "rub_per_case_found": 2388
+   },
+   {
+    "refer_share": 0.2,
+    "referred_per1000": 200,
+    "cases_per1000": 72,
+    "found_per1000": 48,
+    "sensitivity": 0.672,
+    "ppv": 0.241,
+    "referred_per_case_found": 4.15,
+    "rub_per_case_found": 3508
+   },
+   {
+    "refer_share": 0.3,
+    "referred_per1000": 300,
+    "cases_per1000": 72,
+    "found_per1000": 56,
+    "sensitivity": 0.774,
+    "ppv": 0.185,
+    "referred_per_case_found": 5.41,
+    "rub_per_case_found": 4568
+   },
+   {
+    "refer_share": 0.4,
+    "referred_per1000": 400,
+    "cases_per1000": 72,
+    "found_per1000": 63,
+    "sensitivity": 0.885,
+    "ppv": 0.159,
+    "referred_per_case_found": 6.3,
+    "rub_per_case_found": 5326
+   },
+   {
+    "refer_share": 0.5,
+    "referred_per1000": 500,
+    "cases_per1000": 72,
+    "found_per1000": 67,
+    "sensitivity": 0.938,
+    "ppv": 0.135,
+    "referred_per_case_found": 7.43,
+    "rub_per_case_found": 6279
+   }
+  ],
+  "baseline_F18-49_t15": {
+   "n": 2180,
+   "cases": 168,
+   "test_everyone": {
+    "cases_per1000": 72,
+    "rub_per_case_found": 11775
+   },
+   "test_nobody": {
+    "found_per1000": 0
+   }
+  },
+  "rule_vs_model_F18-49_t15": {
+   "rule": {
+    "referred_per1000": 148,
+    "sensitivity": 0.51,
+    "ppv": 0.247,
+    "rub_per_case_found": 3416
+   },
+   "model_same_referrals": {
+    "referred_per1000": 148,
+    "sensitivity": 0.579,
+    "ppv": 0.281,
+    "rub_per_case_found": 3012
+   },
+   "sensitivity_diff_pp": 6.9,
+   "sensitivity_diff_ci95_pp": [
+    0.6,
+    13.9
+   ],
+   "model_better": true
+  },
+  "application_path_F18-49": [
+   {
+    "target": "t15",
+    "features": "full_cbc",
+    "group": "F18-49",
+    "n": 2180,
+    "auc_within_cycle": 0.822,
+    "auc_default_reference": 0.819,
+    "mean_predicted_within_cycle": 0.098,
+    "mean_predicted_default_reference": 0.098,
+    "observed": 0.077
+   },
+   {
+    "target": "t30",
+    "features": "full_cbc",
+    "group": "F18-49",
+    "n": 2180,
+    "auc_within_cycle": 0.727,
+    "auc_default_reference": 0.724,
+    "mean_predicted_within_cycle": 0.303,
+    "mean_predicted_default_reference": 0.306,
+    "observed": 0.289
+   }
+  ],
+  "gates": {
+   "thresholds": {
+    "auc_t15_min": 0.8,
+    "auc_t30_min": 0.7,
+    "calibration_gap_max": 0.03
+   },
+   "checks": {
+    "auc_t15_F18-49": true,
+    "auc_t30_F18-49": true,
+    "calibration_t15_ALL": true,
+    "calibration_t15_F18-49": true,
+    "calibration_t30_ALL": true,
+    "calibration_t30_F18-49": true
+   },
+   "passed": true
+  },
+  "price_ferritin_rub": 845
+ },
+ "limitations": [
+  "Данные обучения — США (NHANES); на российской популяции модель не проверялась.",
+  "Проверена для женщин 18–49 лет; у женщин 50+ и мужчин случаев мало, преимущество перед простым правилом не показано.",
+  "Пороги направлений заданы долей людей группы: у мужчин и женщин 50+ им соответствуют очень малые вероятности.",
+  "Не применяется при анемии, беременности и у людей младше 18 лет.",
+  "Оценка по модели, а не измерение ферритина; не медицинское изделие."
+ ],
+ "reference_predictions": {
+  "lab_reference": "default",
+  "refer_share": 0.3,
+  "cases": [
+   {
+    "name": "Ж 34, полный ОАК: Hb у нижней границы, RDW повышен",
+    "sex": "F",
+    "age_years": 34,
+    "values": {
+     "hemoglobin": 124,
+     "RBC": 4.59,
+     "hematocrit": 37.7,
+     "MCV": 82,
+     "MCH": 27.0,
+     "MCHC": 329,
+     "RDW": 15.2,
+     "platelets": 310,
+     "WBC": 6.1
+    },
+    "expected": {
+     "p_lt15": 0.4490333190634968,
+     "p_lt30": 0.6751534073725167,
+     "features": "full_cbc",
+     "group": "F18-49",
+     "refer": 0.08217685691258829,
+     "high": 0.2207446584002203
+    }
+   },
+   {
+    "name": "Ж 34, только гемоглобин",
+    "sex": "F",
+    "age_years": 34,
+    "values": {
+     "hemoglobin": 124
+    },
+    "expected": {
+     "p_lt15": 0.22278130959237488,
+     "p_lt30": 0.45172384933920534,
+     "features": "hb_only",
+     "group": "F18-49",
+     "refer": 0.13181160855677257,
+     "high": 0.21742911779051405
+    }
+   },
+   {
+    "name": "Ж 29, полный ОАК без отклонений",
+    "sex": "F",
+    "age_years": 29,
+    "values": {
+     "hemoglobin": 136,
+     "RBC": 4.5,
+     "hematocrit": 40.1,
+     "MCV": 89,
+     "MCH": 30.2,
+     "MCHC": 339,
+     "RDW": 13.2,
+     "platelets": 255,
+     "WBC": 6.8
+    },
+    "expected": {
+     "p_lt15": 0.028264040072257607,
+     "p_lt30": 0.3140710004652161,
+     "features": "full_cbc",
+     "group": "F18-49",
+     "refer": 0.08217685691258829,
+     "high": 0.2207446584002203
+    }
+   },
+   {
+    "name": "Ж 62, полный ОАК без отклонений",
+    "sex": "F",
+    "age_years": 62,
+    "values": {
+     "hemoglobin": 131,
+     "RBC": 4.4,
+     "hematocrit": 39.5,
+     "MCV": 90,
+     "MCH": 30.1,
+     "MCHC": 334,
+     "RDW": 13.9,
+     "platelets": 240,
+     "WBC": 6.4
+    },
+    "expected": {
+     "p_lt15": 0.0027807045738180314,
+     "p_lt30": 0.04491498167422182,
+     "features": "full_cbc",
+     "group": "F50+",
+     "refer": 0.00634124925015145,
+     "high": 0.02464436817972201
+    }
+   },
+   {
+    "name": "М 45, полный ОАК без отклонений",
+    "sex": "M",
+    "age_years": 45,
+    "values": {
+     "hemoglobin": 148,
+     "RBC": 4.95,
+     "hematocrit": 43.9,
+     "MCV": 89,
+     "MCH": 30.2,
+     "MCHC": 339,
+     "RDW": 13.4,
+     "platelets": 228,
+     "WBC": 6.6
+    },
+    "expected": {
+     "p_lt15": 0.00042016806722689073,
+     "p_lt30": 0.008424041315730244,
+     "features": "full_cbc",
+     "group": "M",
+     "refer": 0.0015744319562064513,
+     "high": 0.0032865474304477247
+    }
+   }
+  ]
+ },
+ "fast_path_checked": true
+}

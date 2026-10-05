@@ -1,0 +1,62 @@
+{
+  "_comment": "Восемь демонстрационных случаев под «боли» кейса. Значения придуманы (не данные пациентов) и арифметически согласованы: MCH = Hb / RBC; MCHC = Hb / Hct × 100; MCV = Hct / RBC × 10. Черновик до проверки врачом команды. В 'expect' — только инварианты (анемия, тяжесть, флаги, срочность, рекомендация), а не класс от ML.",
+  "examples": [
+    {
+      "id": "case1_hidden_iron",
+      "title": "Гемоглобин в норме, а запас железа?",
+      "pain": "Скрытый дефицит при нормальном гемоглобине",
+      "input": {"sex": "F", "age_years": 34, "values": {"hemoglobin": 124, "RBC": 4.59, "hematocrit": 37.7, "MCV": 82, "MCH": 27.0, "MCHC": 329, "RDW": 15.2, "platelets": 310, "WBC": 6.1}},
+      "followup": {"add_values": {"ferritin": 9}, "title": "Добавить ферритин 9 мкг/л"},
+      "expect": {"anemia": false, "screening_applicable": true, "screening_risk_in": ["elevated", "high"], "first_next_test": "ferritin", "after_followup": {"rule_signals_include": ["ferritin_below_who"], "hidden_detected": true}}
+    },
+    {
+      "id": "case2_inflammation_mask",
+      "title": "Ферритин «в норме» на фоне воспаления",
+      "pain": "Воспаление маскирует дефицит железа",
+      "input": {"sex": "M", "age_years": 61, "values": {"hemoglobin": 104, "RBC": 4.10, "hematocrit": 32.4, "MCV": 79, "MCH": 25.4, "MCHC": 321, "RDW": 16.0, "platelets": 340, "WBC": 8.9, "ferritin": 62, "CRP": 28, "serum_iron": 5.5, "TIBC": 50, "TSAT": 11}},
+      "expect": {"anemia": true, "severity": "moderate", "flags_include": ["ferritin_masked_by_inflammation"], "next_tests_include_any": ["sTfR", "Ret_He"]}
+    },
+    {
+      "id": "case3_mixed_normal_mcv",
+      "title": "Нормальный MCV при высоком RDW",
+      "pain": "Сочетанный дефицит: псевдонормоцитоз",
+      "input": {"sex": "F", "age_years": 58, "values": {"hemoglobin": 96, "RBC": 3.35, "hematocrit": 30.5, "MCV": 91, "MCH": 28.7, "MCHC": 315, "RDW": 19.5, "platelets": 280, "WBC": 5.2, "ferritin": 8}},
+      "expect": {"anemia": true, "severity": "moderate", "flags_include": ["normal_mcv_high_rdw"], "next_tests_include_any": ["vitamin_B12", "folate"]}
+    },
+    {
+      "id": "case4_b12_gray_zone",
+      "title": "B12 в серой зоне",
+      "pain": "Пограничный B12 требует функционального подтверждения",
+      "input": {"sex": "M", "age_years": 67, "values": {"hemoglobin": 118, "RBC": 3.40, "hematocrit": 35.4, "MCV": 104, "MCH": 34.7, "MCHC": 333, "RDW": 14.8, "platelets": 190, "WBC": 4.6, "vitamin_B12": 230, "folate": 9}},
+      "expect": {"anemia": true, "severity": "mild", "flags_include": ["b12_gray_zone"], "next_tests_include_any": ["active_B12", "homocysteine"]}
+    },
+    {
+      "id": "case5_unexplained_kidney",
+      "title": "Анемия без дефицитов: что исключить",
+      "pain": "Анемия неясного генеза: почки, щитовидная железа, гемолиз",
+      "input": {"sex": "F", "age_years": 74, "values": {"hemoglobin": 105, "RBC": 3.60, "hematocrit": 31.7, "MCV": 88, "MCH": 29.2, "MCHC": 331, "RDW": 14.2, "platelets": 230, "WBC": 6.4, "ferritin": 120, "vitamin_B12": 420, "folate": 12, "CRP": 2, "creatinine": 160}},
+      "expect": {"anemia": true, "severity": "moderate", "flags_include": ["unexplained_checklist"], "checklist": {"kidney": "suspected", "thyroid": "not_checked", "hemolysis": "not_checked"}, "next_tests_include_any": ["TSH"]}
+    },
+    {
+      "id": "case6_microcytosis_not_iron",
+      "title": "Микроцитоз при нормальном железе",
+      "pain": "Микроцитоз и гипохромия не только от дефицита железа",
+      "input": {"sex": "F", "age_years": 45, "values": {"hemoglobin": 101, "RBC": 4.39, "hematocrit": 31.6, "MCV": 72, "MCH": 23.0, "MCHC": 320, "RDW": 15.5, "platelets": 300, "WBC": 6.0, "ferritin": 180, "serum_iron": 22, "TIBC": 49, "TSAT": 45}},
+      "expect": {"anemia": true, "severity": "moderate", "flags_include": ["microcytosis_not_iron"], "next_tests_include_any": ["vitamin_B6", "copper", "ceruloplasmin"]}
+    },
+    {
+      "id": "case7_urgent",
+      "title": "Тяжёлая анемия",
+      "pain": "Когда нужно обращаться срочно",
+      "input": {"sex": "M", "age_years": 50, "values": {"hemoglobin": 68, "RBC": 2.90, "hematocrit": 22.6, "MCV": 78, "MCH": 23.4, "MCHC": 301, "RDW": 18.0, "platelets": 420, "WBC": 7.5}},
+      "expect": {"anemia": true, "severity": "severe", "urgent": true}
+    },
+    {
+      "id": "case8_pregnancy",
+      "title": "Беременность, II триместр",
+      "pain": "Другие пороги гемоглобина при беременности",
+      "input": {"sex": "F", "age_years": 29, "pregnancy": {"status": "yes", "trimester": 2}, "values": {"hemoglobin": 108, "RBC": 3.70, "hematocrit": 32.6, "MCV": 88, "MCH": 29.2, "MCHC": 331, "RDW": 13.5, "platelets": 250, "WBC": 9.0}},
+      "expect": {"anemia": false, "level2_enabled": false}
+    }
+  ]
+}

@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block title %}Justmedit — доступ врача к истории{% endblock %}
+{% block head %}
+  <link rel="stylesheet" href="/static/cabinet.css?v={{ v }}">
+{% endblock %}
+{% block skip %}share{% endblock %}
+{% block hero %}
+<section class="hero hero--auth hero--share" aria-labelledby="share-h">
+  <div class="hero__fx" aria-hidden="true"><span class="hero__blob hero__blob--a"></span><span class="hero__blob hero__blob--b"></span></div>
+  <div class="wrap share">
+    <p class="hero__kicker"><span class="hero__dot" aria-hidden="true"></span>Доступ врача</p>
+    <h1 id="share-h" class="share__title">История анализов <span class="hero__accent">по ссылке пациента</span></h1>
+
+    <div class="auth-card share-card" id="share" tabindex="-1">
+      <!-- Состояния заполняет cabinet.js: проверка → вход врача → принятие → готово / ошибка -->
+      <div class="share-state" id="share-wait" role="status">
+        <span class="spinner" aria-hidden="true"></span>
+        <p>Проверяем ссылку…</p>
+      </div>
+
+      <div class="share-state" id="share-login" hidden>
+        <div class="share-state__ico share-state__ico--key" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="8" cy="14" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M11 11.5 19 4m-3 3 2 2m-4.5 0.5 1.5 1.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <h2 class="share-state__t">Пациент открыл вам доступ к истории анализов</h2>
+        <p class="share-state__p">Ссылку принимает только врач со своим аккаунтом. Войдите как врач — доступ откроется сразу, ссылку не нужно открывать заново.</p>
+        <div id="share-alert" class="cab-alert" role="alert" hidden></div>
+
+        <form id="share-login-form" class="auth-form" novalidate autocomplete="on">
+          <div class="fx">
+            <label class="fx__label" for="sl-login">Логин врача</label>
+            <input class="fx__input" id="sl-login" type="text" autocomplete="username" autocapitalize="off" spellcheck="false" maxlength="64" aria-describedby="err-sl-login">
+            <p class="field__error" id="err-sl-login" hidden></p>
+          </div>
+          <div class="fx">
+            <label class="fx__label" for="sl-password">Пароль</label>
+            <div class="pw">
+              <input class="fx__input" id="sl-password" type="password" autocomplete="current-password" maxlength="128" aria-describedby="err-sl-password">
+              <button type="button" class="pw__eye" data-for="sl-password" aria-pressed="false" aria-label="Показать пароль"></button>
+            </div>
+            <p class="field__error" id="err-sl-password" hidden></p>
+          </div>
+          <button type="submit" class="btn btn--primary btn--wide" id="sl-submit">Войти как врач и открыть доступ</button>
+        </form>
+
+        <details class="share-reg" id="share-reg">
+          <summary>Нет аккаунта врача? Зарегистрироваться</summary>
+          <form id="share-reg-form" class="auth-form" novalidate autocomplete="on">
+            <div class="fx">
+              <label class="fx__label" for="sr-login">Логин</label>
+              <input class="fx__input" id="sr-login" type="text" autocomplete="username" autocapitalize="off" spellcheck="false" maxlength="64" aria-describedby="hint-sr-login err-sr-login">
+              <p class="fx__hint" id="hint-sr-login">3–64 символа: буквы одного алфавита (латиница или кириллица), цифры и «._-@».</p>
+              <p class="field__error" id="err-sr-login" hidden></p>
+            </div>
+            <div class="fx">
+              <label class="fx__label" for="sr-password">Пароль (от 8 символов)</label>
+              <div class="pw">
+                <input class="fx__input" id="sr-password" type="password" autocomplete="new-password" maxlength="128" aria-describedby="err-sr-password">
+                <button type="button" class="pw__eye" data-for="sr-password" aria-pressed="false" aria-label="Показать пароль"></button>
+              </div>
+              <p class="field__error" id="err-sr-password" hidden></p>
+            </div>
+            <div class="fx">
+              <label class="fx__label" for="sr-clinic">Клиника</label>
+              <input class="fx__input" id="sr-clinic" type="text" autocomplete="organization" maxlength="120" aria-describedby="err-sr-clinic">
+              <p class="field__error" id="err-sr-clinic" hidden></p>
+            </div>
+            <div class="fx">
+              <label class="consent"><input type="checkbox" id="sr-consent" aria-describedby="err-sr-consent">
+                <span>Я согласен(на) на хранение данных в кабинете врача. <b>Демо: не вводите реальные данные.</b> Данные кабинета хранятся зашифрованно до удаления (можно удалить всё в кабинете).</span></label>
+              <p class="field__error" id="err-sr-consent" hidden></p>
+            </div>
+            <button type="submit" class="btn btn--primary btn--wide" id="sr-submit">Создать кабинет врача и открыть доступ</button>
+          </form>
+        </details>
+      </div>
+
+      <div class="share-state" id="share-ok" hidden>
+        <div class="share-state__ico share-state__ico--ok" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h2 class="share-state__t" id="share-ok-t" tabindex="-1"></h2>
+        <p class="share-state__p">Каждый ваш просмотр истории попадает в журнал, который видит пациент. Пациент может закрыть доступ в любой момент.</p>
+        <a class="btn btn--primary btn--wide" id="share-ok-go" href="/cabinet">Открыть в кабинете</a>
+      </div>
+
+      <div class="share-state" id="share-patient" hidden>
+        <div class="share-state__ico share-state__ico--info" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 11v5.5M12 7.6v.2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <h2 class="share-state__t">Эту ссылку открывает врач</h2>
+        <p class="share-state__p">Вы вошли как пациент <b id="share-patient-name"></b>. Перешлите ссылку врачу: он откроет её, войдя в свой кабинет врача. Если вы врач — выйдите и войдите со своим аккаунтом врача.</p>
+        <div class="share-state__btns">
+          <a class="btn btn--primary" href="/cabinet">Мой кабинет</a>
+          <button type="button" class="btn" id="share-patient-out">Выйти</button>
+        </div>
+      </div>
+
+      <div class="share-state" id="share-bad" hidden>
+        <div class="share-state__ico share-state__ico--bad" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m9 9 6 6m0-6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <h2 class="share-state__t" id="share-bad-t" tabindex="-1">Ссылка недействительна</h2>
+        <p class="share-state__p" id="share-bad-p"></p>
+        <div class="share-state__btns">
+          <a class="btn btn--primary" href="/cabinet" id="share-bad-go">В кабинет</a>
+        </div>
+      </div>
+    </div>
+    <p class="share__note">Код доступа — в части ссылки после «#»: браузер не отправляет её на сервер в адресе страницы, мы передаём код отдельным запросом и не пишем в журнал.</p>
+  </div>
+</section>
+{% endblock %}
+{% block main %}{% endblock %}
+{% block scripts %}
+<script src="/static/cabinet.js?v={{ v }}" defer></script>
+{% endblock %}

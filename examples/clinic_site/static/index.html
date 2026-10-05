@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Клиника «Пример» — расшифровка анализа крови</title>
+  <link rel="stylesheet" href="/static/clinic.css">
+  <script type="module" src="/static/clinic.js"></script>
+</head>
+<body>
+  <header class="top">
+    <strong>Клиника «Пример»</strong>
+    <span class="muted">демо интеграции Justmedit</span>
+  </header>
+  <p class="banner">Демо. Не вводите персональные данные. Не медицинское изделие.</p>
+  <main>
+    <h1>Расшифровка общего анализа крови</h1>
+    <form id="cbc-form" novalidate>
+      <fieldset>
+        <legend>О пациенте</legend>
+        <label>Пол
+          <select name="sex" required>
+            <option value="">— выберите —</option>
+            <option value="F">женский</option>
+            <option value="M">мужской</option>
+          </select>
+        </label>
+        <label>Возраст, лет <input name="age_years" inputmode="decimal" required></label>
+        <label class="check"><input type="checkbox" name="pregnant"> беременность</label>
+      </fieldset>
+      <fieldset>
+        <legend>Общий анализ крови</legend>
+        <label>Гемоглобин, г/л <input name="hemoglobin" inputmode="decimal" required></label>
+        <label>Эритроциты, 10¹²/л <input name="RBC" inputmode="decimal"></label>
+        <label>Гематокрит, % <input name="hematocrit" inputmode="decimal"></label>
+        <label>MCV, фл <input name="MCV" inputmode="decimal"></label>
+        <label>MCH, пг <input name="MCH" inputmode="decimal"></label>
+        <label>MCHC, г/л <input name="MCHC" inputmode="decimal"></label>
+        <label>RDW, % <input name="RDW" inputmode="decimal"></label>
+        <label>Тромбоциты, 10⁹/л <input name="platelets" inputmode="decimal"></label>
+        <label>Лейкоциты, 10⁹/л <input name="WBC" inputmode="decimal"></label>
+        <label>Ферритин, мкг/л (если сдавали) <input name="ferritin" inputmode="decimal"></label>
+      </fieldset>
+      <div class="actions">
+        <button type="submit" id="submit">Расшифровать</button>
+        <button type="button" id="fill-example" class="secondary">Заполнить примером</button>
+      </div>
+    </form>
+    <section id="out" aria-live="polite"></section>
+  </main>
+  <footer class="muted">Ключ API хранится только на сервере клиники; страница обращается к своему серверу.</footer>
+</body>
+</html>
